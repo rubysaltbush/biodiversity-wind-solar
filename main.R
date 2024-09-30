@@ -137,27 +137,86 @@ sysrevdata %>%
   scale_fill_discrete(name = "Facility")
 ggsave("figures/effect_development_barchart.png", width = 5, height = 4)
 
+# mitigation ----
+
 # now a bar chart showing mitigations suggested, and mitigation heirarchy
 # given some have multiple suggestions have to summarise data a bit
 sysrevdata %>%
-  dplyr::select(title, mitigation_category) %>%
+  dplyr::select(title, mitigation_category, wind_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter(!is.na(.$mitigation_category)) %>%
   # Split the categories and unnest them
   dplyr::mutate(mitigation_category = stringr::str_split(mitigation_category, ", ")) %>%
   tidyr::unnest(mitigation_category) %>%
   # Count occurrences of each category
-  dplyr::group_by(mitigation_category) %>%
+  dplyr::group_by(mitigation_category, wind_solar) %>%
   dplyr::summarise(count = n(), .groups = 'drop') %>%
-  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = mitigation_category)) +
-  geom_bar(stat = "identity") +
-  ggpubr::theme_pubr(legend = "none") +
-  scale_fill_brewer(palette = "Set2") +
+  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  ggpubr::theme_pubr() +
   xlab("Mitigation Category") +
+  labs(fill = "Facility type") +
   ggpubr::rotate_x_text(angle = 15, hjust = 0.7, vjust = 0.9) +
   ylab("Number of Publications")
 ggsave("figures/mitigation_cat_barplot.png", width = 5, height = 4)
 
+# tables for numbers
+sysrevdata %>%
+  dplyr::select(title, `mitigation_suggested?`) %>%
+  dplyr::distinct() %>%
+  dplyr::filter(!is.na(.$`mitigation_suggested?`)) %>% 
+  dplyr::select(`mitigation_suggested?`) %>% 
+  table()
+# mitigation_suggested?
+#   no yes 
+# 10  20 
+
+# mitigation category
+sysrevdata %>%
+  dplyr::select(title, mitigation_category, wind_solar) %>%
+  dplyr::distinct() %>%
+  dplyr::filter(!is.na(.$mitigation_category)) %>%
+  # Split the categories and unnest them
+  dplyr::mutate(mitigation_category = stringr::str_split(mitigation_category, ", ")) %>%
+  tidyr::unnest(mitigation_category) %>%
+  # Count occurrences of each category
+  dplyr::group_by(mitigation_category, wind_solar) %>%
+  dplyr::summarise(count = n(), .groups = 'drop')
+# mitigation_category         wind_solar count
+# <chr>                       <chr>      <int>
+# 1 curtailment                 wind           5
+# 2 offsetting                  solar          1
+# 3 offsetting                  wind           2
+# 4 on-site restoration         solar          5
+# 5 on-site restoration         wind           1
+# 6 siting                      solar          2
+# 7 siting                      wind           3
+# 8 technological modifications solar          1
+# 9 technological modifications wind           3
+
+# explicit tests of mitigation
+sysrevdata %>%
+  dplyr::select(title, `mitigation_tested?`) %>%
+  dplyr::distinct() %>%
+  dplyr::filter(!is.na(.$`mitigation_tested?`)) %>% 
+  dplyr::select(`mitigation_tested?`) %>% 
+  table()
+# mitigation_tested?
+#   no yes 
+# 23   7 
+
+# explicit tests of mitigation
+sysrevdata %>%
+  dplyr::select(title, `mitigation_supported_by_explicit_test?`) %>%
+  dplyr::distinct() %>%
+  dplyr::filter(!is.na(.$`mitigation_supported_by_explicit_test?`)) %>% 
+  dplyr::select(`mitigation_supported_by_explicit_test?`) %>% 
+  table()
+# mitigation_supported_by_explicit_test?
+#   no yes 
+# 3   7 
+
+# word clouds suck really ----
 
 # okay now let's try to make a word cloud from the abstracts
 # Step 1: Create a corpus from the abstract column
