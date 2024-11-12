@@ -4,10 +4,44 @@ library(tidyverse)
 library(sf)
 library(rnaturalearth)
 library(ggpubr)
-install.packages("wordcloud")
+#install.packages("wordcloud")
 library(wordcloud)
-install.packages("tm")
+#install.packages("tm")
 library(tm)
+
+# preprocessing of data, as exported by Rayyan
+rayyanexport <- readr::read_csv("data_input/Rayyan_take3_export_articles.csv")
+
+# need to get notes out and into their own columns
+# which will be: wind_solar, topic (impact/mitigation), construction_operation, 
+# region, country, biodiversity_category, biodiversity_metric
+
+# extract wind/solar
+rayyanexport$wind_solar <- as.character(str_extract_all(string = rayyanexport$notes, 
+                                             pattern = "wind|solar"))
+# only one with both wind and solar, replace
+rayyanexport$wind_solar <- gsub("c\\(\"wind\", \"solar\"\\)", "wind_solar", 
+                                       rayyanexport$wind_solar)
+table(rayyanexport$wind_solar)
+# solar       wind wind_solar 
+# 50        301          1 
+
+# extract topic (impact/mitigation)
+rayyanexport$impact_mitigation <- as.character(str_extract_all(string = rayyanexport$notes, 
+                                                               pattern = "impact|mitigation"))
+# many with impact and mitigation, replace with new category
+rayyanexport$impact_mitigation <- gsub("c\\(\"impact\", \"mitigation\"\\)", "impact_mitigation", 
+                                       rayyanexport$impact_mitigation)
+table(rayyanexport$impact_mitigation)
+
+# extract construction_operation
+rayyanexport$construction_operation <- as.character(str_extract_all(string = rayyanexport$notes, 
+                                                               pattern = "construction|operation"))
+# some with construction and operation, replace with new category
+rayyanexport$construction_operation <- gsub("c\\(\"operation\", \"construction\"\\)", "construction_operation", 
+                                       rayyanexport$construction_operation)
+table(rayyanexport$construction_operation)
+
 
 # get data
 sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v2_20240930.csv")
