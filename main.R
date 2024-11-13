@@ -57,16 +57,6 @@ sysrevdata %>%
 # 6 wind         mitigation                                          12
 # 7 windandsolar impact                                               1
 
-# make histogram of year of publication
-sysrevdata %>%
-  dplyr::select(title, year) %>%
-  dplyr::distinct() %>%
-  ggplot(aes(x = year)) +
-  geom_histogram(binwidth = 1) +
-  ggpubr::theme_pubr() +
-  xlab("Year of Publication") +
-  ylab("Number of Publications")
-ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
 
 # locations ----
 
@@ -101,18 +91,7 @@ ggplot() +
 ggsave("figures/map_study_locations.png", width = 6, height = 4)
 rm(worldmap, sysrevlatlong)
 
-# make histogram of biodiversity category (not many so far)
-sysrevdata %>%
-  dplyr::select(title, biodiversity_category) %>%
-  dplyr::distinct() %>%
-  dplyr::filter(!is.na(.$biodiversity_category)) %>%
-  ggplot(aes(x = biodiversity_category, fill = biodiversity_category)) +
-  geom_bar() +
-  ggpubr::theme_pubr(legend = "none") +
-  xlab("Biodiversity Category") +
-  ggpubr::rotate_x_text(angle = 20) +
-  ylab("Number of Publications")
-ggsave("figures/biodiversity_cat_histogram.png", width = 5, height = 4)
+
 
 # and table for specific numbers
 sysrevdata %>%

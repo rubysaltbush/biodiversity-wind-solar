@@ -99,14 +99,23 @@ rayyanexport$biodiversity_category <- gsub("c\\(\"plants\", \"animals\"\\)", "pl
                                            rayyanexport$biodiversity_category)
 rayyanexport$biodiversity_category <- gsub("c\\(\"pollinators\", \"invertebrates\"\\)", "pollinators, invertebrates",
                                            rayyanexport$biodiversity_category)
+# make pluralisation consistent
+rayyanexport$biodiversity_category <- gsub("bird", "birds",
+                                           rayyanexport$biodiversity_category)
+rayyanexport$biodiversity_category <- gsub("amphibian", "amphibians",
+                                           rayyanexport$biodiversity_category)
+rayyanexport$biodiversity_category <- gsub("mammal", "mammals",
+                                           rayyanexport$biodiversity_category)
+rayyanexport$biodiversity_category <- gsub("reptile", "reptiles",
+                                           rayyanexport$biodiversity_category)
 table(rayyanexport$biodiversity_category)
-# amphibian                    animals                       bats                 bats, bird  bats, bird, invertebrates 
+# amphibians                    animals                       bats                bats, birds bats, birds, invertebrates 
 # 2                          1                         94                         12                          1 
-# bats, invertebrates                       bird  bird, fish, invertebrates               bird, mammal              bird, reptile 
+# bats, invertebrates                      birds birds, fish, invertebrates             birds, mammals            birds, reptiles 
 # 1                        164                          1                          4                          1 
-# invertebrates                     mammal                     plants            plants, animals pollinators, invertebrates 
+# invertebrates                    mammals                     plants            plants, animals pollinators, invertebrates 
 # 15                         21                         19                          2                          3 
-# reptile 
+# reptiles 
 # 10 
 
 # extract biodiversity_metric
@@ -163,4 +172,34 @@ table(rayyanexport$biodiversity_metric)
 
 # export this data now for further processing and additional data entry in excel
 readr::write_csv(rayyanexport, "data_output/rayyan_export_processed.csv")
+
+#### preliminary graphs #####
+
+# how many papers included currently?
+length(unique(rayyanexport$title))
+# 351
+
+# make histogram of year of publication
+rayyanexport %>%
+  dplyr::select(title, year) %>%
+  dplyr::distinct() %>%
+  ggplot(aes(x = year)) +
+  geom_histogram(binwidth = 1) +
+  ggpubr::theme_pubr() +
+  xlab("Year of Publication") +
+  ylab("Number of Publications")
+ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
+
+# make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
+rayyanexport %>%
+  dplyr::select(title, biodiversity_category) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
+  ggplot(aes(x = biodiversity_category, fill = biodiversity_category)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Biodiversity Category") +
+  ggpubr::rotate_x_text(angle = 20) +
+  ylab("Number of Publications")
+ggsave("figures/biodiversity_cat_histogram.png", width = 5, height = 4)
 
