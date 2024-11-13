@@ -33,6 +33,8 @@ rayyanexport$impact_mitigation <- as.character(str_extract_all(string = rayyanex
 rayyanexport$impact_mitigation <- gsub("c\\(\"impact\", \"mitigation\"\\)", "impact_mitigation", 
                                        rayyanexport$impact_mitigation)
 table(rayyanexport$impact_mitigation)
+# impact impact_mitigation        mitigation 
+# 301                30                20 
 
 # extract construction_operation
 rayyanexport$construction_operation <- as.character(str_extract_all(string = rayyanexport$notes, 
@@ -41,7 +43,40 @@ rayyanexport$construction_operation <- as.character(str_extract_all(string = ray
 rayyanexport$construction_operation <- gsub("c\\(\"operation\", \"construction\"\\)", "construction_operation", 
                                        rayyanexport$construction_operation)
 table(rayyanexport$construction_operation)
+# construction construction_operation              operation 
+# 8                     24                    319 
 
+# extract region
+rayyanexport$region <- as.character(str_extract_all(string = rayyanexport$notes, 
+                                                    pattern = "Asia|Africa|North America|South America|Europe|Oceania"))
+# South African countries get two "Africa", replace with only one
+rayyanexport$region <- gsub("c\\(\"Africa\", \"Africa\"\\)", "Africa",
+                            rayyanexport$region)
+table(rayyanexport$region)
+
+# extract country
+rayyanexport$country <- as.character(str_extract_all(string = rayyanexport$notes, 
+                                                    pattern = "Australia|Argentina|Austria|Belgium|Brazil|Bulgaria|Canada|Chile|China|Croatia|Czech Republic|Denmark|Egypt|Ethiopia|Finland|France|Galapagos|Germany|Greece|Hungary|India|Ireland|Israel|Italy|Japan|Korea|Mexico|Netherlands|New Caledonia|New Zealand|Norway|Poland|Portugal|Puerto Rico|Romania|Slovakia|South Africa|Spain|Sweden|Switzerland|Taiwan|Turkey|United Kingdom|United States"))
+# a few studies in multiple countries, replace as needed
+rayyanexport$country <- gsub("c\\(\"Canada\", \"United States\"\\)", "Canada, United States",
+                            rayyanexport$country)
+rayyanexport$country <- gsub("c\\(\"France\", \"Belgium\"\\)", "France, Belgium",
+                             rayyanexport$country)
+rayyanexport$country <- gsub("c\\(\"Germany\", \"Netherlands\"\\)", "Germany, Netherlands",
+                             rayyanexport$country)
+rayyanexport$country <- gsub("c\\(\"Sweden\", \"Austria\", \"Germany\"\\)", "Sweden, Austria, Germany",
+                             rayyanexport$country)
+table(rayyanexport$country)
+
+
+
+
+
+
+
+
+
+#### figures from more final data ####
 
 # get data
 sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v2_20240930.csv")
