@@ -190,6 +190,32 @@ rayyanexport %>%
   ylab("Number of Publications")
 ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
 
+# make histogram of region, counting some pubs with multiple regions multiply
+rayyanexport %>%
+  dplyr::select(title, region) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(region, delim = ", ") %>%
+  ggplot(aes(x = region, fill = region)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Continent") +
+  ggpubr::rotate_x_text(angle = 20) +
+  ylab("Number of Publications")
+ggsave("figures/continents_histogram.png", width = 5, height = 4)
+
+# make histogram of country, counting some pubs with multiple countries multiply
+rayyanexport %>%
+  dplyr::select(title, country) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(country, delim = ", ") %>%
+  ggplot(aes(x = country, fill = country)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Country") +
+  ggpubr::rotate_x_text(angle = 90) +
+  ylab("Number of Publications")
+ggsave("figures/countries_histogram.png", width = 5, height = 4)
+
 # make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
 rayyanexport %>%
   dplyr::select(title, biodiversity_category) %>%
@@ -202,4 +228,17 @@ rayyanexport %>%
   ggpubr::rotate_x_text(angle = 20) +
   ylab("Number of Publications")
 ggsave("figures/biodiversity_cat_histogram.png", width = 5, height = 4)
+
+# make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
+rayyanexport %>%
+  dplyr::select(title, biodiversity_metric) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
+  ggplot(aes(x = biodiversity_metric, fill = biodiversity_metric)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Biodiversity Metric") +
+  ggpubr::rotate_x_text(angle = 20) +
+  ylab("Number of Publications")
+ggsave("figures/biodiversity_metric_histogram.png", width = 5, height = 4)
 
