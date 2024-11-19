@@ -244,18 +244,27 @@ counts <- rayyanexport %>%
   dplyr::group_by(country, region) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::ungroup()
+# add regional count
+regioncount <- counts %>%
+  dplyr::group_by(region) %>%
+  dplyr::summarise(regioncount = sum(count))
+counts <- counts %>%
+  dplyr::left_join(regioncount, by = "region")
+rm(regioncount)
 
-# make histogram of country coloured by region, sorted by size, to match map
+# make histogram of country coloured by region, sorted by region+counts, to match map
 counts %>%
-  dplyr::mutate(country = forcats::fct_reorder(country, desc(count))) %>%
+  dplyr::arrange(-regioncount, -count) %>%
+  dplyr::mutate(country = forcats::fct_inorder(country)) %>%
   ggplot(aes(x = country, y = count, fill = region)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_brewer(palette = "YlGnBu") +
   xlab("Country") +
   ylab("Number of Publications") +
-  coord_flip()
-ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
+  coord_flip() +
+  theme(rect = element_rect(fill = "transparent"))
+ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7, bg = "transparent")
 
 # checking my countries against "admin" column of world map, need to change:
 # United States -> United States of America
