@@ -57,27 +57,42 @@ rayyanexport$country <- gsub("c\\(\"Germany\", \"Netherlands\"\\)", "Germany, Ne
                              rayyanexport$country)
 rayyanexport$country <- gsub("c\\(\"Sweden\", \"Austria\", \"Germany\"\\)", "Sweden, Austria, Germany",
                              rayyanexport$country)
+# a few countries have more accurate names, replace these
+rayyanexport$country <- gsub("Czech Republic", "Czechia", rayyanexport$country)
+rayyanexport$country <- gsub("Korea", "South Korea", rayyanexport$country)
 table(rayyanexport$country)
-# Australia                  Austria                  Belgium                   Brazil                 Bulgaria 
-# 4                        1                        3                        7                        2 
-# Canada    Canada, United States                    Chile                    China                  Croatia 
-# 15                        4                        2                       12                        1 
-# Czech Republic                  Denmark                    Egypt                 Ethiopia                  Finland 
-# 1                        2                        1                        1                        3 
-# France          France, Belgium                  Germany     Germany, Netherlands                   Greece 
-# 12                        1                       15                        1                        1 
-# Hungary                    India                  Ireland                   Israel                    Italy 
-# 4                        1                        2                        2                        8 
-# Japan                    Korea                   Mexico              Netherlands            New Caledonia 
-# 2                        1                        7                        3                        1 
-# New Zealand                   Norway                   Poland                 Portugal              Puerto Rico 
-# 1                       12                        7                        2                        1 
-# Romania                 Slovakia             South Africa                    Spain                   Sweden 
-# 3                        1                        6                       25                       10 
-# Sweden, Austria, Germany              Switzerland                   Taiwan                   Turkey           United Kingdom 
-# 2                        1                        3                        1                       18 
+# Australia               Austria                  Belgium 
+# 4                        1                        3 
+# Brazil                 Bulgaria                   Canada 
+# 7                        2                       15 
+# Canada, United States   Chile                    China 
+# 4                        2                       12 
+# Croatia                  Czechia                  Denmark 
+# 1                        1                        2 
+# Egypt                 Ethiopia                  Finland 
+# 1                        1                        3 
+# France          France, Belgium                  Germany 
+# 12                        1                       15 
+# Germany, Netherlands      Greece                  Hungary 
+# 1                        1                        4 
+# India                  Ireland                   Israel 
+# 1                        2                        2 
+# Italy                    Japan                   Mexico 
+# 8                        2                        7 
+# Netherlands            New Caledonia              New Zealand 
+# 3                        1                        1 
+# Norway                   Poland                 Portugal 
+# 12                        7                        2 
+# Puerto Rico               Romania                 Slovakia 
+# 1                        3                        1 
+# South Africa            South Korea               Spain 
+# 6                        1                       25 
+# Sweden Sweden, Austria, Germany              Switzerland 
+# 10                        2                        1 
+# Taiwan                   Turkey           United Kingdom 
+# 3                        1                       18 
 # United States 
-# 138 
+# 138
 
 # extract biodiversity_category
 rayyanexport$biodiversity_category <- as.character(str_extract_all(string = rayyanexport$notes, 
@@ -215,6 +230,39 @@ rayyanexport %>%
   ggpubr::rotate_x_text(angle = 90) +
   ylab("Number of Publications")
 ggsave("figures/countries_histogram.png", width = 5, height = 4)
+
+# want to make map of this same data, coloured for poster
+# first get world map data without Antarctica (not included)
+worldmap <- rnaturalearth::ne_countries() %>% 
+  filter(sovereignt != "Antarctica")
+
+# create table of country count data
+counts <- rayyanexport %>%
+  dplyr::select(title, country) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(country, delim = ", ") %>%
+  dplyr::group_by(country) %>%
+  dplyr::summarise(count = n())
+# checking my countries against "admin" column of world map, need to change:
+# United States -> United States of America
+counts$country <- gsub("United States", "United States of America", counts$country)
+
+# join data together
+worldmapcount <- worldmap %>%
+  dplyr::select(country = admin, geometry) %>%
+  dplyr::left_join(counts, by = "country") %>%
+  dplyr::mutate(count = log(replace_na(count, 0)))
+
+# then plot world map coloured by number of studies
+ggplot(worldmapcount) +
+  geom_sf(aes(fill = count), linewidth = 0.1) +
+  theme_void() +
+  scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
+  labs(fill = "No. studies")
+ggsave("figures/map_countrycounts.png", width = 6, height = 4)
+
+rm(worldmap, counts, worldmapcount)
+
 
 # make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
 rayyanexport %>%
