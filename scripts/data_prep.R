@@ -238,11 +238,25 @@ worldmap <- rnaturalearth::ne_countries() %>%
 
 # create table of country count data
 counts <- rayyanexport %>%
-  dplyr::select(title, country) %>%
+  dplyr::select(title, country, region) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(country, delim = ", ") %>%
-  dplyr::group_by(country) %>%
-  dplyr::summarise(count = n())
+  dplyr::group_by(country, region) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup()
+
+# make histogram of country coloured by region, sorted by size, to match map
+counts %>%
+  dplyr::mutate(country = forcats::fct_reorder(country, desc(count))) %>%
+  ggplot(aes(x = country, y = count, fill = region)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "YlGnBu") +
+  xlab("Country") +
+  ylab("Number of Publications") +
+  coord_flip()
+ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
+
 # checking my countries against "admin" column of world map, need to change:
 # United States -> United States of America
 counts$country <- gsub("United States", "United States of America", counts$country)
@@ -251,17 +265,17 @@ counts$country <- gsub("United States", "United States of America", counts$count
 worldmapcount <- worldmap %>%
   dplyr::select(country = admin, geometry) %>%
   dplyr::left_join(counts, by = "country") %>%
-  dplyr::mutate(count = log(replace_na(count, 0)))
+  dplyr::mutate(countlog = log(replace_na(count, 0)))
 
 # then plot world map coloured by number of studies
 ggplot(worldmapcount) +
-  geom_sf(aes(fill = count), linewidth = 0.1) +
+  geom_sf(aes(fill = countlog), linewidth = 0.1) +
   theme_void() +
   scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
   labs(fill = "No. studies")
-ggsave("figures/map_countrycounts.png", width = 6, height = 4)
+ggsave("figures/map_countrycounts.pdf", width = 6, height = 4)
 
-rm(worldmap, counts, worldmapcount)
+
 
 
 # make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
