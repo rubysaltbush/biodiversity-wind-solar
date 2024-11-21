@@ -262,9 +262,8 @@ counts %>%
   scale_fill_brewer(palette = "YlGnBu") +
   xlab("Country") +
   ylab("Number of Publications") +
-  coord_flip() +
-  theme(rect = element_rect(fill = "transparent"))
-ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7, bg = "transparent")
+  coord_flip()
+ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
 
 # checking my countries against "admin" column of world map, need to change:
 # United States -> United States of America
@@ -285,20 +284,28 @@ ggplot(worldmapcount) +
 ggsave("figures/map_countrycounts.pdf", width = 6, height = 4)
 
 
-
-
 # make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
+# coloured by wind or solar, arranged by # studies??
+# create table of country count data
 rayyanexport %>%
-  dplyr::select(title, biodiversity_category) %>%
+  dplyr::select(title, biodiversity_category, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
-  ggplot(aes(x = biodiversity_category, fill = biodiversity_category)) +
-  geom_bar() +
-  ggpubr::theme_pubr(legend = "none") +
+  tidyr::separate_longer_delim(wind_solar, delim = "_") %>%
+  dplyr::group_by(biodiversity_category, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(-count) %>%
+  dplyr::mutate(biodiversity_category = forcats::fct_inorder(biodiversity_category)) %>%
+  ggplot(aes(x = biodiversity_category, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "YlGnBu") +
   xlab("Biodiversity Category") +
-  ggpubr::rotate_x_text(angle = 20) +
-  ylab("Number of Publications")
-ggsave("figures/biodiversity_cat_histogram.png", width = 5, height = 4)
+  coord_flip() +
+  ylab("Number of Publications") +
+  labs(fill = "Facility type")
+ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
 
 # make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
 rayyanexport %>%
