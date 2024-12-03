@@ -2,6 +2,7 @@
 
 library(tidyverse)
 library(sf)
+library(terra)
 library(rnaturalearth)
 library(ggpubr)
 #install.packages("wordcloud")
