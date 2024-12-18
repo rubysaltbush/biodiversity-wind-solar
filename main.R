@@ -5,10 +5,7 @@ library(sf)
 library(terra)
 library(rnaturalearth)
 library(ggpubr)
-#install.packages("wordcloud")
-library(wordcloud)
-#install.packages("tm")
-library(tm)
+
 
 
 
@@ -200,72 +197,3 @@ sysrevdata %>%
 #   no yes 
 # 3   7 
 
-# word clouds suck really ----
-
-# okay now let's try to make a word cloud from the abstracts
-# Step 1: Create a corpus from the abstract column
-corpus <- sysrevdata %>%
-  dplyr::select(abstract) %>%
-  dplyr::distinct()
-
-corpus <-  tm::Corpus(tm::VectorSource(corpus))
-
-# Step 2: Preprocess the data (convert to lower case, remove punctuation, etc.)
-corpus <- tm_map(corpus, content_transformer(tolower))         # Convert to lowercase
-corpus <- tm_map(corpus, removePunctuation)                    # Remove punctuation
-corpus <- tm_map(corpus, removeNumbers)                        # Remove numbers
-corpus <- tm_map(corpus, removeWords, stopwords("english"))    # Remove common stopwords
-corpus <- tm_map(corpus, stripWhitespace)                      # Remove extra white spaces
-
-# Step 3: Create a Document-Term Matrix
-dtm <- tm::TermDocumentMatrix(corpus)
-matrix <- as.matrix(dtm)
-word_freqs <- sort(rowSums(matrix), decreasing = TRUE)  # Sum term frequencies
-df_word_freqs <- data.frame(word = names(word_freqs), freq = word_freqs)
-
-# Step 4: Generate the word cloud
-set.seed(1234)  # For reproducibility
-png("figures/wordcloud_abstract.png", width = 800, height = 800, res = 300)
-wordcloud::wordcloud(words = df_word_freqs$word, freq = df_word_freqs$freq, 
-          min.freq = 3,                              # Minimum frequency to include
-          max.words = 200,                           # Maximum number of words in the cloud
-          random.order = FALSE,                      # Arrange largest words centrally
-          colors = brewer.pal(8, "Dark2"))           # Color palette
-dev.off()
-
-# needs lots more cleaning, ah well. what about mitigation text?
-
-# Step 1: Create a corpus from the abstract column
-corpus <- sysrevdata %>%
-  dplyr::select(mitigation_text) %>%
-  dplyr::distinct()
-
-corpus <-  tm::Corpus(tm::VectorSource(corpus))
-
-# Step 2: Preprocess the data (convert to lower case, remove punctuation, etc.)
-corpus <- tm_map(corpus, content_transformer(tolower))         # Convert to lowercase
-corpus <- tm_map(corpus, removePunctuation)                    # Remove punctuation
-corpus <- tm_map(corpus, removeNumbers)                        # Remove numbers
-corpus <- tm_map(corpus, removeWords, stopwords("english"))    # Remove common stopwords
-corpus <- tm_map(corpus, stripWhitespace)                      # Remove extra white spaces
-
-# Step 3: Create a Document-Term Matrix
-dtm <- tm::TermDocumentMatrix(corpus)
-matrix <- as.matrix(dtm)
-word_freqs <- sort(rowSums(matrix), decreasing = TRUE)  # Sum term frequencies
-df_word_freqs <- data.frame(word = names(word_freqs), freq = word_freqs)
-
-# Step 4: Generate the word cloud
-set.seed(1234)  # For reproducibility
-png("figures/wordcloud_mitigationtext.png", width = 800, height = 800, res = 300)
-wordcloud::wordcloud(words = df_word_freqs$word, freq = df_word_freqs$freq, 
-                     min.freq = 3,                              # Minimum frequency to include
-                     max.words = 200,                           # Maximum number of words in the cloud
-                     random.order = FALSE,                      # Arrange largest words centrally
-                     colors = brewer.pal(8, "Dark2"))           # Color palette
-dev.off()
-
-# okay yes word clouds maybe are just a bit too random to generate much of any
-# insight, and need too much cleaning
-
-rm(word_freqs, matrix, dtm, df_word_freqs, corpus)
