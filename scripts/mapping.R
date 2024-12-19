@@ -1,3 +1,39 @@
+# script to map Australian wind and solar farms against Australian ecosystems
+# and biodiversity e.g. bird species, bat species, mammal species
+
+# get data ----
+
+# read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
+windfarms <- jsonlite::fromJSON("data_input/reneweconomy_windmap.json")
+windfarms <- windfarms$markers
+solarfarms <- jsonlite::fromJSON("data_input/reneweconomy_solarmap.json")
+solarfarms <- solarfarms$markers
+
+# some very messy columns, build into data I want
+windfarms <- windfarms %>%
+  dplyr::select(title, address, lat, long = lng, description)
+# and extract extra data from description column using stringr functions
+windfarmextract <- data.frame()
+for (n in 1:nrow(windfarms)) {
+  description <- windfarms[n, "description"] # get description
+  # below regex matches different elements in wind farm description 
+  # and returns the useful bits in different groups
+  rgx_pattern <- "<div class=\"([a-z]*Panel).*Size:<\\/strong> (\\d*\\.?\\d*).*Operational:<\\/strong> (\\d*).*Technology:<\\/strong> ([a-zA-Z\\s]*)<.*Owner: ?<\\/strong> ?([a-zA-Z\\s,]*)<.*Comments:<\\/strong>(.*)<\\/div>"
+  
+  # now extract wind farm data using above regex from above bud description
+  temp <- as.data.frame(stringr::str_match(description, rgx_pattern)) 
+  temp$desc <- description
+  temp <- cbind(windfarms[n, c("title", "address", "lat", "long", "description")], temp)
+  windfarmextract <- rbind(windfarmextract, temp)
+}
+rm(n, temp, description, rgx_pattern)
+windfarmextract <- dplyr::rename(windfarmextract, size_mw = V3, year_operational = V4, technology = V5, owner = V6, comments = V7)
+problems <- windfarmextract[is.na(windfarmextract$size_mw),]
+
+# 27 problems, more than I hoped gah
+
+# ohhhkay what I've ripped only includes the first 10 wind farms featured on the page, need to get the rest
+
 # need background Aus map
 # read in shapefile of Aus outline
 aus <- terra::vect("data_input/Aus_outline.shp")

@@ -2,3 +2,7 @@
 
 install.packages("tidyverse")
 install.packages("ggpubr")
+install.packages("sf")
+install.packages("terra")
+install.packages("rnaturalearth")
+install.packages("jsonlite")
