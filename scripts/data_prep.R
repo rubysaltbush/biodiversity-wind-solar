@@ -1,4 +1,8 @@
-# preprocessing of data, as exported by Rayyan
+# script for preprocessing of systematic review data, as exported by Rayyan
+
+##### data processing ####
+
+# import data directly from Rayyan download
 rayyanexport <- readr::read_csv("data_input/Rayyan_take3_export_articles.csv")
 
 # need to get notes out and into their own columns
@@ -185,6 +189,7 @@ table(rayyanexport$biodiversity_metric)
 # survival, behaviour 
 # 1 
 
+#### export processed data ####
 # export this data now for further processing and additional data entry in excel
 readr::write_csv(rayyanexport, "data_output/rayyan_export_processed.csv")
 

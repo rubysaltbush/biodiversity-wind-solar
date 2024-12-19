@@ -2,8 +2,8 @@ This file records details of all data files in the data_input folder.
 
 Rayyan_take3_export_articles.csv - Ruby Stephens - 2024-11-12 - Exported articles with labels and tags from third round of article screening for systematic review.
 
-wind_solar_biodiversity_sysreview_v2_20240930.csv - Ruby Stephens - 2024-09-30 -
-Details and data extracted from 314 papers included in systematic review.
+wind_solar_biodiversity_sysreview.csv - Ruby Stephens - updated 2024-12-19 -
+Details and data extracted from papers included in systematic review.
 
 solar_nationalmap_20241203 and wind_nationalmap_20241203 - National Map - Ruby Stephens - 2024-12-03 - data downloaded from nationalmap.gov.au on locations and power generation of wind and solar facilities in the National Energy Market (southeast Australia)
 
