@@ -1,0 +1,3417 @@
+[
+  {
+    "map_id": "5",
+    "address": "Hornsdale Power Reserve, Hornsdale SA",
+    "description": {
+      "Size:": "315MW",
+      "Operational:": "2016 (first stage)",
+      "Technology:": "Siemens",
+      "Owner:": "Neoen",
+      "Comments:": "Built in three stages, mostly contracted to ACT government, next to Hornsdale big battery."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/05/tesla-big-battery-expansion-hornsdale.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-114-x-114.png",
+      "retina": false
+    },
+    "lat": "-33.085897",
+    "lng": "138.5183516",
+    "anim": "0",
+    "title": "Hornsdale",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "161700",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/05/tesla-big-battery-expansion-hornsdale.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/05/tesla-big-battery-expansion-hornsdale-300x172.jpg"
+      }
+    ],
+    "id": "103",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "150MW/194MWh"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2017"
+      },
+      {
+        "id": 4,
+        "name": "Technology",
+        "value": "Tesla"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Neoen"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">150MW/194MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2017</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"4\" data-custom-field-name=\"Technology\" Technology=\"Technology\">Tesla</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Neoen</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Wattle Point Wind Farm, Sheoak Beach Road, Edithburgh SA, Australia",
+    "description": {
+      "Size:": "91MW",
+      "Operational:": "2005",
+      "Technology:": "Vestas",
+      "Owner:": "AFL",
+      "Comments:": "Located next to Dalrymple North battery, was Australia's biggest wind farm when completed."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/05/dalrymple-battery.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-35.1117422",
+    "lng": "137.7212617",
+    "anim": "0",
+    "title": "Wattle Point",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "161702",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/05/dalrymple-battery.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/05/dalrymple-battery-300x199.jpg"
+      }
+    ],
+    "id": "104",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "86MW"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2018"
+      },
+      {
+        "id": 4,
+        "name": "Technology",
+        "value": "Samsung"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "ElectraNet"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">86MW</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2018</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"4\" data-custom-field-name=\"Technology\" Technology=\"Technology\">Samsung</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">ElectraNet</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Lake Bonney Wind Farm, Goodwood Rd, Daw Park SA, Australia",
+    "description": {
+      "Size:": "278.5MW",
+      "Operational:": "2005",
+      "Technology:": "",
+      "Owner:": "Infigen",
+      "Comments:": "Built in two stages, second stage complete in 2008, located next to big battery storage."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/05/lake-bonney-battery-wind-.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-114-x-114.png",
+      "retina": false
+    },
+    "lat": "-37.737946",
+    "lng": "140.386887",
+    "anim": "0",
+    "title": "Lake Bonney ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "161704",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/05/lake-bonney-battery-wind-.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/05/lake-bonney-battery-wind--300x216.jpg"
+      }
+    ],
+    "id": "105",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "25MW/52MWh"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2019"
+      },
+      {
+        "id": 4,
+        "name": "Technology",
+        "value": "Tesla"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Infigen"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">25MW/52MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2019</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"4\" data-custom-field-name=\"Technology\" Technology=\"Technology\">Tesla</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Infigen</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Lincoln Gap SA",
+    "description": {
+      "Size:": "212MW",
+      "Operational:": "2021",
+      "Technology:": "Senvion/Vestas",
+      "Owner:": "Nexif",
+      "Comments:": "To be built in two stages to reach target of 464MW. Also includes battery storage."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-32.6188951",
+    "lng": "137.5696102",
+    "anim": "0",
+    "title": "Lincoln Gap",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "109",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "10MW/10MWh"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2021"
+      },
+      {
+        "id": 4,
+        "name": "Technology",
+        "value": "Fluence"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Nexif"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">10MW/10MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2021</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"4\" data-custom-field-name=\"Technology\" Technology=\"Technology\">Fluence</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Nexif</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Bulgana – North West of Ballarat, VIC",
+    "description": {
+      "Size:": "194MW",
+      "Operational:": "2021",
+      "Technology:": "Siemens",
+      "Owner:": "Neoen",
+      "Comments:": "Located next to Bulgana battery, first behind the meter battery in Australia wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-37.1420099",
+    "lng": "142.997146",
+    "anim": "0",
+    "title": "Bulgana",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "112",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "20MW/34MWh"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2021"
+      },
+      {
+        "id": 4,
+        "name": "Technology",
+        "value": "Tesla"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Neoen"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">20MW/34MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2021</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"4\" data-custom-field-name=\"Technology\" Technology=\"Technology\">Tesla</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Neoen</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Sapphire, NSW",
+    "description": {
+      "Size:": "270MW",
+      "Operational:": "2018",
+      "Technology:": "",
+      "Owner:": "CWP",
+      "Comments:": "To be located next to planned solar farm and battery storage."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-114-x-114.png",
+      "retina": false
+    },
+    "lat": "-29.6938427",
+    "lng": "151.3308635",
+    "anim": "0",
+    "title": "Sapphire",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "120",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "30MW/30MWh"
+      },
+      {
+        "id": 3,
+        "name": "Start date",
+        "value": "2022"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "CWP"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">30MW/30MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"3\" data-custom-field-name=\"Start date\" Year=\"Start date\">2022</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">CWP</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Coopers Gap Wind Farm, Niagara Road, Jandowae QLD",
+    "description": {
+      "Size:": "453MW",
+      "Operational:": "2021",
+      "Technology:": "",
+      "Owner:": "AGL",
+      "Comments:": "Biggest wind farm in Queensland to date."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-114-x-114.png",
+      "retina": false
+    },
+    "lat": "-26.7161788",
+    "lng": "151.448059",
+    "anim": "0",
+    "title": "Coopers Gap",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "134",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "100MW"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "AGL"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">100MW</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">AGL</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Silverton Wind Farm, Silverton NSW, Australia",
+    "description": {
+      "Size:": "200MW",
+      "Operational:": "2019",
+      "Technology:": "GE",
+      "Powering Australia Renewables Fund": "",
+      "Comments:": "Biggest wind farm in NSW when built."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-31.86094989999999",
+    "lng": "141.2963491",
+    "anim": "0",
+    "title": "Silverton",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "135",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "50MW"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">50MW</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Kaban QLD",
+    "description": {
+      "Size:": "157MW",
+      "Operational:": "2023",
+      "Technology:": "Vestas",
+      "Owner:": "Neoen",
+      "Comments:": "Contract with CleanCo, may add big battery. NAIF finance vetoed by Resource Minister."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-17.433309261045313",
+    "lng": "145.4431828515625",
+    "anim": "0",
+    "title": "Kaban",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "138",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "100MW"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Neoen"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">100MW</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Neoen</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Goyder SA",
+    "description": {
+      "Size:": "412MW",
+      "Operational: 2024": "",
+      "Technology:": "GE Cypress 5.5",
+      "Owner:": "Neoen",
+      "Comments:": "First stage contracted to ACT government, plans for biggest wind, solar, battery hybrid in Australia."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-33.6511494",
+    "lng": "139.1221414",
+    "anim": "0",
+    "title": "Goyder South",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "141",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "800MW/1800MWh"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Neoen"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">800MW/1800MWh</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Neoen</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Mortlake (South Boorook), Mortlake VIC, Australia",
+    "description": {
+      "Size:": "157.5MW",
+      "Operational:": "",
+      "Technology:": "",
+      "Owner:": "Acciona",
+      "Comments:": "Contracted to Victoria government."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-38.1241958",
+    "lng": "142.8113448",
+    "anim": "0",
+    "title": "Mortlake South",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "142",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [
+      {
+        "id": 2,
+        "name": "Size",
+        "value": "300MW"
+      },
+      {
+        "id": 5,
+        "name": "Owner",
+        "value": "Origin Energy"
+      }
+    ],
+    "custom_fields_html": "<p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"2\" data-custom-field-name=\"Size\" Battery size=\"Battery size\">300MW</p><p data-hide-in-infowindows=\"true\"  data-custom-field-id=\"5\" data-custom-field-name=\"Owner\" Owner=\"Owner\">Origin Energy</p>"
+  },
+  {
+    "map_id": "5",
+    "address": "Musselroe Wind Farm, Cape Portland TAS, Australia",
+    "description": {
+      "Size:": "168MW",
+      "Operational:": "2013",
+      "Technology:": "Vestas",
+      "Owner:": "Hydro Tasmania and Shenhua Clean Energy",
+      "Comments:": "Biggest wind farm in Tasmania, delivers around 5% of annual supply."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-40.7803916",
+    "lng": "148.0104827",
+    "anim": "0",
+    "title": "Musselroe",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "363",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Cattle Hill Wind Farm, Waddamana TAS, Australia",
+    "description": {
+      "Size:": "144MW/",
+      "Operational:": "2020",
+      "Technology:": "Goldwind",
+      "Owner:": "Goldwind",
+      "Comments:": "First to use algorithms to identify eagles and switch off turbines if they approach."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2019/12/Cattle-Hill-wind-farm-Goldwind-.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-42.1594363",
+    "lng": "146.709184",
+    "anim": "0",
+    "title": "Cattle Hill",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "138643",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2019/12/Cattle-Hill-wind-farm-Goldwind-.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2019/12/Cattle-Hill-wind-farm-Goldwind--300x200.jpg"
+      }
+    ],
+    "id": "364",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Granville Harbour TAS, Australia",
+    "description": {
+      "Size:": "112MW",
+      "Operational:": "2020",
+      "Technology:": "Vestas",
+      "Owner:": "Granville Harbour Wind Farm",
+      "Comments:": "Contracted to Hydro Tasmania."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-41.8078417",
+    "lng": "145.0351942",
+    "anim": "0",
+    "title": "Granville Habour",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "365",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Stockyard Hill Wind Farm Project Site Office, Stockyard Hill VIC, Australia",
+    "description": {
+      "Size:": "530MW",
+      "Operational:": "2021",
+      "Technology:": "Goldwind",
+      "Owner:": "Goldwind",
+      "Comments:": "Long term off-take agreement with Origin, remains  Australia's biggest wind farm."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2020/12/stockyard-hill-victoria-wind-goldwind-.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.5518417",
+    "lng": "143.3142547",
+    "anim": "0",
+    "title": "Stockyard Hill",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "157722",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2020/12/stockyard-hill-victoria-wind-goldwind-.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2020/12/stockyard-hill-victoria-wind-goldwind--300x188.jpg"
+      }
+    ],
+    "id": "366",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Dandaragan WA, Australia",
+    "description": {
+      "Size:": "214MW/",
+      "Operational:": "2021",
+      "Technology:": "Vestas",
+      "Owner:": "Ratch Australia Alinta",
+      "Comments:": "Has become Western Australia's largest wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-30.6723056",
+    "lng": "115.7030484",
+    "anim": "0",
+    "title": "Yandin",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "367",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Warradarge WA, Australia",
+    "description": {
+      "Size:": "180MW/",
+      "Operational:": "2020",
+      "Technology:": "Vestas",
+      "Owner:": "Bright Energy",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-30.0597548",
+    "lng": "115.3301857",
+    "anim": "0",
+    "title": "Warradarge ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "368",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Emu Downs Wind Farm Lookout, Bibby Road, Badgingarra WA, Australia",
+    "description": {
+      "Size:": "80MW",
+      "Operational:": "2006",
+      "Technology:": "Vestas",
+      "Owner:": "APA Group",
+      "Comments:": "Co-located with solar farm of same name, across the road from Badgingarra wind and solar complex."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-30.4756515",
+    "lng": "115.381241",
+    "anim": "0",
+    "title": "Emu Downs",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "369",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mumbida Wind Farm, Connolly Road, Burma Road WA, Australia",
+    "description": {
+      "Size:": "55MW/",
+      "Operational:": "2013",
+      "Technology:": "GE",
+      "Owner:": "Synergy and ICG",
+      "Comments:": "May be expanded, contracted to state water authority to power desalination plant."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-29.0110631",
+    "lng": "114.9684225",
+    "anim": "0",
+    "title": "Mumbida ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "370",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Collgar Wind Farm Information Display, Bulls Head Road, Norpa WA, Australia",
+    "description": {
+      "Size:": "222MW",
+      "Operational:": "2011",
+      "Technology:": "Vestas",
+      "Owner:": "REST Super",
+      "Comments:": "Was biggest wind farm in Western Australia and re-gained the throne after software upgrade increased capacity by 15MW to 222MW."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2012/11/Collgar-Wind-Farm.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-31.5542515",
+    "lng": "118.4447408",
+    "anim": "0",
+    "title": "Collgar",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "14041",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2012/11/Collgar-Wind-Farm.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2012/11/Collgar-Wind-Farm-300x199.jpg"
+      }
+    ],
+    "id": "371",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Snowtown Wind Farm, Ireland Rd, Mundoora SA, Australia",
+    "description": {
+      "Size:": "101MW",
+      "Operational:": "2008",
+      "Technology:": "Suzlon",
+      "Owner:": "Tilt",
+      "Comments:": "Was to have battery storage added behind the meter but found connection rules too complex. Snowtown 2 sold in 2020."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-33.7140884",
+    "lng": "138.1408256",
+    "anim": "0",
+    "title": "Snowtown",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "372",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Snowtown Wind Farm 2, Landslide Road, Barunga Gap SA, Australia",
+    "description": {
+      "Size:": "270MW/",
+      "Operational:": "2014",
+      "Technology:": "Siemens",
+      "Owner:": "Palisade",
+      "Comments:": "Near Snowtown 1, has long term power deal with Origin Energy."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-33.8304029",
+    "lng": "138.1193017",
+    "anim": "0",
+    "title": "Snowtown 2",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "373",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mount Emerald Wind Farm, Kippen Drive, Arriga QLD, Australia",
+    "description": {
+      "Size:": "180MW",
+      "Operational:": "2019",
+      "Technology:": "Vestas",
+      "Owner:": "Ratch Australia",
+      "Comments:": "Australia's most northerly wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-17.1332484",
+    "lng": "145.3800374",
+    "anim": "0",
+    "title": "Mt Emerald",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "374",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Warwick QLD, Australia",
+    "description": {
+      "Size:": "1026MW",
+      "Operational:": "2024",
+      "Technology:": "N/A",
+      "Owner:": "Acciona",
+      "Comments:": "Biggest wind project in country, includes 100MW component owned directly by CleanCo and another 400MW contracted by CleanCo."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-28.2137979",
+    "lng": "152.0306591",
+    "anim": "0",
+    "title": "MacIntyre",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "375",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Bluff Point Wind Farm, Woolnorth TAS, Australia",
+    "description": {
+      "Size:": "140MW",
+      "Operational:": "2002",
+      "Technology:": "Vestas",
+      "Owner:": "Hydro Tasmania and Shenhua",
+      "Comments:": "Comprised of Bluff Point, the first major wind farm built in Tasmania in 2002 and 2004, and Studland Bay, added in 2007."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/05/woolnorth-wind-farm.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-40.7396138",
+    "lng": "144.6893962",
+    "anim": "0",
+    "title": "Woolnorth",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "162165",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/05/woolnorth-wind-farm.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/05/woolnorth-wind-farm-300x197.jpg"
+      }
+    ],
+    "id": "376",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Clements Gap Wind Farm, Montrose Ln, Crystal Brook SA, Australia",
+    "description": {
+      "Size:": "56.7MW",
+      "Operational:": "2010",
+      "Technology:": "Suzlon",
+      "Owner:": "Pacific Hydro",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-33.5077185",
+    "lng": "138.1110662",
+    "anim": "0",
+    "title": "Clements Gap",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "377",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Waterloo Wind Farm, Schutz Road, Waterloo SA, Australia",
+    "description": {
+      "Size:": "130MW",
+      "Operational:": "2010",
+      "Technology:": "Vestas",
+      "Owner:": "Palisade and Northleaf",
+      "Comments:": "Built in two stages with part 2 added in 2016."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-34.00106030000001",
+    "lng": "138.9110041",
+    "anim": "0",
+    "title": "Waterloo",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "378",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mount Millar Wind Farm, Range Road, Cowell SA, Australia",
+    "description": {
+      "Size:": "70MW",
+      "Operational:": "2006",
+      "Technology:": "Enercon",
+      "Owner:": "Meridian",
+      "Comments:": "First wind farm in Australia to use direct drive turbines that do not use gear boxes."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-33.6255531",
+    "lng": "136.7039082",
+    "anim": "0",
+    "title": "Mt Millar ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "379",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Starfish Hill Wind Farm, Cape Jervis SA, Australia",
+    "description": {
+      "Size:": "33MW",
+      "Operational:": "2003",
+      "Technology:": "NEG Micon",
+      "Owner:": "Ratch Australia",
+      "Comments:": "Built over two locations, was first big wind farm in South Australia."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-35.5787555",
+    "lng": "138.1302294",
+    "anim": "0",
+    "title": "Starfish Hill",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "380",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Port Augusta Renewable Energy park, Port Paterson SA, Australia",
+    "description": {
+      "Size:": "210MW",
+      "Operational:": "2022",
+      "Technology:": "Vestas",
+      "Owner:": "Iberdrola, DP Energy",
+      "Comments:": "Biggest wind and solar hybrid facility in Australia."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-32.59541",
+    "lng": "137.8853713",
+    "anim": "0",
+    "title": "Port Augusta Renewable Energy Hub",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "381",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Willogoleche WF Substation, McAskill Road, Willalo SA, Australia",
+    "description": {
+      "Size:": "119MW",
+      "Operational:": "2019",
+      "Technology:": "GE",
+      "Owner:": "Engie",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-33.4499622",
+    "lng": "138.7970319",
+    "anim": "0",
+    "title": "Willogoleche",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "382",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "White Rock Wind Farm, Spring Mountain Road, Spring Mountain NSW, Australia",
+    "description": {
+      "Size:": "175MW",
+      "Operational:": "2017",
+      "Technology:": "Goldwind",
+      "Owner:": "Goldwind",
+      "Comments:": "Co-located with solar farm, planning second stage of wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-29.8291832",
+    "lng": "151.5475869",
+    "anim": "0",
+    "title": "White Rock",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "384",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Taralga Wind Farm, Old Showground Road, Taralga NSW, Australia",
+    "description": {
+      "Size:": "107MW",
+      "Operational:": "2016",
+      "Technology:": "Vestas",
+      "Owner:": "Pacific Hydro",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-34.4237104",
+    "lng": "149.8258649",
+    "anim": "0",
+    "title": "Taralga",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "385",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Capital Wind Farm, Lake George NSW, Australia",
+    "description": {
+      "Size:": "140MW",
+      "Operational:": "2009",
+      "Technology:": "Suzlon",
+      "Owner:": "Infigen",
+      "Comments:": "Located next to Woodlawn wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-35.1661165",
+    "lng": "149.518277",
+    "anim": "0",
+    "title": "Capital",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "386",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Gullen Range Wind Farm (No public access), Storriers Lane, Bannister NSW, Australia",
+    "description": {
+      "Size:": "165.5MW",
+      "Operational:": "2013",
+      "Technology:": "Goldwind",
+      "Owner:": "BCJE",
+      "Comments:": "Co-located with small solar farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-34.6149361",
+    "lng": "149.4595745",
+    "anim": "0",
+    "title": "Gullen Range",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "387",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Macarthur Wind Farm, MacArthur-Hawkesdale Road, MacArthur VIC, Australia",
+    "description": {
+      "Size:": "420MW",
+      "Operational:": "2013",
+      "Technology:": "Vestas",
+      "Owner:": "Morrison and Co, Malakoff",
+      "Comments:": "Was Australia's biggest wind farm when completed."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2019/10/Macarthur-Wind-Farm-AMP-Capital-optimised.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-114-x-114.png",
+      "retina": false
+    },
+    "lat": "-38.0490795",
+    "lng": "142.1915163",
+    "anim": "0",
+    "title": "Macarthur",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "136503",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2019/10/Macarthur-Wind-Farm-AMP-Capital-optimised.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2019/10/Macarthur-Wind-Farm-AMP-Capital-optimised-300x169.jpg"
+      }
+    ],
+    "id": "388",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mortons Lane Wind Farm, Woodhouse VIC, Australia",
+    "description": {
+      "Size:": "19.5MW",
+      "Operational:": "2012",
+      "Technology:": "Goldwind",
+      "Owner:": "Prime Super",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.83532",
+    "lng": "142.4660746",
+    "anim": "0",
+    "title": "Mortons Lane",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "389",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Gunning Wind Farm, Gunning NSW, Australia",
+    "description": {
+      "Size:": "46.5MW",
+      "Operational:": "2011",
+      "Technology:": "",
+      "Owner:": "Acciona",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-34.6905625",
+    "lng": "149.4270092",
+    "anim": "0",
+    "title": "Gunning",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "391",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Boco Rock Wind Farm, Avon Lake Rd, Springfield NSW, Australia",
+    "description": {
+      "Size:": "114MW",
+      "Operational:": "2015",
+      "Technology:": "GE",
+      "Owner:": "EGCO",
+      "Comments:": "Owners are looking to add a second stage to the project."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-36.5823679",
+    "lng": "149.0851768",
+    "anim": "0",
+    "title": "Boco Rock",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "392",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Crookwell Wind Farm, Goulburn Rd, Pejar NSW, Australia",
+    "description": {
+      "Size:": "91MW",
+      "Operational:": "2019",
+      "Technology:": "Vestas",
+      "Owner:": "GPG",
+      "Comments:": "First 4.5MW stage was first wind farm in NSW in 1998, second 91MW stage completed in 2019 and third 58MW stage recently got planning approval after court decision and has secured a long term PPA with Telstra."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-34.519592",
+    "lng": "149.555344",
+    "anim": "0",
+    "title": "Crookwell",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "393",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Cullerin Range Wind Farm, Cullerin NSW, Australia",
+    "description": {
+      "Size:": "30MW",
+      "Operational:": "2009",
+      "Technology:": "Senvion",
+      "Owner:": "DUET",
+      "Comments:": "Was Origin Energy's first investment in wind energy."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-34.8180225",
+    "lng": "149.399069",
+    "anim": "0",
+    "title": "Cullerin Range",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "394",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Woodlawn Wind Farm, Tarago NSW, Australia",
+    "description": {
+      "Size:": "48.3MW",
+      "Operational:": "2011",
+      "Technology:": "Suzlon",
+      "Owner:": "Infigen",
+      "Comments:": "Next to Capital wind farm, host to annual Run with the Wind event."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-35.0954285",
+    "lng": "149.5789486",
+    "anim": "0",
+    "title": "Woodlawn",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "395",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Waubra Wind Farm, Harrisons Road, Waubra VIC, Australia",
+    "description": {
+      "Size:": "192MW",
+      "Operational:": "2009",
+      "Technology:": "",
+      "Owner:": "Acciona",
+      "Comments:": "Centre of attention for anti-wind activists."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-37.3946388",
+    "lng": "143.6386011",
+    "anim": "0",
+    "title": "Waubra",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "396",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Moorabool Wind Farm, Bungal VIC, Australia",
+    "description": {
+      "Size:": "312MW",
+      "Operational:": "2021",
+      "Technology:": "Goldwind",
+      "Owner:": "Goldwind",
+      "Comments:": "Being built in two sections, first section just began sending power to grid.."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-37.7394582",
+    "lng": "144.1715885",
+    "anim": "0",
+    "title": "Moorabool",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "397",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Murra Warra Wind Farm Office, Ailsa Wheat Road, Murra Warra VIC, Australia",
+    "description": {
+      "Size:": "228MW",
+      "Operational:": "2019",
+      "Technology:": "GE",
+      "Owner:": "Partners Group",
+      "Comments:": "Stage one completed in 2020, 209MW stage 2 under construction with 5.5MW turbines."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2020/02/Murra-Warra-Wind-Victoria-2.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-36.4333382",
+    "lng": "142.3196754",
+    "anim": "0",
+    "title": "Murra Warra",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "142002",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2020/02/Murra-Warra-Wind-Victoria-2.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2020/02/Murra-Warra-Wind-Victoria-2-300x196.jpg"
+      }
+    ],
+    "id": "398",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Lal Lal Wind Farm, Duggan Lane, Lal Lal VIC, Australia",
+    "description": {
+      "Size:": "228MW",
+      "Operational:": "2006",
+      "Technology:": "Vestas",
+      "Owner:": "Macquarie Investment Management",
+      "Comments:": "Combines two wind farm sites at Yendon and Elaine."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-37.6352291",
+    "lng": "144.0236608",
+    "anim": "0",
+    "title": "Lal Lal",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "399",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Salt Creek Wind Farm, Hexham-Woorndoo Road, Hexham VIC, Australia",
+    "description": {
+      "Size:": "54MW",
+      "Operational:": "2019",
+      "Technology:": "Vestas",
+      "Owner:": "Tilt",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-37.918698",
+    "lng": "142.7960267",
+    "anim": "0",
+    "title": "Salt Creek",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "400",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Bald Hills Wind Farm, Tarwin Lower VIC, Australia",
+    "description": {
+      "Size:": "106.6MW",
+      "Operational:": "2015",
+      "Technology:": "Senvion",
+      "Owner:": "Energy Infrastructure Trust",
+      "Comments:": "Lost a key court battle with landowners in 2020, setting scene for bigger court battle in 2021."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2020/02/ProjectOverview-BaldHillsWindFarm-758x568-copy.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-38.7478299",
+    "lng": "145.9494813",
+    "anim": "0",
+    "title": "Bald Hills",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "141495",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2020/02/ProjectOverview-BaldHillsWindFarm-758x568-copy.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2020/02/ProjectOverview-BaldHillsWindFarm-758x568-copy-300x225.jpg"
+      }
+    ],
+    "id": "401",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Challicum Hills Wind Farm, Price Road, Ballyrogan VIC, Australia",
+    "description": {
+      "Size:": "52.5MW",
+      "Operational:": "2003",
+      "Technology:": "NEG",
+      "Owner:": "Pacific Hydro",
+      "Comments:": "Was Australia's biggest wind farm when it began operations."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-37.3887311",
+    "lng": "143.0775131",
+    "anim": "0",
+    "title": "Challicum Hills",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "402",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "AGL Oaklands Hill Wind Farm, Glenthompson-Caramut Rd, Glenthompson VIC, Australia",
+    "description": {
+      "Size:": "63MW",
+      "Operational:": "2010",
+      "Technology:": "Suzlon",
+      "Owner:": "AGL",
+      "Comments:": "Spans eight properties, which are mainly used for sheep and cattle grazing.."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-37.683252",
+    "lng": "142.551115",
+    "anim": "0",
+    "title": "Oaklands Hill",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "403",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Ararat Wind Farm, Ararat VIC, Australia",
+    "description": {
+      "Size:": "240MW",
+      "Operational:": "2017",
+      "Technology:": "GE",
+      "Owner:": "Partners Group and OP Trust",
+      "Comments:": "Was third biggest wind generator in Australia at time of commissioning."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-37.2625968",
+    "lng": "143.0784669",
+    "anim": "0",
+    "title": "Ararat",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "404",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Hallett Wind Farm Substation, Canowie SA, Australia",
+    "description": {
+      "Size:": "352MW",
+      "Operational:": "From 2008",
+      "Technology:": "Suzlon",
+      "Owner:": "AGL",
+      "Comments:": "Collection of four wind farms: Brown Hill (Hallett 1, 95MW, 2008); Hallett Hill (Hallett 2, 71MW, 2010); North Brown Hill (Hallett 4, 132MW, 2011); Bluff Range (Hallett 5, 53MW, 2012). Hallett 3 was never built."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2016/10/hallett-wind-farm.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-300MW.png",
+      "retina": false
+    },
+    "lat": "-33.349988",
+    "lng": "138.750581",
+    "anim": "0",
+    "title": "Hallett",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "83588",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2016/10/hallett-wind-farm.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2016/10/hallett-wind-farm-300x192.jpg"
+      }
+    ],
+    "id": "405",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Bodangora Wind Farm, Gillinghall Road, Bodangora NSW, Australia",
+    "description": {
+      "Size:": "132MW",
+      "Operational:": "2019",
+      "Technology:": "GE",
+      "Owner:": "Infigen",
+      "Comments:": "Mostly contracted to EnergyAustralia."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-32.4071283",
+    "lng": "149.04133",
+    "anim": "0",
+    "title": "Bodangora",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "406",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Cathedral Rocks Wind Farm, Sleaford SA, Australia",
+    "description": {
+      "Size:": "66MW",
+      "Operational:": "2007",
+      "Technology:": "Vestas",
+      "Owner:": "Acciona and EnergyAustralia",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-34.8650514",
+    "lng": "135.5967417",
+    "anim": "0",
+    "title": "Cathedral Rocks",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "407",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Emu Downs Wind Farm Lookout, Bibby Road, Badgingarra WA, Australia",
+    "description": {
+      "Size:": "130MW",
+      "Operational:": "2019",
+      "Technology:": "Vestas",
+      "Owner:": "Infigen",
+      "Comments:": "Co-located with solar farm, next door to Emu Downs wind and solar complex."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2020/06/badgingarra-wind-farm-apa-supplied.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-30.4756515",
+    "lng": "115.381241",
+    "anim": "0",
+    "title": "Badgingarra ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "147873",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2020/06/badgingarra-wind-farm-apa-supplied.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2020/06/badgingarra-wind-farm-apa-supplied-300x197.jpg"
+      }
+    ],
+    "id": "408",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Walkaway Wind Farm, Walkaway WA, Australia",
+    "description": {
+      "Size:": "89.9MW",
+      "Operational:": "2006",
+      "Technology:": "Vestas",
+      "Owner:": "Infigen",
+      "Comments:": "Also known as Alinta wind farm. Offtake agreements with AGL and Alinta."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-28.9024923",
+    "lng": "114.8927165",
+    "anim": "0",
+    "title": "Walkaway",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "409",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Albany Wind Farm, Sand Patch Road, Sandpatch WA, Australia",
+    "description": {
+      "Size:": "35MW",
+      "Operational:": "2001",
+      "Technology:": "",
+      "Owner:": "Bright Energy",
+      "Comments:": "The biggest wind farm in the country when first opened, Grassmere section added in 2011."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2019/03/Albany-wind-farms-western-australia.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-35.0658354",
+    "lng": "117.799695",
+    "anim": "0",
+    "title": "Albany",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "124384",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2019/03/Albany-wind-farms-western-australia.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2019/03/Albany-wind-farms-western-australia-300x177.jpg"
+      }
+    ],
+    "id": "410",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Cherry Tree Wind Farm, Homewood Road, Trawool VIC, Australia",
+    "description": {
+      "Size:": "57.6MW",
+      "Operational:": "2021",
+      "Technology:": "",
+      "Owner:": "John Laing",
+      "Comments:": "Contracted to Infigen Energy."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-37.100352",
+    "lng": "145.2673653",
+    "anim": "0",
+    "title": "Cherry Tree",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "411",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mount Gellibrand Wind Farm, Mooleric Road, Birregurra VIC, Australia",
+    "description": {
+      "Size:": "132MW",
+      "Operational:": "2018",
+      "Technology": ": Nordex",
+      "Owner:": "Acciona",
+      "Comments:": ""
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2019/04/ACCIONAs-Mt-Gellibrand-wind-farm-enters-commissioning-phase-copy.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-38.2591313",
+    "lng": "143.8011101",
+    "anim": "0",
+    "title": "Mt Gellibrand",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "126003",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2019/04/ACCIONAs-Mt-Gellibrand-wind-farm-enters-commissioning-phase-copy.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2019/04/ACCIONAs-Mt-Gellibrand-wind-farm-enters-commissioning-phase-copy-300x200.jpg"
+      }
+    ],
+    "id": "412",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Codrington Wind Farm Viewing Area, Codrington VIC, Australia",
+    "description": {
+      "Size:": "18.2MW",
+      "Operational:": "2001",
+      "Technology:": "Bonus Turbines",
+      "Owner:": "Pacific Hydro",
+      "Comments:": "Australia's first commercial wind farm."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-38.27438610000001",
+    "lng": "141.9777639",
+    "anim": "0",
+    "title": "Codrington",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "413",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Portland Wind Farm, Portland West VIC, Australia",
+    "description": {
+      "Size:": "195MW",
+      "Operational:": "2007",
+      "Technology:": "Vestas",
+      "Owner:": "Pacific Hydro",
+      "Comments:": "Built over four different sites, Yambuk, Cape Bridgewater (2008), Cape Nelson (2009) and Cape Sir William Grant (2015)."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-38.37315861802152",
+    "lng": "141.37813177856447",
+    "anim": "0",
+    "title": "Portland",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "route": "/markers/390",
+    "action": "wpgmza_rest_api_request",
+    "id": "414",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Bango Wind Farm, Lachlan Valley Way, Boorowa NSW, Australia",
+    "description": {
+      "Size:": "244MW",
+      "Operational:": "2021",
+      "Technology:": "GE 5.3MW",
+      "Owner:": "Squadron Energy.",
+      "Comments:": "Has contract to help power Sydney roads."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-34.5517015",
+    "lng": "148.7322235",
+    "anim": "0",
+    "title": "Bango",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "415",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Biala Wind Farm, Grabben Gullen Road, Gurrundah NSW, Australia",
+    "description": {
+      "Size:": "110MW",
+      "Operational:": "2021",
+      "Technology:": "Goldwind",
+      "Owner:": "BJCE",
+      "Comments:": "Near Gullen Range wind and solar complex."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-57-x-57.png",
+      "retina": false
+    },
+    "lat": "-34.5877119",
+    "lng": "149.3697835",
+    "anim": "0",
+    "title": "Biala",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "416",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Tantanoola SA, Australia",
+    "description": {
+      "Size:": "46MW",
+      "Operational:": "2005",
+      "Technology:": "Vestas",
+      "Owner:": "Engie and Mitsui",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.6938333",
+    "lng": "140.4543612",
+    "anim": "0",
+    "title": "Canunda",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "417",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Berrybank VIC, Australia",
+    "description": {
+      "Size:": "180MW",
+      "Operational:": "2022",
+      "Technology:": "Vestas",
+      "Owner:": "GPG Naturgy",
+      "Comments:": "Has contract with Victoria state government. 2nd stage to begin construction soon."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/BigWind-72-x-72.png",
+      "retina": false
+    },
+    "lat": "-37.9825676",
+    "lng": "143.4763603",
+    "anim": "0",
+    "title": "Berrybank",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "420",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Crudine NSW, Australia",
+    "description": {
+      "Size:": "134MW",
+      "Operational:": "2021",
+      "Technology:": "GE",
+      "Owner:": "CWP",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-33.0442219",
+    "lng": "149.626193",
+    "anim": "0",
+    "title": "Crudine Ridge",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "421",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Clarke Creek Wind Farm, Clarke Creek QLD, Australia",
+    "description": {
+      "Size:": "450MW",
+      "Operational:": "2024",
+      "Technology:": "",
+      "Owner:": "Lacour and Goldwind",
+      "Comments:": "Signed long term off-take for bulk of capacity with Stanwell Corp"
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-22.7583486",
+    "lng": "149.4350563",
+    "anim": "0",
+    "title": "Clarke Creek",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "426",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Kiata Wind Farm project site, Kiata VIC, Australia",
+    "description": {
+      "Size:": "31MW",
+      "Operational:": "2017",
+      "Technology:": "Vestas",
+      "Owner:": "Windlab",
+      "Comments:": "One of the best performing wind farms in terms of capacity factors."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-36.3976929",
+    "lng": "141.7468272",
+    "anim": "0",
+    "title": "Kiata",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "427",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Windy Hill Wind Farm, Glendinning Road, Ravenshoe QLD, Australia",
+    "description": {
+      "Size:": "12MW",
+      "Operational:": "2000",
+      "Technology:": "Enercon",
+      "Owner:": "Ratch",
+      "Comments:": "First wind farm in Queensland, and for nearly two decades the only one."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-17.5945918",
+    "lng": "145.5313612",
+    "anim": "0",
+    "title": "Windy Hill",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "428",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Toora Wind Farm, Silcocks Hill Road, Toora VIC, Australia",
+    "description": {
+      "Size:": "21MW",
+      "Operational:": "2002",
+      "Technology:": "Vestas",
+      "Owner:": "Ratch",
+      "Comments:": "Located on Wilson's Promintory."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/05/toora-wind-farm-victoria.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-38.6534438",
+    "lng": "146.3402295",
+    "anim": "0",
+    "title": "Toora",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "162196",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/05/toora-wind-farm-victoria.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/05/toora-wind-farm-victoria-300x174.jpg"
+      }
+    ],
+    "id": "430",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mount Mercer Wind Farm, Shelford-mt Mercer Road, Mount Mercer VIC, Australia",
+    "description": {
+      "Size:": "131MW",
+      "Operational:": "2014",
+      "Technology:": "Repower",
+      "Owner:": "Meridian",
+      "Comments:": ""
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-37.8318698",
+    "lng": "143.8884633",
+    "anim": "0",
+    "title": "Mt Mercer",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "431",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Coonooer Bridge",
+    "description": {
+      "Size:": "19.5MW",
+      "Operational:": "2016",
+      "Technology:": "Vestas",
+      "Owner:": "Eurus, Windlab and local landowners",
+      "Comments:": "Small, but one of the best performing wind farms in Australia. Contracted to ACT government."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-36.4711528",
+    "lng": "143.318772",
+    "anim": "0",
+    "title": "Coonooer Bridge",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "432",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Kennedy Energy Park, Torrens Creek QLD, Australia",
+    "description": {
+      "Size:": "41MW",
+      "Operational:": "2021",
+      "Technology:": "Vestas",
+      "Owner:": "Windlab",
+      "Comments:": "Was to be world's first wind, solar, battery hybrid, but despite being completed in 2019 was not officially connected to the grid until mid 2021. Now working through commissioning process."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-20.766667",
+    "lng": "145.016667",
+    "anim": "0",
+    "title": "Kennedy",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "433",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Crowland Wind Farm, Spring Flat Road, Crowlands VIC, Australia",
+    "description": {
+      "Size:": "80MW",
+      "Operational:": "2019",
+      "Technology:": "Senvion",
+      "Owner:": "Pacific Hydro",
+      "Comments:": "Has long term contract with Melbourne Renewable Energy Project, a collection of fourteen leading universities, cultural institutions, corporations and Councils."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.1263843",
+    "lng": "143.1559074",
+    "anim": "0",
+    "title": "Crowlands",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "434",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Collector NSW, Australia",
+    "description": {
+      "Size:": "226.8MW",
+      "Operational:": "2021",
+      "Technology:": "Vestas",
+      "Owner:": "Ratch Australia",
+      "Comments:": "Backed by CEFC loan, has long term contract with Infigen."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/06/collector-wind-farm.jpg",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-150MW.png",
+      "retina": false
+    },
+    "lat": "-34.888311208027424",
+    "lng": "149.3979877976562",
+    "anim": "0",
+    "title": "Collector ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "162199",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/06/collector-wind-farm.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/06/collector-wind-farm-300x236.jpg"
+      }
+    ],
+    "id": "435",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Yaloak South Wind Farm, Mount Wallace VIC, Australia",
+    "description": {
+      "Size:": "28.7MW",
+      "Operational:": "2019",
+      "Technology:": "Senvion",
+      "Owner:": "Pacific Hydro",
+      "Comments:": "Planned 115MW project was dramatically reduced in size following local objections and concerns about wedge tailed eagles."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.7164742",
+    "lng": "144.2419466",
+    "anim": "0",
+    "title": "Yaloak South",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "0",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "436",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Mortlake VIC, Australia",
+    "description": {
+      "Size:": "336MW",
+      "Operational:": "2020",
+      "Technology:": "Vestas",
+      "Owner:": "Tilt",
+      "Comments:": "Multiple contracts including with Victoria government."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-300MW.png",
+      "retina": false
+    },
+    "lat": "-37.98435238705844",
+    "lng": "142.99654648605954",
+    "anim": "0",
+    "title": "Dundonnell",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "442",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Wonthaggi Wind Farm, Campbell Street, Wonthaggi VIC, Australia",
+    "description": {
+      "Size:": "12MW",
+      "Operational:": "2005",
+      "Technology:": "Senvion",
+      "Owner:": "EDL",
+      "Comments:": "One of its rotor blades snapped in 2012."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-38.6073719",
+    "lng": "145.547975",
+    "anim": "0",
+    "title": "Wonthaggi",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "443",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Agnew Gold Mine, Agnew-Sandstone Road, Leinster WA, Australia",
+    "description": {
+      "Size:": "18MW",
+      "Operational:": "2020",
+      "Technology:": "Goldwind",
+      "Owner:": "EDL",
+      "Comments:": "Part of ground-breaking renewables-based micro-grid combined with 4MW of solar and a 14MW.4MWh battery. Powers gold mine owned by Goldfields."
+    },
+    "pic": "https://reneweconomy.com.au/wp-content/uploads/2021/06/agnew-mine-wind.jpg",
+    "link": "o",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-28.0088823",
+    "lng": "120.5084279",
+    "anim": "0",
+    "title": "Agnew Gold Mine",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "gallery": [
+      {
+        "attachment_id": "162649",
+        "url": "https://reneweconomy.com.au/wp-content/uploads/2021/06/agnew-mine-wind.jpg",
+        "thumbnail": "https://reneweconomy.com.au/wp-content/uploads/2021/06/agnew-mine-wind-300x211.jpg"
+      }
+    ],
+    "id": "535",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Dulacca QLD, Australia",
+    "description": {
+      "Size:": "180MW",
+      "Operational:": "2023",
+      "Technology:": "Vestas 4.2MW",
+      "Owner:": "Octopus",
+      "Comments:": "Has signed long term PPA for 70% output with CleanCo, began construction in August, 2021."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-operating-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-26.6435833",
+    "lng": "149.7608349",
+    "anim": "0",
+    "title": "Dulacca",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "549",
+    "categories": [
+      "11"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Rye Park NSW, Australia",
+    "description": {
+      "Size:": "396MW",
+      "Operational:": "2024",
+      "Technology:": "Vestas 6.0MW",
+      "Owner:": "Tilt (PowAr)",
+      "Comments:": "Has signed long term PPA for 55% of output with Newcrest Mining."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-300MW.png",
+      "retina": false
+    },
+    "lat": "-34.53958004156086",
+    "lng": "148.86159276289064",
+    "anim": "0",
+    "title": "RYE PARK",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "550",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Yarranup Road, Lumeah WA, Australia",
+    "description": {
+      "Size:": "76MW",
+      "Operational:": "2024",
+      "Technology:": "Vestas 6.0MW",
+      "Owner:": "Enel Green Power",
+      "Comments:": "Has signed long term PPA with BHP to help power nickel operations."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-33.98479107834223",
+    "lng": "117.35646887038571",
+    "anim": "0",
+    "title": "Flat Rocks",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "570",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Wellington NSW, Australia",
+    "description": {},
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-32.5520391",
+    "lng": "148.9492902",
+    "anim": "0",
+    "title": "Uungula wind farm",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "layergroup": "0",
+    "id": "576",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Ironpot QLD, Australia",
+    "description": {
+      "Size:": "500MW",
+      "Operational:": "2026",
+      "Technology:": "",
+      "Owner:": "Stanwell Corporation",
+      "Comments:": "To be located near to Stanwell's Tarong coal-fired power station."
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-bigger-than-300MW.png",
+      "retina": false
+    },
+    "lat": "-26.6037531",
+    "lng": "151.428965",
+    "anim": "0",
+    "title": "Tarong West wind farm",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "0",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "594",
+    "categories": [],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Rokewood VIC, Australia",
+    "description": {
+      "Size:": "656MW",
+      "Operational:": "2024/div>"
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-37.901613",
+    "lng": "143.7218162",
+    "anim": "0",
+    "title": "Golden Plains",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "603",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Bajool QLD, Australia",
+    "description": {
+      "Size:": "330MW",
+      "Operational:": "2026"
+    },
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-23.840736362555287",
+    "lng": "150.5506461109375",
+    "anim": "0",
+    "title": "Mount Hopeful",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "607",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "King Rocks Road North, Hyden WA, Australia",
+    "description": {},
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-32.2394107",
+    "lng": "119.1613142",
+    "anim": "0",
+    "title": "King Rocks ",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "620",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  },
+  {
+    "map_id": "5",
+    "address": "Ryan Corner Wind Farm, Hamilton-Port Fairy Road, Orford VIC, Australia",
+    "description": {},
+    "pic": "",
+    "link": "",
+    "icon": {
+      "url": "//reneweconomy.com.au/wp-content/uploads/2021/05/Big-Wind-Construction-up-to-50MW.png",
+      "retina": false
+    },
+    "lat": "-38.2711563",
+    "lng": "142.1400299",
+    "anim": "0",
+    "title": "Ryan Corner",
+    "infoopen": "0",
+    "category": "",
+    "approved": "1",
+    "retina": "1",
+    "type": "0",
+    "did": "",
+    "sticky": "0",
+    "other_data": "",
+    "layergroup": "0",
+    "id": "644",
+    "categories": [
+      "13"
+    ],
+    "custom_field_data": [],
+    "custom_fields_html": ""
+  }
+]
