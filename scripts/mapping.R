@@ -12,13 +12,14 @@ solarfarms <- solarfarms$markers
 # some very messy columns, build into data I want
 windfarms <- windfarms %>%
   dplyr::select(title, address, lat, long = lng, description)
-# and extract extra data from description column using stringr functions
+
+# and extract extra data from html in description column 
 windfarmextract <- data.frame()
 for (n in 1:nrow(windfarms)) {
   description <- windfarms[n, "description"] # get description
   # below regex matches different elements in wind farm description 
   # and returns the useful bits in different groups
-  rgx_pattern <- "<div class=\"([a-z]*Panel).*Size:<\\/strong> (\\d*\\.?\\d*).*Operational:<\\/strong> (\\d*).*Technology:<\\/strong> ([a-zA-Z\\s]*)<.*Owner: ?<\\/strong> ?([a-zA-Z\\s,]*)<.*Comments:<\\/strong>(.*)<\\/div>"
+  rgx_pattern <- "<div class=\"([a-z]*Panel).*Size:<\\/strong> (\\d*\\.?\\d*).*Operational: ?<\\/strong> ?(\\d*).*Technology: ?<\\/strong> ?([a-zA-Z\\s\\/]*)?<.*Owner: ?<\\/strong> ?([a-zA-Z\\s,]*)<.*Comments: ?<\\/strong> ?(.*)<\\/div>"
   
   # now extract wind farm data using above regex from above bud description
   temp <- as.data.frame(stringr::str_match(description, rgx_pattern)) 
