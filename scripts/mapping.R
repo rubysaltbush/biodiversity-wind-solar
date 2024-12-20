@@ -29,8 +29,9 @@ solarfarms_tidy <- solarfarms %>%
 readr::write_csv(windfarms_tidy, "data_output/windfarms_aus_fromjson.csv")
 readr::write_csv(solarfarms_tidy, "data_output/solarfarms_aus_fromjson.csv")
 
-
-
+# and read back in (error checking not finished yet but will try mapping for now)
+windfarms <- readr::read_csv("data_input/windfarms_aus_updated.csv")
+solarfarms <- readr::read_csv("data_input/solarfarms_aus_updated.csv")
 
 # need background Aus map
 # read in shapefile of Aus outline
@@ -42,43 +43,31 @@ aus <- terra::crop(aus, terra::ext(c(xmin = 112, xmax = 155, ymin = -43.74, ymax
 # convert aus to sf for easy plotting
 aus <- sf::st_as_sf(aus)
 
-# read in data from NEM on locations of wind and solar farms
-wind <- readr::read_csv("data_input/wind_nationalmap_20241203.csv") %>%
-  dplyr::mutate(lat = Lat, lon = Lon) %>%
-  dplyr::filter(!(is.na(lat))) # 2 missing coordinates, could patch but remove for now
-
-solar <- readr::read_csv("data_input/solar_nationalmap_20241203.csv") %>%
-  dplyr::mutate(lat = Lat, lon = Lon) %>%
-  dplyr::filter(!(is.na(lat))) # 7 missing coordinates, could patch but remove for now
-
 # okay now for biome map
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
-wind <- sf::st_as_sf(wind, coords = c("lon", "lat"), crs = "EPSG:4326")
-solar <- sf::st_as_sf(solar, coords = c("lon", "lat"), crs = "EPSG:4326")
+windfarms <- sf::st_as_sf(windfarms, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
+solarfarms <- sf::st_as_sf(solarfarms, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
 sf::st_crs(aus) <- "EPSG:4326"
 sf::st_crs(biomes) <- "EPSG:4326"
 
 # make map!
 ggplot() +
-  geom_sf(data = aus, fill = NA, linewidth = 0.75) +
-  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.2) +
-  geom_sf(data = wind, shape = 1, colour = "blue") +
-  geom_sf(data = solar, shape = 2, colour = "yellow") +
+  geom_sf(data = aus, fill = NA, linewidth = 0.3) +
+  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.1, alpha = 0.3) +
+  geom_sf(data = windfarms, shape = 1, colour = "blue") +
+  geom_sf(data = solarfarms, shape = 2, colour = "yellow") +
   theme_void()
+ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
 
 # extract biome for each wind and solar location
-wind_biome <- sf::st_join(wind, biomes) %>%
+wind_biome <- sf::st_join(windfarms, biomes) %>%
   dplyr::distinct() %>%
   dplyr::mutate(facility = "wind")
-solar_biome <- sf::st_join(solar, biomes) %>%
+solar_biome <- sf::st_join(solarfarms, biomes) %>%
   dplyr::distinct() %>%
   dplyr::mutate(facility = "solar")
-
-# hack for now
-wind_biome$`Max Cap (MW)` <- as.numeric(wind_biome$`Max Cap (MW)`)
-wind_biome$`Reg Cap (MW)` <- as.numeric(wind_biome$`Reg Cap (MW)`)
 
 # simplify to a df of biome with #s of wind and solar facilities in them
 biome_windsolar <- wind_biome %>%
@@ -101,7 +90,27 @@ biome_windsolarsummary %>%
   xlab("Biome") +
   ylab("Number of facilities") +
   coord_flip()
-ggsave("figures/aus_facilities_by_biome.png", width = 8, height = 7)
+ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
+# interesting, has changed a bit with addition of renew economy data. 
+# should probably exclude "to be constructed" projects from this tho, future
 
-# that will do for now
-rm(aus, biome_windsolar, biome_windsolarsummary, biomes, solar, solar_biome, wind, wind_biome)
+
+# enough of biomes, let's use better veg mapping
+# clean up df not needed anymore
+rm(windfarms, solarfarms, biome_windsolarsummary, biomes, solar_biome, wind_biome)
+
+# NVIS ----
+# why can't they provide this data in more usable format gahhhhhh
+#nvis_extant <- terra::vect("data_cache/NVIS_V7_0_AUST_RASTERS_EXT_ALL/NVIS_V7_0_AUST_EXT.gdb")
+
+
+#### NEM data for southeast ----
+
+# read in data from NEM on locations of wind and solar farms
+wind <- readr::read_csv("data_input/wind_nationalmap_20241203.csv") %>%
+  dplyr::mutate(lat = Lat, lon = Lon)# %>%
+#dplyr::filter(!(is.na(lat))) # 2 missing coordinates, could patch but remove for now
+
+solar <- readr::read_csv("data_input/solar_nationalmap_20241203.csv") %>%
+  dplyr::mutate(lat = Lat, lon = Lon) #%>%
+#dplyr::filter(!(is.na(lat))) # 7 missing coordinates, could patch but remove for now
