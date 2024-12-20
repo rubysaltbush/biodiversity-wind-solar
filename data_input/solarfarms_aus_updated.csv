@@ -1,7 +1,7 @@
 title,address,lat,long,size_mw,yr_operational,technology,owner,comments
 Gannawarra,"Gannawarra Solar Farm, Lalbert-Kerang Road, Bael Bael VIC, Australia",-35.7350558,143.7794624,50MW,2019,,Wirsol and Edify,First solar farm to have battery co-located.
 New England,"Uralla, NSW",-30.6414818,151.4915632,400MW,2022,,Acen Renewables,To be built next to big battery as part of state's biggest hybrid project. Second stage of 320MW to be built after NSW tender win.
-Sunraysia,"Sunraysia Solar Farm, The Cut Line, Balranald NSW",-34.8215156,143.5087952,200MW,2021,,Maoneng,Will have big battery added.
+Sunraysia,"Sunraysia Solar Farm, The Cut Line, Balranald NSW",-34.805786,143.492007,200MW,2021,,Maoneng,Will have big battery added.
 Broken Hill,"Broken Hill Solar Plant, Barrier Highway, Broken Hill NSW, Australia",-31.985972,141.3929982,53MW,2015,,Powering Australia Renewables Fund,One of first solar farms in NSW.
 Chichester,"Pilbara, WA.",-21.5921433,121.5236826,60MW,2021,"Longi, Ingeteam.",Alinta,To help power giant iron ore mines in Pilbara. Two batteries to be added to network.
 Bungala,"Bungala Solar Power Project, Wami Kata SA, Australia",-32.4243012,137.8399898,220MW,2018,,Enel Green Power,"Built in two stages, with first stage opening in 2018, and second in 2020."
@@ -21,7 +21,7 @@ Yatpool,"Yatpool Solar Farm, Carwarp VIC, Australia",-34.3943523,142.1846235,96M
 Karadoc,"Karadoc Solar Farm, Iraak VIC, Australia",-34.4161986,142.2521812,86MW,2020,N/A,BayWa,HasÂ off take contract with brewer CUB and with Flow Power
 Bannerton,"Anzac Road, Robinvale, Vic",-34.6538898,142.7682356,88MW,2019,N/A,Foresight Solar,Funded by CEFC
 Nyngan,"Nyngan Solar Plant, Nyngan NSW, Australia",-31.5662057,147.0707349,102MW,2015,N/A,Powering Australia Renewables Fund,Largest in NSW when completed.
-Colleambally,"Coleambally Solar Farm, Ercildoune Road, Coleambally NSW, Australia",-34.743048,145.9558062,150MW,2018,N/A,Neoen,Was largest in NSW at time of completion
+Colleambally,"Coleambally Solar Farm, Ercildoune Road, Coleambally NSW, Australia",-34.747623,145.950925,150MW,2018,N/A,Neoen,Was largest in NSW at time of completion; sheep grazing under panels
 Royalla,"Royalla Solar Farm, Australian Capital Territory, Australia",-35.4897929,149.1430018,20MW,2014,N/A,DIF,"First solar farm in NEM, contracted to ACT government."
 Moree,"Moree Solar Farm, Moree NSW, Australia",-29.5697392,149.8668036,56MW,2016,N/A,FRV,First solar farm in Australia to deploy single axis tracking.
 Bomen,"Bomen Solar Farm, Trahairs Road, Bomen NSW, Australia",-35.0492632,147.4441281,100MW,2021,N/A,Spark Infrastructure,First solar farm to be built and owned by a major electricity network company.
@@ -74,7 +74,7 @@ Katherine,"Katherine NT, Australia",-14.4519683,132.2698623,25MW,2022,N/A,ENI,On
 Port Augusta Renewable Energy Park,"Port Augusta Renewable Energy park, Port Paterson SA, Australia",-32.59541,137.8853713,100MW,2022,N/A,Iberdrola,Part of country's biggest wind-solar hybrid project.
 Corowa,"Corowa Solar Farm, Santos Road, Corowa NSW, Australia",-35.9852523,146.3604583,30MW,2022,N/A,Terrain Solar,Has long term off take with Coles.
 Carwarp,carwarp ,-34.4593153,142.2033193,121MW,2022,N/A,Canadian Solar,Has long term underwriting contract with Victoria government.
-Metz,Metz solar,-30.51599522,151.77977798750004,115MW,2022,N/A,Energy Solutions,
+Metz,Metz solar,-30.51599522,151.779778,115MW,2022,N/A,Energy Solutions,
 Hillston,"Hillston NSW, Australia",-33.4855373,145.5314081,120MW,2022,N/A,Amp Energy,
 Suntop,"909 Suntop Road, Suntop NSW, Australia",-32.5833487,148.8273515,150MW,2022,Canadian Solar bi-facial,Canadian Solar,
 Sebastapol,"Sebastopol Solar Farm, Sebastopol NSW, Australia",-34.6018,147.5534594,90MW,2022,N/A,FRV,Has long term off-take agreement with Snowy Hydro.
@@ -93,17 +93,17 @@ Junee,"Junee Solar Farm, Old Sydney Road, Marinna NSW, Australia",-34.8111341,14
 Edenvale,"Kogan Condamine Road, Kogan QLD, Australia",-27.0051829,150.6958348,204MW,2022,N/A,Sojitz and Eneos,Japanese coal company and Japanese oil company to sell 70 per cent of output to retailer and 30 per cent to supply nearby coal mine.
 Northam,"Northam WA, Australia",-31.652297,116.711515,10MW,2018,N/A,Indigenous Business Australia and Bookitja,.
 Valdora,"Sunshine Coast Solar Farm, Yandina Coolum Road, Valdora QLD, Australia",-26.5612621,153.0304861,15MW,2017,N/A,Sunshine Coast Council,"Built by Sunshine Coast Council in ground-breaking project to cut emissions, save costs and offset its electricity consumption."
-Avonlie,"-34.90918077662601, 146.5889217549142",-34.90918078,146.5889217549142,190MW,2023,N/A,Octopus Energy,
+Avonlie,"-34.90918077662601, 146.5889217549142",-34.90918078,146.5889218,190MW,2023,N/A,Octopus Energy,
 Yarrabee,"Yamma Road, Morundah NSW, Australia",-34.9043293,146.1871286,900MW,2025,N/A,Origin Energy,"Bought in 2022, first stage likely to be 450MW, but has planning approval to go to 900MW."
-Carisbrook,"160 Bald Hills Road, Tarwin Lower VIC, Australia",-37.05602571,143.86793479360352,74MW,2023,N/A,Origin Energy,Bought by Origin from ibVogt.
+Carisbrook,"160 Bald Hills Road, Tarwin Lower VIC, Australia",-37.05602571,143.8679348,74MW,2023,N/A,Origin Energy,Bought by Origin from ibVogt.
 Tailem Bend 2,"Substation, Tailem Bend SA, Australia",-35.2710966,139.4920555,87MW,2023,N/A,Vena Energy,"Contracted to local business through Zen Energy, to be paired with 41.5MW one hour battery"
 Mica Creek,"Diamantina Power Station, Diamantina Developmental Rd, Mount Isa QLD, Australia",-20.7718162,139.4905992,88MW,2023,N/A,APA,To reduce dependence on main gas generators to Mt Isa grid.
 Gruyere Micro Grid,"Gruyere Mine Camp, Cosmo Newbery WA, Australia",-28.0310366,123.8129099,13.2MW,2022,N/A,APA,Supplies Gruyere mine along with 4.4MW/4.4MWh battery.
 Cunderdin,"Cunderdin WA, Australia",-31.656499,117.273171,128MW,2024,NA,Monford,"hybrid solar and battery project, under construction (looks complete?)"
 Mannum,"Mannum SA, Australia",-34.921573,139.267388,45.86MW,"2019, 2023",Canadian Solar 385W monocrystalline monofacial modules mounted on single-axis trackers,Epic Energy,Built in 2 stages
-Stubbo,"Stubbo Road, Stubbo NSW, Australia",-32.29662116,149.5492896756714,400MW,2024,,Acen Renewables,Won first round of tender under NSW infrastructure roadmap.
+Stubbo,"Stubbo Road, Stubbo NSW, Australia",-32.29662116,149.5492897,400MW,2024,,Acen Renewables,Won first round of tender under NSW infrastructure roadmap.
 Munna Creek,"493 Blowers Road, Munna Creek QLD, Australia",-25.8821061,152.459626,120MW,2024,,Mytilineos/div,Has PPAs with NBN and Telstra.
 Wandoan South,"Wandoan South Solar Farm Stage 1 - Main Access, Woleebee QLD, Australia",-26.2629642,149.772688,100MW,2023,,Vena Energy,Located next to big battery of same name.
-Aldoga,"-23.835292, 151.071334",-23.835292,151.071334,NA,NA,NA,NA,NA
-Culcairn,"Cummings Road, Culcairn NSW, Australia",-35.68851636,146.9853112767822,350MW,2026,,Neoen Australia,Won third round generation tender under NSW infrastructure roadmap.
-Broadsound,"353 Manly Access, Clarke Creek QLD, Australia",-22.8501045,149.3289865,360MW,2026,,Iberdrola.,"To be built next to battery project, 180 MW with two hours storage."
+Aldoga,"Flynn Rd, Aldoga QLD, Australia",-23.802867,151.053427,380MW,2025,NA,ACCIONA Energ’a,NA
+Culcairn,"Cummings Road, Culcairn NSW, Australia",-35.68851636,146.9853113,350MW,2026,,Neoen Australia,Won third round generation tender under NSW infrastructure roadmap.
+Broadsound,"353 Manly Access, Clarke Creek QLD, Australia",-22.820709,149.387858,360MW,2026,,Iberdrola.,"To be built next to battery project, 180 MW with two hours storage."
