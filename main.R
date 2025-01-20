@@ -7,6 +7,9 @@ library(rnaturalearth)
 library(ggpubr)
 library(jsonlite)
 
+# functions
+source("scripts/functions/cache_csv.R")
+
 # first, preprocess systematic review data
 source("scripts/data_prep.R")
 
