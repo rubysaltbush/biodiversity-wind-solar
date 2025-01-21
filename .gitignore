@@ -50,7 +50,7 @@ po/*~
 rsconnect/
 
 # macOS system file
-*.DS_Store
+**/.DS_Store
 
 # data cache folder for local caching of data files
 /data_cache
