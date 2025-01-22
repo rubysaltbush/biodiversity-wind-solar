@@ -1,12 +1,13 @@
 # script to map Australian wind and solar farms against Australian ecosystems
 # and biodiversity e.g. bird species, bat species, mammal species
 
-# get data ----
+# get wind/solar location data ----
 
-# current wind/solar data are lat/longs ripped from Renew Economy website, need to:
-# 1) verify lat/longs accurate and e.g. not on adjacent roads
-# 2) tidy up what is currently mess of constructed and planned projects
-windfarms <- cache_csv("data_input/windfarms_aus_updated.csv", function(){
+# TO DO
+# load data for wind and solar farms across world from globalenergymonitor.org
+# and filter down to just wind and solar farms in Australia above 10MW capacity
+# compiling single data source
+windsolar <- cache_csv("data_output/windsolar_aus_gipt.csv", function(){
 
 # read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
 windfarms <- jsonlite::fromJSON("data_input/tidy_reneweconomy_windfarms.json")
@@ -28,27 +29,7 @@ readr::write_csv(windfarms_tidy, "data_output/windfarms_aus_fromjson.csv")
 windfarms <- readr::read_csv("data_input/windfarms_aus_updated.csv")
 })
 
-solarfarms <- cache_csv("data_input/solarfarms_aus_updated.csv", function(){
-  
-# read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
-solarfarms <- jsonlite::fromJSON("data_input/tidy_reneweconomy_solarfarms.json")
-
-# some messy columns, build into data I want
-solarfarms_tidy <- solarfarms %>%
-  tidyr::unnest(cols = description) %>%
-  dplyr::select(title, address, lat, long = lng, 
-                size_mw = `Size:`,
-                yr_operational = `Operational:`, 
-                technology = `Technology:`,
-                owner = `Owner:`,
-                comments = `Comments:`)
-
-# export these as csv to fill in few missing fields
-readr::write_csv(solarfarms_tidy, "data_output/solarfarms_aus_fromjson.csv")
-
-# and read back in (error checking not finished yet but will try mapping for now)
-solarfarms <- readr::read_csv("data_input/solarfarms_aus_updated.csv")
-})
+# rewrite below to match new wind and solar data source
 
 # need background Aus map
 # read in shapefile of Aus outline
@@ -310,13 +291,4 @@ ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
 #   - work out spatial resolution needed for insights
 #   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???
 
-#### NEM data for southeast (less complete) ----
 
-# read in data from NEM on locations of wind and solar farms
-wind <- readr::read_csv("data_input/wind_nationalmap_20241203.csv") %>%
-  dplyr::mutate(lat = Lat, lon = Lon)# %>%
-#dplyr::filter(!(is.na(lat))) # 2 missing coordinates, could patch but remove for now
-
-solar <- readr::read_csv("data_input/solar_nationalmap_20241203.csv") %>%
-  dplyr::mutate(lat = Lat, lon = Lon) #%>%
-#dplyr::filter(!(is.na(lat))) # 7 missing coordinates, could patch but remove for now

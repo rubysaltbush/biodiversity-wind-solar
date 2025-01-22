@@ -18,3 +18,7 @@ tidy_reneweconomy_windfarms.json - Renew Economy - added 2024-12-20 - data extra
 solarfarms_aus_updated.csv - Renew Economy and Ruby Stephens - added 2024-12-20 - data extracted from Renew Economy website and then manually updated by checking lat/longs against satellite imagery and project details against details on project websites etc
 
 windfarms_aus_updated.csv - Renew Economy and Ruby Stephens - added 2024-12-20 - data extracted from Renew Economy website and then manually updated by checking lat/longs against satellite imagery and project details against details on project websites etc
+
+Global-Solar-Power-Tracker-June-2024-v2.xlsx - Global Energy Monitor - added 2025-01-22 - Global Solar Power Tracker, Global Energy Monitor and TransitionZero, June 2024 release https://globalenergymonitor.org/projects/global-integrated-power-tracker/
+
+Global-Wind-Power-Tracker-June-2024.xlsx - Global Energy Monitor - added 2025-01-22 - Global Energy Monitor, Global Wind Power Tracker, June 2024 release https://globalenergymonitor.org/projects/global-integrated-power-tracker/
