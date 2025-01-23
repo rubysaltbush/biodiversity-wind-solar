@@ -5,28 +5,87 @@
 
 # TO DO
 # load data for wind and solar farms across world from globalenergymonitor.org
-# and filter down to just wind and solar farms in Australia above 10MW capacity
+# and filter down to just wind and solar farms in Australia of 3MW+ capacity
 # compiling single data source
-windsolar <- cache_csv("data_output/windsolar_aus_gipt.csv", function(){
+windsolar <- cache_csv("data_output/windsolar_gipt_aus.csv", function(){
 
-# read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
-windfarms <- jsonlite::fromJSON("data_input/tidy_reneweconomy_windfarms.json")
+  # data downloaded from Global Integrated Power Tracker January 2025
+  # read in two tabs of spreadsheet, 2nd sheet has all >=10MW projects
+  wind_gipt1 <- readxl::read_xlsx("data_input/Global-Wind-Power-Tracker-June-2024.xlsx",
+                                  sheet = 2)
+  # read in two tabs of spreadsheet, 3rd sheet has all <10MW projects
+  wind_gipt2 <- readxl::read_xlsx("data_input/Global-Wind-Power-Tracker-June-2024.xlsx",
+                                  sheet = 3)
+  
+  # bind sheet stogether
+  wind_gipt <- wind_gipt1 %>%
+    dplyr::bind_rows(wind_gipt2) %>%
+    dplyr::filter(`Country/Area` == "Australia") %>% # just Australian wind farms (381)
+    dplyr::filter(`Capacity (MW)` >= 3) %>% # just those greater than 3 MW (378)
+    dplyr::filter(`Installation Type` == "Onshore") %>% # only onshore wind (319)
+    dplyr::filter(Status %in% c("operating", "construction")) # not projects still in planning stages
+  rm(wind_gipt1, wind_gipt2)  
+  # separate rows include different phases of same projects, combine later?
+  
+  # read in two tabs of spreadsheet, first with >20MW projects
+  solar_gipt1 <- readxl::read_xlsx("data_input/Global-Solar-Power-Tracker-June-2024-v2.xlsx",
+                                   sheet = 2)
+  # and 2nd with <20MW projects
+  solar_gipt2 <- readxl::read_xlsx("data_input/Global-Solar-Power-Tracker-June-2024-v2.xlsx",
+                                   sheet = 3)
+  # bind sheet stogether
+  solar_gipt <- solar_gipt1 %>%
+    dplyr::bind_rows(solar_gipt2) %>%
+    dplyr::filter(Country == "Australia") %>% # just Australian solar farms (394)
+    dplyr::filter(`Capacity (MW)` >= 3) %>% # just those greater than 3 MW (384)
+    dplyr::filter(Status %in% c("operating", "construction")) # not projects still in planning stages
+  rm(solar_gipt1, solar_gipt2)  
+  # okay this gives 154 rows, most so far although separate rows include 
+  # different phases of same projects)
 
-# some messy columns, build into data I want
-windfarms_tidy <- windfarms %>%
-  tidyr::unnest(cols = description) %>%
-  dplyr::select(title, address, lat, long = lng, 
-                size_mw = `Size:`,
-                yr_operational = `Operational:`, 
-                technology = `Technology:`,
-                owner = `Owner:`,
-                comments = `Comments:`)
+# select and rename columns
+wind_gipt <- wind_gipt %>%
+  dplyr::select(date_last_researched = `Date Last Researched`, 
+                project_name = `Project Name`,
+                phase_name = `Phase Name`,
+                project_other_names = `Other Name(s)`,
+                capacity_mw = `Capacity (MW)`,
+                status = Status,
+                start_year = `Start year`,
+                operator = Operator,
+                owner = Owner,
+                lat = Latitude,
+                long = Longitude,
+                location_accuracy = `Location accuracy`,
+                city = City,
+                state = `State/Province`
+                ) %>%
+  dplyr::mutate(type = "wind")
 
-# export these as csv to fill in few missing fields
-readr::write_csv(windfarms_tidy, "data_output/windfarms_aus_fromjson.csv")
+solar_gipt <- solar_gipt %>%
+  dplyr::select(date_last_researched = `Date Last Researched`, 
+                project_name = `Project Name`,
+                phase_name = `Phase Name`,
+                project_other_names = `Other Name(s)`,
+                capacity_mw = `Capacity (MW)`,
+                status = Status,
+                start_year = `Start year`,
+                operator = Operator,
+                owner = Owner,
+                lat = Latitude,
+                long = Longitude,
+                location_accuracy = `Location accuracy`,
+                city = City,
+                state = `State/Province`
+                ) %>%
+  dplyr::mutate(type = "solar")
 
-# and read back in (error checking not finished yet but will try mapping for now)
-windfarms <- readr::read_csv("data_input/windfarms_aus_updated.csv")
+windsolar <- wind_gipt %>%
+  dplyr::bind_rows(solar_gipt)
+rm(solar_gipt, wind_gipt)
+
+# write combined data to cache
+readr::write_csv(windsolar, "data_output/windsolar_gipt_aus.csv")
 })
 
 # rewrite below to match new wind and solar data source
@@ -45,8 +104,7 @@ aus <- sf::st_as_sf(aus)
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
-windfarms <- sf::st_as_sf(windfarms, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
-solarfarms <- sf::st_as_sf(solarfarms, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
+windsolar_sf <- sf::st_as_sf(windsolar, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
 sf::st_crs(aus) <- "EPSG:4326"
 sf::st_crs(biomes) <- "EPSG:4326"
 
@@ -54,34 +112,26 @@ sf::st_crs(biomes) <- "EPSG:4326"
 ggplot() +
   geom_sf(data = aus, fill = NA, linewidth = 0.3) +
   geom_sf(data = biomes, aes(fill = biome), linewidth = 0.1, alpha = 0.3) +
-  geom_sf(data = windfarms, shape = 1, colour = "blue") +
-  geom_sf(data = solarfarms, shape = 2, colour = "yellow") +
+  geom_sf(data = windsolar_sf, aes(shape = type, colour = type)) +
   theme_void()
 ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
 
 # extract biome for each wind and solar location
-wind_biome <- sf::st_join(windfarms, biomes) %>%
-  dplyr::distinct() %>%
-  dplyr::mutate(facility = "wind")
-solar_biome <- sf::st_join(solarfarms, biomes) %>%
-  dplyr::distinct() %>%
-  dplyr::mutate(facility = "solar")
+windsolar_biome <- sf::st_join(windsolar_sf, biomes) %>%
+  dplyr::distinct()
 
 # simplify to a df of biome with #s of wind and solar facilities in them
-windsolar <- wind_biome %>%
-  dplyr::bind_rows(solar_biome) 
-
-biome_windsolarsummary <- windsolar %>%
-  dplyr::select(biome, facility) %>%
-  dplyr::group_by(biome, facility) %>%
+windsolar_biomesummary <- windsolar_biome %>%
+  dplyr::select(biome, type) %>%
+  dplyr::group_by(biome, type) %>%
   dplyr::summarise(number = n()) %>%
   dplyr::ungroup()
 
 # now display in stacked bar chart
-biome_windsolarsummary %>%
+windsolar_biomesummary %>%
   dplyr::arrange(-number) %>%
   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
-  ggplot(aes(x = biome, y = number, fill = facility)) +
+  ggplot(aes(x = biome, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_brewer(palette = "YlGnBu") +
@@ -89,7 +139,9 @@ biome_windsolarsummary %>%
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
-# interesting, has changed a bit with addition of renew economy data. 
+# interesting that temperate forest is most represented biome
+# given deserts is our biggest biome by land area
+# bias of population centres
 
 # enough of biomes, let's use better veg mapping
 # clean up df not needed anymore

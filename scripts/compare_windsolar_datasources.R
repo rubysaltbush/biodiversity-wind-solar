@@ -102,18 +102,36 @@ solar_gipt <- solar_gipt1 %>%
   dplyr::filter(`Capacity (MW)` >= 3) %>% # just those greater than 3 MW (384)
   dplyr::filter(Status %in% c("operating", "construction")) # not projects still in planning stages
 rm(solar_gipt1, solar_gipt2)  
-# okay this gives 154 rows, again most so far although separate rows include 
-# different phases of same projects)  
-
-# okay now for the big task: map all on same map? join against one another and 
-# manually compare?
+# okay this gives 154 rows, most so far although separate rows include 
+# different phases of same projects)
 
 # quick comparison - MW capacity of each energy type, currently operating
 
+# National Energy Market data
 sum(wind_nem$max_cap_mw)
 # [1] 10136.5
-sum(wind_re$size_mw)
-# gives NA because of Ryan Corner, which looks like it's in construction at least 
-# but not in other data sets
+sum(solar_nem$`Max Cap (MW)`)
+# [1] 7204.26
 
-# TO DO TOMORROW: map these all, compare and decide
+# Renew Economy data
+wind_re %>% dplyr::filter(!(is.na(size_mw))) %>% dplyr::select(size_mw) %>% sum(.)
+# [1] 16318.3
+# unless filtered gives NA because of Ryan Corner, which looks like it's in 
+# construction at least according to website but is not included in other data sets
+sum(solar_re$size_mw)
+# [1] 12142.16
+
+# Global Integrated Power Tracker data
+sum(wind_gipt$`Capacity (MW)`)
+# [1] 15318.2
+# curiously almost exactly 1000 MW fewer than Renew Economy data
+sum(solar_gipt$`Capacity (MW)`)
+# [1] 11547.3
+# again smaller than the Renew Economy data, but hopefully with fewer spurious/erroneous records?
+
+
+# for now the GIPT data seems most reliable and doesn't seem to be missing too much
+# if we decide we want a more complete data set I could update these all but that
+# is probably unnecessary for our purposes for now
+
+rm(solar_gipt, solar_nem, solar_re, wind_gipt, wind_re, wind_nem)
