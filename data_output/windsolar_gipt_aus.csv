@@ -1,4 +1,4 @@
-date_last_researched,project_name,phase_name,project_other_names,capacity_mw,status,start_year,operator,owner,lat,long,location_accuracy,city,state,type
+date_last_researched,project_name,phase_name,project_other_names,capacity_mw,status,start_year,operator,owner,lat,lon,location_accuracy,city,state,type
 2022/09/23,Albany wind farm,1,Grasmere (Phase 2),22,operating,2001,Verve Energy,Bright Energy,-35.0584,117.7850,exact,Albany,Western Australia,wind
 2022/10/04,Albany wind farm,2,Grasmere (Phase 2),14,operating,2011,Verve Energy,Bright Energy,-35.0487,117.7546,exact,NA,Western Australia,wind
 2022/09/23,Ararat wind farm,--,NA,240,operating,2017,Windlab PTY LTD,OPTrust,-37.2411,143.0429,exact,NA,Victoria,wind

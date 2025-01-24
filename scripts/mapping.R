@@ -3,7 +3,6 @@
 
 # get wind/solar location data ----
 
-# TO DO
 # load data for wind and solar farms across world from globalenergymonitor.org
 # and filter down to just wind and solar farms in Australia of 3MW+ capacity
 # compiling single data source
@@ -55,7 +54,7 @@ wind_gipt <- wind_gipt %>%
                 operator = Operator,
                 owner = Owner,
                 lat = Latitude,
-                long = Longitude,
+                lon = Longitude,
                 location_accuracy = `Location accuracy`,
                 city = City,
                 state = `State/Province`
@@ -73,7 +72,7 @@ solar_gipt <- solar_gipt %>%
                 operator = Operator,
                 owner = Owner,
                 lat = Latitude,
-                long = Longitude,
+                lon = Longitude,
                 location_accuracy = `Location accuracy`,
                 city = City,
                 state = `State/Province`
@@ -88,7 +87,17 @@ rm(solar_gipt, wind_gipt)
 readr::write_csv(windsolar, "data_output/windsolar_gipt_aus.csv")
 })
 
-# rewrite below to match new wind and solar data source
+# now summarise data so that each row represents a single project and location
+windsolar <- windsolar %>%
+  dplyr::group_by(project_name, project_other_names, type, status, 
+                  operator, owner, lat, lon, state) %>%
+  dplyr::summarise(phase_names = paste0(phase_name, collapse = ","),
+                   totalcapacity_mw = sum(capacity_mw),
+                   start_years = paste0(start_year, collapse = ","))
+windsolar$project_name[duplicated(windsolar$project_name)]
+# collapses 17 rows, still 18 projects on multiple rows
+length(unique(windsolar$project_name))
+# 246 unique projects
 
 # need background Aus map
 # read in shapefile of Aus outline
@@ -104,28 +113,46 @@ aus <- sf::st_as_sf(aus)
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
-windsolar_sf <- sf::st_as_sf(windsolar, coords = c("long", "lat"), remove = FALSE, crs = "EPSG:4326")
+windsolar <- sf::st_as_sf(windsolar, coords = c("lon", "lat"), remove = FALSE, crs = "EPSG:4326")
 sf::st_crs(aus) <- "EPSG:4326"
 sf::st_crs(biomes) <- "EPSG:4326"
 
 # make map!
 ggplot() +
-  geom_sf(data = aus, fill = NA, linewidth = 0.3) +
-  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.1, alpha = 0.3) +
-  geom_sf(data = windsolar_sf, aes(shape = type, colour = type)) +
+  geom_sf(data = aus, fill = NA, linewidth = 0.1) +
+  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.01, alpha = 0.3) +
+  scale_fill_brewer(palette = "Set1") +
+  geom_sf(data = windsolar, aes(shape = type, colour = type, size = totalcapacity_mw)) +
+  scale_colour_brewer(palette = "Set1", name = "facility type") +
+  scale_shape(solid = FALSE, name = "facility type") +
+  scale_size(name = "total capacity (mw)") +
   theme_void()
 ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
 
 # extract biome for each wind and solar location
-windsolar_biome <- sf::st_join(windsolar_sf, biomes) %>%
+windsolar <- sf::st_join(windsolar, biomes) %>%
   dplyr::distinct()
 
 # simplify to a df of biome with #s of wind and solar facilities in them
-windsolar_biomesummary <- windsolar_biome %>%
+windsolar_biomesummary <- windsolar %>%
+  sf::st_drop_geometry() %>%
   dplyr::select(biome, type) %>%
   dplyr::group_by(biome, type) %>%
   dplyr::summarise(number = n()) %>%
   dplyr::ungroup()
+windsolar_biomesummary
+# biome                                                        type  number
+# <chr>                                                        <chr>  <int>
+#   1 Deserts and Xeric Shrublands                                 solar     24
+# 2 Deserts and Xeric Shrublands                                 wind      15
+# 3 Mediterranean Forests, Woodlands and Scrub                   solar     20
+# 4 Mediterranean Forests, Woodlands and Scrub                   wind      28
+# 5 Temperate Broadleaf and Mixed Forest                         solar     42
+# 6 Temperate Broadleaf and Mixed Forest                         wind      64
+# 7 Temperate Grasslands, Savannas and Shrublands                solar     20
+# 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar     46
+# 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind       7
+# 10 Tropical and Subtropical Moist Broadleaf Forests             wind       2
 
 # now display in stacked bar chart
 windsolar_biomesummary %>%
@@ -134,18 +161,18 @@ windsolar_biomesummary %>%
   ggplot(aes(x = biome, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_brewer(palette = "Set1") +
   xlab("Biome") +
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
 # interesting that temperate forest is most represented biome
 # given deserts is our biggest biome by land area
-# bias of population centres
+# bias of population centres - could show this in data or just discuss it
 
 # enough of biomes, let's use better veg mapping
 # clean up df not needed anymore
-rm(biome_windsolarsummary, biomes, solar_biome, wind_biome, windfarms, solarfarms)
+rm(windsolar_biomesummary, biomes)
 
 # NVIS ----
 
@@ -170,7 +197,8 @@ nvis_extant <- nvis_extant[[1]]
 mvgcodes <- readr::read_csv("data_input/mvg_codes_names.csv")
 
 # extract values for wind/solar farms from raster 
-# first vectorise wind and solar farm points
+
+# vectorise wind and solar farm points
 windsolarV <- terra::vect(windsolar)
 # re-project into raster's Albers equal area projection
 windsolarV <- terra::project(windsolarV, terra::crs(nvis_extant))
@@ -179,8 +207,8 @@ windsolarV <- terra::project(windsolarV, terra::crs(nvis_extant))
 extraction <- terra::extract(nvis_extant, windsolarV)
 # it works!! 
 table(extraction$`nvis-mvg_1`)
-# 2   3   4   5   7   9  11  14  15  18  19  20  21  22  25  99 
-# 3   6   1  13   1   1   1   2   1   2   2   3   2   5 152   1
+# 3   5   6   7   9  10  11  14  15  16  17  18  19  20  21  22  25  27  29  99 
+# 6   9  10   7   1   1   3   2   1   2   1   4   3   2   2  16 193   2   2   1 
 # mostly 25, the code for cleared land, which makes sense. woot woot.
 
 # join back onto data (all in same order, have checked)
@@ -196,8 +224,8 @@ rm(extraction, nvis_extant)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvg_name, facility) %>%
-  dplyr::group_by(mvg_name, facility) %>%
+  dplyr::select(mvg_name, type) %>%
+  dplyr::group_by(mvg_name, type) %>%
   dplyr::summarise(number = n()) %>%
   dplyr::ungroup()
 
@@ -205,10 +233,10 @@ mvg_windsolarsummary <- windsolar %>%
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
   dplyr::mutate(mvg_name = forcats::fct_inorder(mvg_name)) %>%
-  ggplot(aes(x = mvg_name, y = number, fill = facility)) +
+  ggplot(aes(x = mvg_name, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_brewer(palette = "Set1") +
   xlab("Major Vegetation Group") +
   ylab("Number of facilities") +
   coord_flip()
@@ -236,8 +264,8 @@ nvis_pre1750 <- nvis_pre1750[[1]]
 extraction <- terra::extract(nvis_pre1750, windsolarV)
 # it works!! 
 table(extraction$nvis7_0_aust_pre_mvg_alb_1)
-# 1  2  3  5  6  7  8  9 11 12 13 14 15 16 17 18 19 20 21 22 26 31 32 
-# 3  2 16 81  9  1  3  2 15  3  1  9  2  1  9  1 16  2  5  6  1  1  7 
+# 1   2   3   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  21  22  27  31  32 
+# 2   1  23 113  10   2   3   1   1  17   1   1  11   2  11   9   5  22   7  17   1   2   6 
 
 # without cleared land considered the original ecosystems which wind and solar
 # farms are located on seem more diverse, though eucalypt woodlands (5) has most
@@ -258,8 +286,8 @@ rm(extraction, mvgcodes, nvis_pre1750)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_name, facility) %>%
-  dplyr::group_by(mvgpre1750_name, facility) %>%
+  dplyr::select(mvgpre1750_name, type) %>%
+  dplyr::group_by(mvgpre1750_name, type) %>%
   dplyr::summarise(number = n()) %>%
   dplyr::ungroup()
 
@@ -267,10 +295,10 @@ mvg_windsolarsummary <- windsolar %>%
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
   dplyr::mutate(mvgpre1750_name = forcats::fct_inorder(mvgpre1750_name)) %>%
-  ggplot(aes(x = mvgpre1750_name, y = number, fill = facility)) +
+  ggplot(aes(x = mvgpre1750_name, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_brewer(palette = "Set1") +
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Number of facilities") +
   coord_flip()
@@ -305,7 +333,7 @@ extraction <- terra::extract(land_capability, windsolarV)
 # it works!! 
 table(extraction$land_capability)
 # 1  2  3  4  5  6  7  8  9 
-# 14 38 41 34 24 34  9  1  1 
+# 20 43 55 49 30 40 29  1  1 
 
 # interestingly most facilities located on relatively decent agricultural land
 # though only 14 on the best
@@ -320,27 +348,30 @@ rm(extraction)
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(land_capability, facility) %>%
-  dplyr::group_by(land_capability, facility) %>%
+  dplyr::select(land_capability, type) %>%
+  dplyr::group_by(land_capability, type) %>%
   dplyr::summarise(number = n()) %>%
   dplyr::ungroup()
 
 # now display in stacked bar chart
 landcap_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  ggplot(aes(x = land_capability, y = number, fill = facility)) +
+  ggplot(aes(x = land_capability, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_brewer(palette = "Set1") +
   xlab("Agricultural land capability") +
   ylab("Number of facilities") +
+  scale_x_continuous(breaks = c(1:9)) +
   coord_flip()
 ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
 
 # TO DOs
-#   - fix y axis labels
+#   - REDO ALL GRAPHS AS MW NOT # FACILITIES
 #   - cache all data as csv, make more graphs and a nice map to export
 #   - work out spatial resolution needed for insights
 #   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???
 
+# write data output for now
 
+readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
