@@ -294,6 +294,7 @@ mvg_windsolarsummary %>%
   coord_flip()
 ggsave("figures/aus_capacity_by_mvg.png", width = 9, height = 7)
 # looking at it by capacity changes the order of vegetation groups affected
+# though all are still dwarfed by the cleared category
 
 # now try same with pre-1750 mapping
 
@@ -339,10 +340,11 @@ rm(extraction, mvgcodes, nvis_pre1750)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_name, type) %>%
+  dplyr::select(mvgpre1750_name, type, totalcapacity_mw) %>%
   dplyr::group_by(mvgpre1750_name, type) %>%
-  dplyr::summarise(number = n()) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
+mvg_windsolarsummary
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
@@ -356,6 +358,23 @@ mvg_windsolarsummary %>%
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_mvgpre1750.png", width = 9, height = 7)
+
+# and stacked bar chart by total capacity
+mvg_windsolarsummary %>%
+  dplyr::arrange(-sumcapmw) %>%
+  dplyr::mutate(mvgpre1750_name = forcats::fct_inorder(mvgpre1750_name)) %>%
+  ggplot(aes(x = mvgpre1750_name, y = sumcapmw, fill = type)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "Set1") +
+  xlab("Major Vegetation Group (pre-1750)") +
+  ylab("Total maximum capacity (MW)") +
+  coord_flip()
+ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
+
+# again using capacity increases the dominance of wind (implying that there are
+# fewer but larger capacity wind farms vs solar farms)
+# shifts ranking of smaller cateogries but eucalypt woodlands still predominate
 
 rm(mvg_windsolarsummary)
 
@@ -389,7 +408,7 @@ table(extraction$land_capability)
 # 20 43 55 49 30 40 29  1  1 
 
 # interestingly most facilities located on relatively decent agricultural land
-# though only 14 on the best
+# though only 20 on the best category
 # probably because developments are targeting mostly cleared lands
 
 # join back onto data (all in same order, have checked)
@@ -401,9 +420,9 @@ rm(extraction)
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(land_capability, type) %>%
+  dplyr::select(land_capability, type, totalcapacity_mw) %>%
   dplyr::group_by(land_capability, type) %>%
-  dplyr::summarise(number = n()) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 
 # now display in stacked bar chart
@@ -419,8 +438,57 @@ landcap_windsolarsummary %>%
   coord_flip()
 ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
 
+# now display in stacked bar chart, with capacity instead
+landcap_windsolarsummary %>%
+  dplyr::arrange(-sumcapmw) %>%
+  ggplot(aes(x = land_capability, y = sumcapmw, fill = type)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "Set1") +
+  xlab("Agricultural land capability") +
+  ylab("Total maximum capacity (MW)") +
+  scale_x_continuous(breaks = c(1:9)) +
+  coord_flip()
+ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
+# again increases proportion of wind, interesting that on the best 
+# agricultural land it is mostly wind farms not solar, which is probably more
+# compatible with continuing agriculture
+
+rm(land_capability, landcap_windsolarsummary)
+
+# sankey graph showing pre1750 to today change in veg for solar locations? ----
+
+# need to work out source (pre-1750 veg), target (extant veg), value (MW?)
+sankeylinks <- windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::select(mvgpre1750_name, mvg_name, type, totalcapacity_mw) %>% 
+  dplyr::group_by(mvgpre1750_name, mvg_name) %>% # leave out solar/wind distinction for now
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
+  dplyr::ungroup()
+
+# create nodes df for sankey
+sankeynodes <- data.frame(
+  name = c(as.character(sankeylinks$mvgpre1750_name), 
+           as.character(sankeylinks$mvg_name)) %>% unique()
+)
+
+# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
+sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_name, sankeynodes$name)-1
+sankeylinks$IDtarget <- match(sankeylinks$mvg_name, sankeynodes$name)-1
+
+# Make the Network
+p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
+                   Source = "IDsource", Target = "IDtarget",
+                   Value = "sumcapmw", NodeID = "name", 
+                   sinksRight = FALSE)
+p
+
+# not sure if will be able to colour by solar/wind? if not can make separate diagrams maybe
+
+# ugh it's hideous. I think there has to be a better way to do this, will try next week
+
 # TO DOs
-#   - REDO ALL GRAPHS AS MW NOT # FACILITIES
+#   - try also with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
 #   - cache all data as csv, make more graphs and a nice map to export
 #   - work out spatial resolution needed for insights
 #   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???

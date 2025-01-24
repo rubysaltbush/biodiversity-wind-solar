@@ -6,6 +6,7 @@ library(terra)
 library(rnaturalearth)
 library(ggpubr)
 library(jsonlite)
+library(networkD3)
 
 # functions
 source("scripts/functions/cache_csv.R")
