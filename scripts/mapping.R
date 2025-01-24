@@ -143,7 +143,7 @@ windsolar_biomesummary <- windsolar %>%
 windsolar_biomesummary
 # biome                                                        type  number
 # <chr>                                                        <chr>  <int>
-#   1 Deserts and Xeric Shrublands                                 solar     24
+# 1 Deserts and Xeric Shrublands                                 solar     24
 # 2 Deserts and Xeric Shrublands                                 wind      15
 # 3 Mediterranean Forests, Woodlands and Scrub                   solar     20
 # 4 Mediterranean Forests, Woodlands and Scrub                   wind      28
@@ -152,7 +152,7 @@ windsolar_biomesummary
 # 7 Temperate Grasslands, Savannas and Shrublands                solar     20
 # 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar     46
 # 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind       7
-# 10 Tropical and Subtropical Moist Broadleaf Forests             wind       2
+# 10 Tropical and Subtropical Moist Broadleaf Forests            wind       2
 
 # now display in stacked bar chart
 windsolar_biomesummary %>%
@@ -169,6 +169,44 @@ ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
 # interesting that temperate forest is most represented biome
 # given deserts is our biggest biome by land area
 # bias of population centres - could show this in data or just discuss it
+
+# try same graph but counting by maximum capacity of facilities rather than
+# just number of facilities
+# simplify to a df of biome with #s of wind and solar facilities in them
+windsolar_biomesummary <- windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::select(biome, type, totalcapacity_mw) %>%
+  dplyr::group_by(biome, type) %>%
+  dplyr::summarise(sumcapmw = sum(totalcapacity_mw)) %>%
+  dplyr::ungroup()
+windsolar_biomesummary
+# biome                                                        type  sumcapmw
+# <chr>                                                        <chr>    <dbl>
+# 1 Deserts and Xeric Shrublands                                 solar     901.
+# 2 Deserts and Xeric Shrublands                                 wind     1904 
+# 3 Mediterranean Forests, Woodlands and Scrub                   solar    1707 
+# 4 Mediterranean Forests, Woodlands and Scrub                   wind     2762.
+# 5 Temperate Broadleaf and Mixed Forest                         solar    3835.
+# 6 Temperate Broadleaf and Mixed Forest                         wind     8004.
+# 7 Temperate Grasslands, Savannas and Shrublands                solar    1338.
+# 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar    3765 
+# 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind     2479 
+# 10 Tropical and Subtropical Moist Broadleaf Forests            wind      169 
+
+# now display in stacked bar chart
+windsolar_biomesummary %>%
+  dplyr::arrange(-sumcapmw) %>%
+  dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
+  ggplot(aes(x = biome, y = sumcapmw, fill = type)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "Set1") +
+  xlab("Biome") +
+  ylab("Total maximum capacity (MW)") +
+  coord_flip()
+ggsave("figures/aus_capacitymw_by_biome.png", width = 9, height = 7)
+# overall wind power has bigger share when measured by maximum capacity rather 
+# than just number of facilities
 
 # enough of biomes, let's use better veg mapping
 # clean up df not needed anymore
@@ -224,10 +262,11 @@ rm(extraction, nvis_extant)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvg_name, type) %>%
+  dplyr::select(mvg_name, type, totalcapacity_mw) %>%
   dplyr::group_by(mvg_name, type) %>%
-  dplyr::summarise(number = n()) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
+mvg_windsolarsummary
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
@@ -241,6 +280,20 @@ mvg_windsolarsummary %>%
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_mvg.png", width = 9, height = 7)
+
+# now display capacity in stacked bar chart
+mvg_windsolarsummary %>%
+  dplyr::arrange(-sumcapmw) %>%
+  dplyr::mutate(mvg_name = forcats::fct_inorder(mvg_name)) %>%
+  ggplot(aes(x = mvg_name, y = sumcapmw, fill = type)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "Set1") +
+  xlab("Major Vegetation Group") +
+  ylab("Total maximum capacity (MW)") +
+  coord_flip()
+ggsave("figures/aus_capacity_by_mvg.png", width = 9, height = 7)
+# looking at it by capacity changes the order of vegetation groups affected
 
 # now try same with pre-1750 mapping
 
