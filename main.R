@@ -5,8 +5,10 @@ library(sf)
 library(terra)
 library(rnaturalearth)
 library(ggpubr)
+library(patchwork)
 library(jsonlite)
 library(networkD3)
+
 
 # functions
 source("scripts/functions/cache_csv.R")

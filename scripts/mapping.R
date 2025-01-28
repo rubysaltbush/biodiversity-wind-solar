@@ -1,5 +1,5 @@
 # script to map Australian wind and solar farms against Australian ecosystems
-# and biodiversity e.g. bird species, bat species, mammal species
+# and biodiversity mapping, plus climate
 
 # get wind/solar location data ----
 
@@ -212,7 +212,9 @@ ggsave("figures/aus_capacitymw_by_biome.png", width = 9, height = 7)
 # clean up df not needed anymore
 rm(windsolar_biomesummary, biomes)
 
-# NVIS ----
+# NVIS vegetation ----
+
+## present day ----
 
 # load geotiff raster version of national veg mapping, NVIS, in Albers equal projection
 # raster is 3+GB so file is in data_cache
@@ -296,7 +298,8 @@ ggsave("figures/aus_capacity_by_mvg.png", width = 9, height = 7)
 # looking at it by capacity changes the order of vegetation groups affected
 # though all are still dwarfed by the cleared category
 
-# now try same with pre-1750 mapping
+## pre-1750 ----
+# try same with pre-1750 mapping
 
 # load geotiff raster version of national veg mapping, NVIS, in Albers equal projection
 # raster is 3+GB so file is in data_cache
@@ -378,7 +381,7 @@ ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
 
 rm(mvg_windsolarsummary)
 
-# Adams & Engert 2023 land capability mapping ----
+# land capability mapping (Adams & Engert 2023) ----
 
 # read in national scale agricultural land capability map
 land_capability <- terra::rast("data_cache/RD-LANDCAPAUS-02/land_capability.tif")
@@ -456,6 +459,104 @@ ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
 
 rm(land_capability, landcap_windsolarsummary)
 
+# climate ----
+
+# below function copied in from Will's code and adapted
+generate_density_plot <- function(raster_map, solar_data, wind_data, region = "Australia",log=FALSE) {
+  # Load the region polygon
+  region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = region, returnclass = "sf")
+  
+  # Convert region to SpatVector for terra operations
+  region_terra <- terra::vect(region_polygon)
+  
+  # Get the extent and crop the raster to the region
+  region_ext <- terra::ext(region_terra)
+  region_ext_new <- terra::ext(region_ext$xmin, region_ext$xmax, region_ext$ymin, region_ext$ymax)
+  raster_cropped <- terra::crop(raster_map, region_ext_new)
+  region_cropped <- terra::crop(region_terra, region_ext_new)
+  
+  # Mask the raster with the region shape
+  raster_masked <- terra::mask(raster_cropped, region_cropped)
+  
+  # Convert the wind and solar data to sf points
+  wind_points_sf <- st_as_sf(data.frame(lon = wind_data$lon, lat = wind_data$lat), 
+                             coords = c("lon", "lat"), crs = st_crs(raster_cropped))
+  solar_points_sf <- st_as_sf(data.frame(lon = solar_data$lon, lat = solar_data$lat), 
+                              coords = c("lon", "lat"), crs = st_crs(raster_cropped))
+  
+  # Extract raster values at the points
+  wind_temp <- terra::extract(raster_masked, wind_points_sf)
+  solar_temp <- terra::extract(raster_masked, solar_points_sf)
+  
+  # Convert the full raster to a data frame
+  all_temp <- terra::as.data.frame(raster_masked)
+  
+  # Add a source column to each data frame
+  wind_temp <- wind_temp %>% mutate(source = "Wind farms")
+  solar_temp <- solar_temp %>% mutate(source = "Solar farms")
+  all_temp <- all_temp %>% 
+    mutate(ID = NA,  # Add an ID column for consistency
+           source = "All Australia")
+  
+  # Rename the temperature column for consistency
+  col_name <- names(all_temp)[1]
+  all_temp <- all_temp %>% rename(temperature = !!col_name)
+  wind_temp <- wind_temp %>% rename(temperature = !!col_name)
+  solar_temp <- solar_temp %>% rename(temperature = !!col_name)
+  
+  # Combine all temperature data frames
+  combined_temp <- bind_rows(wind_temp, solar_temp, all_temp)
+  
+  # Create the density plot
+  plot <- ggplot(combined_temp, aes(x = temperature, color = source, fill = source)) +
+    geom_density(alpha = 0.5) +
+    labs(
+      title = "Density Comparison of Temperature Values",
+      x = "Mean annual temperature (ºC)",
+      y = "Density",
+      color = "Group",
+      fill = "Group"
+    ) +
+    ggpubr::theme_pubr(legend = "right")
+  if(log){
+    # a bit hacky here
+    plot <- ggplot(combined_temp, aes(x = temperature, color = source, fill = source)) +
+      geom_density(alpha = 0.5) +
+      labs(
+        title = "Density Comparison of Precip Values",
+        x = "Mean annual precipitation (mm)",
+        y = "Density",
+        color = "Group",
+        fill = "Group"
+      ) + 
+      scale_x_log10() +
+      ggpubr::theme_pubr(legend = "none")
+  }
+  return(plot)
+}
+
+# set up data
+solar <-  windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::filter(!is.na(lon) & type == "solar")
+wind <- windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::filter(!is.na(lon) & type == "wind")
+temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
+rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
+
+# generate plots
+temp_plot <- generate_density_plot(temp_raster, solar, wind)
+rain_plot <- generate_density_plot(rain_raster, solar, wind, log = TRUE)
+temp_plot + rain_plot
+ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 6)
+# not sure why above plots are so slow to draw?
+rm(generate_density_plot, rain_plot, rain_raster, temp_plot, temp_raster,
+   wind, solar)
+
+# preferably rewrite above to keep temp and precip values with wind solar data
+# so this can be exported and examined if need be
+
 # sankey graph showing pre1750 to today change in veg for solar locations? ----
 
 # need to work out source (pre-1750 veg), target (extant veg), value (MW?)
@@ -466,15 +567,22 @@ sankeylinks <- windsolar %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 
+# add dummy spaces in one column so sankey diagram won't lump categories
+sankeylinks$mvgpre1750_name <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", sankeylinks$mvgpre1750_name)
+
 # create nodes df for sankey
 sankeynodes <- data.frame(
   name = c(as.character(sankeylinks$mvgpre1750_name), 
            as.character(sankeylinks$mvg_name)) %>% unique()
 )
 
-# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
+# reformat name to id for networkD3 connection
 sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_name, sankeynodes$name)-1
 sankeylinks$IDtarget <- match(sankeylinks$mvg_name, sankeynodes$name)-1
+
+# prepare colour scale: rename below with categories and hex codes once ready to make final graph
+# i.e. once have lumped all vegetation categories
+#my_color <- 'd3.scaleOrdinal() .domain(["group_A", "group_B","group_C", "group_D", "group_E", "group_F", "group_G", "group_H"]) .range(["blue", "blue" , "blue", "red", "red", "yellow", "purple", "purple"])'
 
 # Make the Network
 p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
@@ -483,12 +591,17 @@ p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
                    sinksRight = FALSE)
 p
 
-# not sure if will be able to colour by solar/wind? if not can make separate diagrams maybe
+# can't colour by solar/wind, could make separate diagrams maybe?
 
-# ugh it's hideous. I think there has to be a better way to do this, will try next week
+# but is there a better way to do this?
+rm(p, sankeylinks, sankeynodes)
+
+
+
 
 # TO DOs
 #   - try also with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
+#   - move Will's graphs in here to make with updated data also
 #   - cache all data as csv, make more graphs and a nice map to export
 #   - work out spatial resolution needed for insights
 #   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???
