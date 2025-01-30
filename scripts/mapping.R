@@ -461,101 +461,90 @@ rm(land_capability, landcap_windsolarsummary)
 
 # climate ----
 
-# below function copied in from Will's code and adapted
-generate_density_plot <- function(raster_map, solar_data, wind_data, region = "Australia",log=FALSE) {
-  # Load the region polygon
-  region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = region, returnclass = "sf")
-  
-  # Convert region to SpatVector for terra operations
-  region_terra <- terra::vect(region_polygon)
-  
-  # Get the extent and crop the raster to the region
-  region_ext <- terra::ext(region_terra)
-  region_ext_new <- terra::ext(region_ext$xmin, region_ext$xmax, region_ext$ymin, region_ext$ymax)
-  raster_cropped <- terra::crop(raster_map, region_ext_new)
-  region_cropped <- terra::crop(region_terra, region_ext_new)
-  
-  # Mask the raster with the region shape
-  raster_masked <- terra::mask(raster_cropped, region_cropped)
-  
-  # Convert the wind and solar data to sf points
-  wind_points_sf <- st_as_sf(data.frame(lon = wind_data$lon, lat = wind_data$lat), 
-                             coords = c("lon", "lat"), crs = st_crs(raster_cropped))
-  solar_points_sf <- st_as_sf(data.frame(lon = solar_data$lon, lat = solar_data$lat), 
-                              coords = c("lon", "lat"), crs = st_crs(raster_cropped))
-  
-  # Extract raster values at the points
-  wind_temp <- terra::extract(raster_masked, wind_points_sf)
-  solar_temp <- terra::extract(raster_masked, solar_points_sf)
-  
-  # Convert the full raster to a data frame
-  all_temp <- terra::as.data.frame(raster_masked)
-  
-  # Add a source column to each data frame
-  wind_temp <- wind_temp %>% mutate(source = "Wind farms")
-  solar_temp <- solar_temp %>% mutate(source = "Solar farms")
-  all_temp <- all_temp %>% 
-    mutate(ID = NA,  # Add an ID column for consistency
-           source = "All Australia")
-  
-  # Rename the temperature column for consistency
-  col_name <- names(all_temp)[1]
-  all_temp <- all_temp %>% rename(temperature = !!col_name)
-  wind_temp <- wind_temp %>% rename(temperature = !!col_name)
-  solar_temp <- solar_temp %>% rename(temperature = !!col_name)
-  
-  # Combine all temperature data frames
-  combined_temp <- bind_rows(wind_temp, solar_temp, all_temp)
-  
-  # Create the density plot
-  plot <- ggplot(combined_temp, aes(x = temperature, color = source, fill = source)) +
-    geom_density(alpha = 0.5) +
-    labs(
-      title = "Density Comparison of Temperature Values",
-      x = "Mean annual temperature (ºC)",
-      y = "Density",
-      color = "Group",
-      fill = "Group"
-    ) +
-    ggpubr::theme_pubr(legend = "right")
-  if(log){
-    # a bit hacky here
-    plot <- ggplot(combined_temp, aes(x = temperature, color = source, fill = source)) +
-      geom_density(alpha = 0.5) +
-      labs(
-        title = "Density Comparison of Precip Values",
-        x = "Mean annual precipitation (mm)",
-        y = "Density",
-        color = "Group",
-        fill = "Group"
-      ) + 
-      scale_x_log10() +
-      ggpubr::theme_pubr(legend = "none")
-  }
-  return(plot)
-}
+# below adapted from Will's code, took out of function so can retain
+# climate data with wind/solar data
 
-# set up data
-solar <-  windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::filter(!is.na(lon) & type == "solar")
-wind <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::filter(!is.na(lon) & type == "wind")
+# load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
 temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
 rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
 
-# generate plots
-temp_plot <- generate_density_plot(temp_raster, solar, wind)
-rain_plot <- generate_density_plot(rain_raster, solar, wind, log = TRUE)
-temp_plot + rain_plot
-ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 6)
-# not sure why above plots are so slow to draw?
-rm(generate_density_plot, rain_plot, rain_raster, temp_plot, temp_raster,
-   wind, solar)
+# Load the region polygon
+region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = "Australia", returnclass = "sf")
 
-# preferably rewrite above to keep temp and precip values with wind solar data
-# so this can be exported and examined if need be
+# convert region to SpatVector for terra operations
+region_polygon <- terra::vect(region_polygon)
+
+# crop rasters to the region extent
+temp_raster <- terra::crop(temp_raster, terra::ext(region_polygon))
+rain_raster <- terra::crop(rain_raster, terra::ext(region_polygon))
+
+# Mask the rasters with the region shape
+temp_raster <- terra::mask(temp_raster, region_polygon)
+rain_raster <- terra::mask(rain_raster, region_polygon)
+rm(region_polygon)
+
+# Extract raster values at the points
+windsolar_temp <- terra::extract(temp_raster, windsolar)
+windsolar_rain <- terra::extract(rain_raster, windsolar)
+
+# join these values back to windsolar df
+# join back onto data
+windsolar <- windsolar %>%
+  dplyr::bind_cols(windsolar_temp) %>%
+  dplyr::select(-ID) %>%
+  dplyr::bind_cols(windsolar_rain) %>%
+  dplyr::select(-ID)
+rm(windsolar_temp, windsolar_rain)
+
+# Convert the full rasters to a data frame
+temp_all <- terra::as.data.frame(temp_raster)
+rain_all <- terra::as.data.frame(rain_raster)
+rm(temp_raster, rain_raster)
+temp_all <- dplyr::mutate(temp_all, type = "All Australia")
+rain_all <- dplyr::mutate(rain_all, type = "All Australia")
+# append wind and solar data
+temp_all <- windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::select(type, `CHELSA_bio1_1981-2010_V.2.1`) %>%
+  dplyr::bind_rows(temp_all) %>%
+  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`)
+rain_all <- windsolar %>%
+  sf::st_drop_geometry() %>%
+  dplyr::select(type, `CHELSA_bio12_1981-2010_V.2.1`) %>%
+  dplyr::bind_rows(rain_all) %>%
+  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`)
+
+# now create density plots of these data
+# temperature first
+temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Mean annual temperature (ºC)",
+       y = "Density",
+       colour = "",
+       fill = "") +
+  scale_fill_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_colour_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  ggpubr::theme_pubr(legend = "right")
+
+# then precipitation
+rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Mean annual precipitation (mm)",
+       y = "Density",
+       colour = "",
+       fill = "") +
+  scale_x_log10() +
+  ggpubr::theme_pubr(legend = "none")
+
+# use patchwork package to stitch plots together, and export
+temp_plot + rain_plot
+ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 4.5)
+# plots slow to draw because 10million+ points in density graph
+rm(rain_plot, rain_all, temp_plot, temp_all)
+
+# rename columns for future use
+windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
+                           MAP = `CHELSA_bio12_1981-2010_V.2.1`)
 
 # sankey graph showing pre1750 to today change in veg for solar locations? ----
 
