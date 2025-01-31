@@ -381,6 +381,29 @@ ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
 
 rm(mvg_windsolarsummary)
 
+# LAI ----
+
+# load in pre-summarised Leaf Area Index rasters from GLOBMAP (doi.org/10.5281/zenodo.12698637)
+# for 2001-2003 and 2021-2023
+# can then compare pre- and post- development LAI for wind/solar locations?
+# theoretically should indicate change in density of vegetation
+# BUT will have to BUFFER POINTS as many of these on roads adjacent to actual development
+# (BUT then doesn't this mean we could be picking up e.g. clearing across the road??)
+# but maybe that's okay??? could be influence of development on clearing in the neighbourhood??
+
+mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
+mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
+
+# extract values (shoudl buffer but just trying it for now)
+extraction <- terra::extract(mean_LAI_0103, windsolar)
+hist(extraction$lyr.1) # mostly low LAI values
+extraction2 <- terra::extract(mean_LAI_2123, windsolar)
+hist(extraction2$lyr.1) # mostly low still, some higher
+
+# dif bw 2 values?
+difLAI <- extraction2$lyr.1 - extraction$lyr.1
+hist(difLAI) # mstly close to 0, some -ve but most +ve
+
 # land capability mapping (Adams & Engert 2023) ----
 
 # read in national scale agricultural land capability map
@@ -459,7 +482,7 @@ ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
 
 rm(land_capability, landcap_windsolarsummary)
 
-# climate ----
+# climate density graphs ----
 
 # below adapted from Will's code, took out of function so can retain
 # climate data with wind/solar data
