@@ -394,7 +394,7 @@ rm(mvg_windsolarsummary)
 mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
 mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
 
-# extract values (shoudl buffer but just trying it for now)
+# extract values (should buffer first but just trying it for now)
 extraction <- terra::extract(mean_LAI_0103, windsolar)
 hist(extraction$lyr.1) # mostly low LAI values
 extraction2 <- terra::extract(mean_LAI_2123, windsolar)
@@ -615,9 +615,13 @@ rm(p, sankeylinks, sankeynodes)
 #   - try also with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
 #   - move Will's graphs in here to make with updated data also
 #   - cache all data as csv, make more graphs and a nice map to export
-#   - work out spatial resolution needed for insights
+#   - work out spatial resolution needed for insights (should I buffer all points??? 1 km???)
 #   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???
 
 # write data output for now
 
 readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
+
+# read back in
+
+windsolar <- readr::read_csv("data_output/windsolar_environments.csv")
