@@ -83,8 +83,13 @@ windsolar <- wind_gipt %>%
   dplyr::bind_rows(solar_gipt)
 rm(solar_gipt, wind_gipt)
 
-# write combined data to cache
+# write combined data to output folder for error checking
 readr::write_csv(windsolar, "data_output/windsolar_gipt_aus.csv")
+
+# now read in error-checked version of this data, with lat/longs manually
+# updated by reference to satellite imagery to ensure accuracy
+windsolar <- readr::read_csv("data_input/windsolar_gipt_aus_checked.csv")
+
 })
 
 # now summarise data so that each row represents a single project and location
