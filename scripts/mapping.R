@@ -368,29 +368,6 @@ ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
 
 rm(mvg_windsolarsummary)
 
-# LAI ----
-
-# load in pre-summarised Leaf Area Index rasters from GLOBMAP (doi.org/10.5281/zenodo.12698637)
-# for 2001-2003 and 2021-2023
-# can then compare pre- and post- development LAI for wind/solar locations?
-# theoretically should indicate change in density of vegetation
-# BUT will have to BUFFER POINTS as many of these on roads adjacent to actual development
-# (BUT then doesn't this mean we could be picking up e.g. clearing across the road??)
-# but maybe that's okay??? could be influence of development on clearing in the neighbourhood??
-
-mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
-mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
-
-# extract values (should buffer first but just trying it for now)
-extraction <- terra::extract(mean_LAI_0103, windsolar)
-hist(extraction$lyr.1) # mostly low LAI values
-extraction2 <- terra::extract(mean_LAI_2123, windsolar)
-hist(extraction2$lyr.1) # mostly low still, some higher
-
-# dif bw 2 values?
-difLAI <- extraction2$lyr.1 - extraction$lyr.1
-hist(difLAI) # mstly close to 0, some -ve but most +ve
-
 # land capability mapping (Adams & Engert 2023) ----
 
 # read in national scale agricultural land capability map
@@ -418,11 +395,12 @@ extraction <- terra::extract(land_capability, windsolarV)
 # it works!! 
 table(extraction$land_capability)
 # 1  2  3  4  5  6  7  8  9 
-# 20 43 55 49 30 40 29  1  1 
+# 16 54 53 44 39 38 14  3  1 
 
 # interestingly most facilities located on relatively decent agricultural land
-# though only 20 on the best category
-# probably because developments are targeting mostly cleared lands
+# though only 16 on the best category
+# probably because developments are targeting already cleared lands near 
+# population centres (where transmission is)
 
 # join back onto data (all in same order, have checked)
 windsolar <- windsolar %>%
@@ -558,7 +536,7 @@ windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
 
 # sankey graph showing pre1750 to today change in veg for solar locations? ----
 
-# need to work out source (pre-1750 veg), target (extant veg), value (MW?)
+# need to work out source (pre-1750 veg), target (extant veg), value (MW)
 sankeylinks <- windsolar %>%
   sf::st_drop_geometry() %>%
   dplyr::select(mvgpre1750_name, mvg_name, type, totalcapacity_mw) %>% 
@@ -592,18 +570,37 @@ p
 
 # can't colour by solar/wind, could make separate diagrams maybe?
 
-# but is there a better way to do this?
+# but is there a better way to visualise this data?
 rm(p, sankeylinks, sankeynodes)
 
+# LAI unfinished ----
 
+# load in pre-summarised Leaf Area Index rasters from GLOBMAP (doi.org/10.5281/zenodo.12698637)
+# for 2001-2003 and 2021-2023
+# can then compare pre- and post- development LAI for wind/solar locations?
+# theoretically should indicate change in density of vegetation
+# BUT will have to BUFFER POINTS as many of these on roads adjacent to actual development
+# (BUT then doesn't this mean we could be picking up e.g. clearing across the road??)
+# but maybe that's okay??? could be influence of development on clearing in the neighbourhood??
+
+mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
+mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
+
+# extract values (should buffer first but just trying it for now)
+extraction <- terra::extract(mean_LAI_0103, windsolar)
+hist(extraction$lyr.1) # mostly low LAI values
+extraction2 <- terra::extract(mean_LAI_2123, windsolar)
+hist(extraction2$lyr.1) # mostly low still, some higher
+
+# dif bw 2 values?
+difLAI <- extraction2$lyr.1 - extraction$lyr.1
+hist(difLAI) # mstly close to 0, some -ve but most +ve
 
 
 # TO DOs
-#   - try also with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
-#   - move Will's graphs in here to make with updated data also
+#   - combine similar NVIS vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)
+#   - try buffering (prop to MW?) with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
 #   - cache all data as csv, make more graphs and a nice map to export
-#   - work out spatial resolution needed for insights (should I buffer all points??? 1 km???)
-#   - combine similar vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)???
 
 # write data output for now
 
