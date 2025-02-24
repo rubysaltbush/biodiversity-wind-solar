@@ -41,9 +41,9 @@ date_last_researched,project_name,phase_name,project_other_names,capacity_mw,sta
 21/7/2023,Ferguson wind farm,--,NA,12,operating,2021,NA,Prime Super PTY LTD,-38.6109,143.1794,exact,NA,Victoria,wind,TRUE,TRUE,0,-38.6109,143.1794,TRUE,TRUE,TRUE,
 21/7/2023,Flat Rock wind farm,1,NA,75.6,construction,2024,NA,Enel Green Power SpA,-33.9717,117.3435,exact,NA,Western Australia,wind,TRUE,FALSE,2.6,-33.9928,117.3543,FALSE,FALSE,TRUE,
 4/10/2023,Flyers Creek wind farm,--,NA,145,construction,2024,Iberdrola Australia,Iberdola Australia,-33.5633,149.0804,approximate,Orange,New South Wales,wind,TRUE,FALSE,16.3,-33.5323,149.2537,FALSE,FALSE,TRUE,
-13/7/2023,Golden Plains wind farm (Australia),1,"Golden Plains Wind Farm East (Phase 1), Golden Plains Wind Farm West (Phase 2)",756,construction,2026,NA,Tag Energy ; Ingka Group,-37.9717,143.8008,exact,NA,NA,wind,TRUE,FALSE,1.6,-37.9729,143.783,FALSE,FALSE,TRUE,
+13/7/2023,Golden Plains wind farm (Australia),1,"Golden Plains Wind Farm East (Phase 1), Golden Plains Wind Farm West (Phase 2)",756,construction,2025,NA,Tag Energy ; Ingka Group,-37.9717,143.8008,exact,NA,NA,wind,TRUE,FALSE,1.6,-37.9729,143.783,FALSE,FALSE,TRUE,expected to complete construction this year
 12/7/2023,Goyder South wind farm,1A,Stony Gap (Phase 0),209,construction,2024,Neoen,Neoen,-33.743,138.9977,approximate,Burra,South Australia,wind,TRUE,FALSE,1.6,-33.7442,138.9809,FALSE,FALSE,TRUE,
-19/7/2023,Goyder South wind farm,1B,Stony Gap (Phase 0),204,construction,NA,Neoen,Neoen,-33.785,138.889,approximate,Burra,South Australia,wind,TRUE,FALSE,2.3,-33.7703,138.9076,FALSE,FALSE,TRUE,
+19/7/2023,Goyder South wind farm,1B,Stony Gap (Phase 0),204,construction,2025,Neoen,Neoen,-33.785,138.889,approximate,Burra,South Australia,wind,TRUE,FALSE,2.3,-33.7703,138.9076,FALSE,FALSE,TRUE,
 23/9/2022,Granville Harbour wind farm,--,NA,112,operating,2020,NA,Palisade Investment Partners LLC,-41.7803,145.039,exact,NA,Tasmania,wind,TRUE,FALSE,0.3,-41.7816,145.0422,FALSE,FALSE,TRUE,
 23/9/2022,Gullen Range wind farm,1,NA,138,operating,2014,Goldwind Australia,Beijing Jingneng Clean Energy (Australia) Holding PTY LTD (BJCE),-34.5442,149.4331,exact,NA,New South Wales,wind,TRUE,TRUE,0,-34.5442,149.4331,TRUE,TRUE,TRUE,
 23/9/2022,Gullen Range wind farm,2,NA,27,operating,2014,Goldwind Australia,Beijing Jingneng Clean Energy (Australia) Holding PTY LTD (BJCE),-34.6329,149.456,exact,NA,New South Wales,wind,TRUE,TRUE,0,-34.6329,149.456,TRUE,TRUE,TRUE,
@@ -107,7 +107,7 @@ date_last_researched,project_name,phase_name,project_other_names,capacity_mw,sta
 17/7/2023,Wambo Wind Farm Project,1,NA,252,construction,2025,NA,Renewable Energy Partners (REP); Cubico Sustainable Investments,-26.6582,151.3346,exact,NA,Queensland,wind,TRUE,FALSE,11,-26.5954,151.2463,FALSE,FALSE,TRUE,
 13/10/2022,Warradarge wind farm,--,NA,184,operating,2021,DIF Capital Partners; Bright Energy Investments (BEI),DIF Capital Partners; Bright Energy Investments (BEI),-29.9564,115.502,exact,Eneabba,Western Australia,wind,TRUE,FALSE,3.6,-29.9384,115.5336,FALSE,FALSE,TRUE,
 23/9/2022,Waterloo wind farm (Australia),1,NA,111,operating,2010,Palisade Asset Management LLC; Northleaf Capital Partners,NA,-33.9965,138.9152,exact,NA,South Australia,wind,TRUE,TRUE,0,-33.9965,138.9152,TRUE,TRUE,TRUE,
-13/10/2022,Waterloo wind farm (Australia),2,NA,20,operating,NA,Palisade Asset Management LLC; Northleaf Capital Partners,NA,-34.0011,138.911,exact,Waterloo,South Australia,wind,TRUE,TRUE,0,-34.0011,138.911,TRUE,TRUE,TRUE,updated mw calculated for 6*3.3.MW turbines added
+13/10/2022,Waterloo wind farm (Australia),2,NA,20,operating,2016,Palisade Asset Management LLC; Northleaf Capital Partners,NA,-34.0011,138.911,exact,Waterloo,South Australia,wind,TRUE,TRUE,0,-34.0011,138.911,TRUE,TRUE,TRUE,updated mw calculated for 6*3.3.MW turbines added
 23/9/2022,Wattle Point wind farm,--,NA,91,operating,2005,Infrastructure Capital Group,Infrastructure Capital Group,-35.1373,137.6977,exact,NA,South Australia,wind,TRUE,TRUE,0,-35.1373,137.6977,TRUE,TRUE,TRUE,
 23/9/2022,Waubra wind farm,--,NA,192,operating,2009,Acciona Energy,Acciona Energy,-37.3614,143.6026,exact,NA,Victoria,wind,TRUE,TRUE,0,-37.3614,143.6026,TRUE,TRUE,TRUE,
 23/9/2022,White Rock wind farm,1,NA,175,operating,2018,Goldwind; CECEP Wind-Power Corporation LTD (CECWPC),NA,-29.7877,151.5479,exact,NA,New South Wales,wind,TRUE,FALSE,3,-29.7718,151.5755,FALSE,FALSE,TRUE,
@@ -120,11 +120,11 @@ date_last_researched,project_name,phase_name,project_other_names,capacity_mw,sta
 23/9/2022,Yandin wind farm,--,NA,214,operating,2021,RATCH-Australia Corporation,RATCH-Australia Corporation Pty Ltd,-30.7629,115.6359,approximate,Dandaragan,Western Australia,wind,TRUE,FALSE,11.4,-30.6723,115.703,FALSE,FALSE,TRUE,
 23/9/2022,Chepstowe wind farm,--,NA,6,operating,2015,Fezero PTY LTD,Fezero PTY LTD,-37.5959,143.4957,exact,NA,Victoria,wind,TRUE,FALSE,0.35,-37.5965,143.4996,FALSE,FALSE,TRUE,
 23/9/2022,Crookwell wind farm,1,NA,4.8,operating,1998,NA,NA,-34.5165,149.5425,exact,NA,New South Wales,wind,TRUE,TRUE,0,-34.5165,149.5425,TRUE,TRUE,TRUE,
-21/7/2023,Diapur 2 wind farm,--,NA,8,operating,NA,RPMI Railpen (formerly BayWa),Prime Super PTY LTD,-36.3405,141.4342,exact,NA,Victoria,wind,TRUE,FALSE,1.2,-36.34,141.4474,FALSE,FALSE,TRUE,
-23/9/2022,Hepburn wind farm,--,NA,4,operating,NA,Hepburn Energy,Hepburn Energy,-37.4267,144.121,exact,NA,Victoria,wind,TRUE,FALSE,0.5,-37.4246,144.1157,FALSE,FALSE,TRUE,
+21/7/2023,Diapur 2 wind farm,--,NA,8,operating,2021,RPMI Railpen (formerly BayWa),Prime Super PTY LTD,-36.3405,141.4342,exact,NA,Victoria,wind,TRUE,FALSE,1.2,-36.34,141.4474,FALSE,FALSE,TRUE,
+23/9/2022,Hepburn wind farm,--,NA,4,operating,2011,Hepburn Energy,Hepburn Energy,-37.4267,144.121,exact,NA,Victoria,wind,TRUE,FALSE,0.5,-37.4246,144.1157,FALSE,FALSE,TRUE,community owned
 23/9/2022,Karakin wind farm,--,NA,5,operating,2013,NA,NA,-31.0074,115.466,exact,NA,Western Australia,wind,TRUE,FALSE,11.9,-30.9422,115.3666,FALSE,FALSE,TRUE,
 23/9/2022,Maroona wind farm,--,NA,6,operating,2010,NA,NA,-37.4338,142.8218,exact,NA,Victoria,wind,TRUE,FALSE,1.65,-37.4188,142.8243,FALSE,FALSE,TRUE,
-23/9/2022,Timboon West wind farm,--,NA,7,operating,NA,NA,NA,-38.5284,142.9162,exact,NA,Victoria,wind,TRUE,TRUE,0,-38.5284,142.9162,TRUE,TRUE,TRUE,
+23/9/2022,Timboon West wind farm,--,NA,7,operating,2018,NA,NA,-38.5284,142.9162,exact,NA,Victoria,wind,TRUE,TRUE,0,-38.5284,142.9162,TRUE,TRUE,TRUE,
 23/9/2022,West Hills wind farm,--,NA,5,operating,2013,NA,NA,-30.8711,115.3919,exact,NA,Western Australia,wind,TRUE,FALSE,6.95,-30.8581,115.4633,FALSE,FALSE,TRUE,
 25/7/2023,Avonlie Solar,--,NA,245,construction,2023,Iberdrola,Iberdrola SA,-34.9173,146.594,exact,NA,New South Wales,solar,TRUE,FALSE,1.35,-34.9183,146.6092,FALSE,FALSE,TRUE,
 27/7/2023,Bannerton solar farm,--,NA,110,operating,2019,NA,Foresight Solar Fund,-34.6863,142.7455,exact,NA,Victoria,solar,TRUE,FALSE,1.5,-34.6728,142.7498,FALSE,FALSE,TRUE,"solar farm colocated with almond orchard, opportunity for solar pollinator intervention??"
