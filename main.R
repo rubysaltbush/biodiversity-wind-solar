@@ -9,9 +9,10 @@ library(patchwork)
 library(jsonlite)
 library(networkD3)
 
-# functions
+# functions ----
 source("scripts/functions/cache_csv.R")
 
+# analysis scripts ----
 # first, preprocess systematic review data
 source("scripts/data_prep.R")
 
@@ -21,6 +22,5 @@ source("scripts/sysreview_analysis.R")
 # mapping wind and solar facilities against ecosystems and biodiversity across Aus
 source("scripts/mapping.R")
 
-# Will's mapping of wind/solar facilities vs climate (update with new wind/solar data once processed?)
-source("scripts/mapping_climate.R")
+
 
