@@ -86,25 +86,28 @@ rm(solar_gipt, wind_gipt)
 # write combined data to output folder for error checking
 readr::write_csv(windsolar, "data_output/windsolar_gipt_aus.csv")
 
+})
+
 # now read in error-checked version of this data, with lat/longs manually
 # updated by reference to satellite imagery to ensure accuracy
 windsolar <- readr::read_csv("data_input/windsolar_gipt_aus_checked.csv")
 
-})
-
 # now summarise data so that each row represents a single project and location
 windsolar <- windsolar %>%
+  dplyr::filter(start_year <= 2025) %>% # filter out 7 projects that haven't started building yet
   dplyr::group_by(project_name, project_other_names, type, status, 
                   operator, owner, lat, lon, state) %>%
   dplyr::summarise(phase_names = paste0(phase_name, collapse = ","),
                    totalcapacity_mw = sum(capacity_mw),
-                   start_years = paste0(start_year, collapse = ","))
-windsolar$project_name[duplicated(windsolar$project_name)]
-# collapses 17 rows, still 18 projects on multiple rows
+                   earliest_start = min(start_year),
+                   latest_start = max(start_year))
+length(windsolar$project_name[duplicated(windsolar$project_name)])
+# 38 -> 23 projects on multiple rows, mostly those with multiple stages in different locations
 length(unique(windsolar$project_name))
-# 246 unique projects
+# 239 unique projects
 
-# need background Aus map
+# aus outline ----
+
 # read in shapefile of Aus outline
 aus <- terra::vect("data_input/Aus_outline.shp")
 # bit slow and over complex, simplify to make faster
@@ -114,7 +117,8 @@ aus <- terra::crop(aus, terra::ext(c(xmin = 112, xmax = 155, ymin = -43.74, ymax
 # convert aus to sf for easy plotting
 aus <- sf::st_as_sf(aus)
 
-# okay now for biome map
+# biomes ----
+# read in shapefile of Australian biomes, borders = IBRA subregions
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
@@ -139,25 +143,26 @@ windsolar <- sf::st_join(windsolar, biomes) %>%
   dplyr::distinct()
 
 # simplify to a df of biome with #s of wind and solar facilities in them
+# also summed maximum capacity (mw) of facilities
 windsolar_biomesummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(biome, type) %>%
+  dplyr::select(biome, type, totalcapacity_mw) %>%
   dplyr::group_by(biome, type) %>%
-  dplyr::summarise(number = n()) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 windsolar_biomesummary
-# biome                                                        type  number
-# <chr>                                                        <chr>  <int>
-# 1 Deserts and Xeric Shrublands                                 solar     24
-# 2 Deserts and Xeric Shrublands                                 wind      15
-# 3 Mediterranean Forests, Woodlands and Scrub                   solar     20
-# 4 Mediterranean Forests, Woodlands and Scrub                   wind      28
-# 5 Temperate Broadleaf and Mixed Forest                         solar     42
-# 6 Temperate Broadleaf and Mixed Forest                         wind      64
-# 7 Temperate Grasslands, Savannas and Shrublands                solar     20
-# 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar     46
-# 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind       7
-# 10 Tropical and Subtropical Moist Broadleaf Forests            wind       2
+# biome                                                        type  number sumcapmw
+# <chr>                                                        <chr>  <int>    <dbl>
+# 1 Deserts and Xeric Shrublands                                 solar     17     825 
+# 2 Deserts and Xeric Shrublands                                 wind      14    1865 
+# 3 Mediterranean Forests, Woodlands and Scrub                   solar     31    1917.
+# 4 Mediterranean Forests, Woodlands and Scrub                   wind      30    2748.
+# 5 Temperate Broadleaf and Mixed Forest                         solar     42    3615.
+# 6 Temperate Broadleaf and Mixed Forest                         wind      61    8564.
+# 7 Temperate Grasslands, Savannas and Shrublands                solar     14    1196.
+# 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar     45    3640.
+# 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind       6    1556 
+# 10 Tropical and Subtropical Moist Broadleaf Forests            wind       2     169 
 
 # now display in stacked bar chart
 windsolar_biomesummary %>%
@@ -173,30 +178,7 @@ windsolar_biomesummary %>%
 ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
 # interesting that temperate forest is most represented biome
 # given deserts is our biggest biome by land area
-# bias of population centres - could show this in data or just discuss it
-
-# try same graph but counting by maximum capacity of facilities rather than
-# just number of facilities
-# simplify to a df of biome with #s of wind and solar facilities in them
-windsolar_biomesummary <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::select(biome, type, totalcapacity_mw) %>%
-  dplyr::group_by(biome, type) %>%
-  dplyr::summarise(sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
-windsolar_biomesummary
-# biome                                                        type  sumcapmw
-# <chr>                                                        <chr>    <dbl>
-# 1 Deserts and Xeric Shrublands                                 solar     901.
-# 2 Deserts and Xeric Shrublands                                 wind     1904 
-# 3 Mediterranean Forests, Woodlands and Scrub                   solar    1707 
-# 4 Mediterranean Forests, Woodlands and Scrub                   wind     2762.
-# 5 Temperate Broadleaf and Mixed Forest                         solar    3835.
-# 6 Temperate Broadleaf and Mixed Forest                         wind     8004.
-# 7 Temperate Grasslands, Savannas and Shrublands                solar    1338.
-# 8 Tropical and Subtropical Grasslands, Savannas and Shrublands solar    3765 
-# 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind     2479 
-# 10 Tropical and Subtropical Moist Broadleaf Forests            wind      169 
+# bias of population centres, also concentrated in temp forest biome
 
 # now display in stacked bar chart
 windsolar_biomesummary %>%
@@ -252,8 +234,8 @@ windsolarV <- terra::project(windsolarV, terra::crs(nvis_extant))
 extraction <- terra::extract(nvis_extant, windsolarV)
 # it works!! 
 table(extraction$`nvis-mvg_1`)
-# 3   5   6   7   9  10  11  14  15  16  17  18  19  20  21  22  25  27  29  99 
-# 6   9  10   7   1   1   3   2   1   2   1   4   3   2   2  16 193   2   2   1 
+# 3   5   6   7  11  12  13  14  15  17  18  19  20  21  22  25  27  29  99 
+# 4   6   2   1   5   1   1   1   1   2   2   5   1   2   7 217   2   1   1 
 # mostly 25, the code for cleared land, which makes sense. woot woot.
 
 # join back onto data (all in same order, have checked)
@@ -326,8 +308,8 @@ nvis_pre1750 <- nvis_pre1750[[1]]
 extraction <- terra::extract(nvis_pre1750, windsolarV)
 # it works!! 
 table(extraction$nvis7_0_aust_pre_mvg_alb_1)
-# 1   2   3   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  21  22  27  31  32 
-# 2   1  23 113  10   2   3   1   1  17   1   1  11   2  11   9   5  22   7  17   1   2   6 
+# 1   2   3   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  26  27  31 32
+# 4   1  22 107   7   1   3   1   1  21   2   1  18   2   2  12   4  28   1   7   7   1   1   1 7
 
 # without cleared land considered the original ecosystems which wind and solar
 # farms are located on seem more diverse, though eucalypt woodlands (5) has most
