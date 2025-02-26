@@ -1,18 +1,18 @@
 ﻿mvg_code,mvg_name,mvg_simplified
 1,Rainforests and Vine Thickets   ,Rainforests and Vine Thickets   
-2,Eucalypt Tall Open Forests   ,Eucalypt forests
-3,Eucalypt Open Forests    ,Eucalypt forests
-4,Eucalypt Low Open Forests   ,Eucalypt forests
-5,Eucalypt Woodlands     ,Eucalypt woodlands
+2,Eucalypt Tall Open Forests   ,Eucalypt forests and woodlands
+3,Eucalypt Open Forests    ,Eucalypt forests and woodlands
+4,Eucalypt Low Open Forests   ,Eucalypt forests and woodlands
+5,Eucalypt Woodlands     ,Eucalypt forests and woodlands
 6,Acacia Forests and Woodlands   ,Non-eucalypt forests and woodlands
 7,Callitris Forests and Woodlands   ,Non-eucalypt forests and woodlands
 8,Casuarina Forests and Woodlands   ,Non-eucalypt forests and woodlands
 9,Melaleuca Forests and Woodlands   ,Non-eucalypt forests and woodlands
 10,Other Forests and Woodlands   ,Non-eucalypt forests and woodlands
-11,Eucalypt Open Woodlands    ,Eucalypt woodlands
-12,Tropical Eucalypt Woodlands/Grasslands    ,Eucalypt woodlands
+11,Eucalypt Open Woodlands    ,Eucalypt forests and woodlands
+12,Tropical Eucalypt Woodlands/Grasslands    ,Eucalypt forests and woodlands
 13,Acacia Open Woodlands    ,Non-eucalypt forests and woodlands
-14,Mallee Woodlands and Shrublands   ,Eucalypt woodlands
+14,Mallee Woodlands and Shrublands   ,Eucalypt forests and woodlands
 15,Low Closed Forests and Tall Closed Shrublands,Shrublands
 16,Acacia Shrublands     ,Shrublands
 17,Other Shrublands     ,Shrublands
@@ -21,13 +21,13 @@
 20,Hummock Grasslands     ,Grasslands
 21,"Other Grasslands, Herblands, Sedgelands and Rushlands ",Grasslands
 22,"Chenopod Shrublands, Samphire Shrublands and Forblands ",Shrublands
-23,Mangroves      ,Aquatic vegetation
-24,"Inland aquatic - freshwater, salt lakes, lagoons",Aquatic vegetation
+23,Mangroves      ,Aquatic vegetation and salt lakes
+24,"Inland aquatic - freshwater, salt lakes, lagoons",Aquatic vegetation and salt lakes
 25,"Cleared, non-native vegetation, buildings   ","Cleared, non-native vegetation, buildings   "
-26,Unclassified native vegetation    ,Other
-27,"Naturally bare - sand, rock, claypan, mudflat",Other
-28,Sea and estuaries    ,Aquatic vegetation
-29,"Regrowth, modified native vegetation   ",Other
+26,Unclassified native vegetation    ,"Bare ground, modified native vegetation, other"
+27,"Naturally bare - sand, rock, claypan, mudflat","Bare ground, modified native vegetation, other"
+28,Sea and estuaries    ,Aquatic vegetation and salt lakes
+29,"Regrowth, modified native vegetation   ","Bare ground, modified native vegetation, other"
 31,Other Open Woodlands    ,Non-eucalypt forests and woodlands
-32,Mallee Open Woodlands and Sparse Mallee Shrublands,Eucalypt woodlands
-99,Unknown/no data     ,Other
+32,Mallee Open Woodlands and Sparse Mallee Shrublands,Eucalypt forests and woodlands
+99,Unknown/no data     ,"Bare ground, modified native vegetation, other"

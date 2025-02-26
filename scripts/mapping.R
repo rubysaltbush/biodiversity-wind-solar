@@ -130,7 +130,7 @@ sf::st_crs(biomes) <- "EPSG:4326"
 ggplot() +
   geom_sf(data = aus, fill = NA, linewidth = 0.1) +
   geom_sf(data = biomes, aes(fill = biome), linewidth = 0.01) +
-  scale_fill_brewer(palette = "Pastel1") +
+  scale_fill_grey(start = 1, end = 0) +
   geom_sf(data = windsolar, aes(shape = type, colour = type, size = totalcapacity_mw)) +
   scale_colour_discrete(type = my_colours$windsolar, name = "facility type") +
   scale_shape(name = "facility type") +
@@ -171,7 +171,7 @@ windsolar_biomesummary %>%
   ggplot(aes(x = biome, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Biome") +
   ylab("Number of facilities") +
   coord_flip()
@@ -187,7 +187,7 @@ windsolar_biomesummary %>%
   ggplot(aes(x = biome, y = sumcapmw, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Biome") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
@@ -251,20 +251,33 @@ rm(extraction, nvis_extant)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvg_name, type, totalcapacity_mw) %>%
-  dplyr::group_by(mvg_name, type) %>%
+  dplyr::select(mvg_simplified, type, totalcapacity_mw) %>%
+  dplyr::group_by(mvg_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 mvg_windsolarsummary
+# mvg_simplified                            type  number sumcapmw
+# <chr>                                     <chr>  <int>    <dbl>
+#   1 Cleared, non-native vegetation, buildings solar    126    9706.
+# 2 Cleared, non-native vegetation, buildings wind      91   12034.
+# 3 Eucalypt forests and woodlands            solar      5     228.
+# 4 Eucalypt forests and woodlands            wind      12    1913 
+# 5 Grasslands                                solar      7     560.
+# 6 Grasslands                                wind       1     113 
+# 7 Non-eucalypt forests and woodlands        solar      4     179.
+# 8 Other                                     solar      1      60 
+# 9 Other                                     wind       3     328 
+# 10 Shrublands                                solar      6     460 
+# 11 Shrublands                                wind       6     514.
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  dplyr::mutate(mvg_name = forcats::fct_inorder(mvg_name)) %>%
-  ggplot(aes(x = mvg_name, y = number, fill = type)) +
+  dplyr::mutate(mvg_simplified = forcats::fct_inorder(mvg_simplified)) %>%
+  ggplot(aes(x = mvg_simplified, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group") +
   ylab("Number of facilities") +
   coord_flip()
@@ -273,11 +286,11 @@ ggsave("figures/aus_facilities_by_mvg.png", width = 9, height = 7)
 # now display capacity in stacked bar chart
 mvg_windsolarsummary %>%
   dplyr::arrange(-sumcapmw) %>%
-  dplyr::mutate(mvg_name = forcats::fct_inorder(mvg_name)) %>%
-  ggplot(aes(x = mvg_name, y = sumcapmw, fill = type)) +
+  dplyr::mutate(mvg_simplified = forcats::fct_inorder(mvg_simplified)) %>%
+  ggplot(aes(x = mvg_simplified, y = sumcapmw, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
@@ -316,7 +329,8 @@ table(extraction$nvis7_0_aust_pre_mvg_alb_1)
 
 # rename mvgcodes columns
 mvgcodes <- dplyr::rename(mvgcodes, mvgpre1750_code = mvg_code, 
-                          mvgpre1750_name = mvg_name)
+                          mvgpre1750_name = mvg_name,
+                          mvgpre1750_simplified = mvg_simplified)
 
 # join back onto data (all in same order, have checked)
 windsolar <- windsolar %>%
@@ -330,20 +344,33 @@ rm(extraction, mvgcodes, nvis_pre1750)
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_name, type, totalcapacity_mw) %>%
-  dplyr::group_by(mvgpre1750_name, type) %>%
+  dplyr::select(mvgpre1750_simplified, type, totalcapacity_mw) %>%
+  dplyr::group_by(mvgpre1750_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 mvg_windsolarsummary
+# mvgpre1750_simplified              type  number sumcapmw
+# <chr>                              <chr>  <int>    <dbl>
+#   1 Eucalypt forests and woodlands     solar    110    8931.
+# 2 Eucalypt forests and woodlands     wind      68    9118.
+# 3 Grasslands                         solar     15     806.
+# 4 Grasslands                         wind      21    3467 
+# 5 Non-eucalypt forests and woodlands solar     13     847.
+# 6 Non-eucalypt forests and woodlands wind       2      96 
+# 7 Other                              wind       2     173 
+# 8 Rainforests and Vine Thickets      solar      1      40 
+# 9 Rainforests and Vine Thickets      wind       3     376 
+# 10 Shrublands                         solar     10     570.
+# 11 Shrublands                         wind      17    1672.
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  dplyr::mutate(mvgpre1750_name = forcats::fct_inorder(mvgpre1750_name)) %>%
-  ggplot(aes(x = mvgpre1750_name, y = number, fill = type)) +
+  dplyr::mutate(mvgpre1750_simplified = forcats::fct_inorder(mvgpre1750_simplified)) %>%
+  ggplot(aes(x = mvgpre1750_simplified, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Number of facilities") +
   coord_flip()
@@ -352,11 +379,11 @@ ggsave("figures/aus_facilities_by_mvgpre1750.png", width = 9, height = 7)
 # and stacked bar chart by total capacity
 mvg_windsolarsummary %>%
   dplyr::arrange(-sumcapmw) %>%
-  dplyr::mutate(mvgpre1750_name = forcats::fct_inorder(mvgpre1750_name)) %>%
-  ggplot(aes(x = mvgpre1750_name, y = sumcapmw, fill = type)) +
+  dplyr::mutate(mvgpre1750_simplified = forcats::fct_inorder(mvgpre1750_simplified)) %>%
+  ggplot(aes(x = mvgpre1750_simplified, y = sumcapmw, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
