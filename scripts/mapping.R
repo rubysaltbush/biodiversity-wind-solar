@@ -449,7 +449,7 @@ landcap_windsolarsummary %>%
   ggplot(aes(x = land_capability, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Agricultural land capability") +
   ylab("Number of facilities") +
   scale_x_continuous(breaks = c(1:9)) +
@@ -462,7 +462,7 @@ landcap_windsolarsummary %>%
   ggplot(aes(x = land_capability, y = sumcapmw, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Agricultural land capability") +
   ylab("Total maximum capacity (MW)") +
   scale_x_continuous(breaks = c(1:9)) +
