@@ -94,7 +94,7 @@ windsolar <- readr::read_csv("data_input/windsolar_gipt_aus_checked.csv")
 
 # now summarise data so that each row represents a single project and location
 windsolar <- windsolar %>%
-  dplyr::filter(start_year <= 2025) %>% # filter out 7 projects that haven't started building yet
+  dplyr::filter(start_year <= 2025) %>% # filter out 7 projects that haven't started construction yet
   dplyr::group_by(project_name, project_other_names, type, status, 
                   operator, owner, lat, lon, state) %>%
   dplyr::summarise(phase_names = paste0(phase_name, collapse = ","),
@@ -129,11 +129,11 @@ sf::st_crs(biomes) <- "EPSG:4326"
 # make map!
 ggplot() +
   geom_sf(data = aus, fill = NA, linewidth = 0.1) +
-  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.01, alpha = 0.3) +
-  scale_fill_brewer(palette = "Set1") +
+  geom_sf(data = biomes, aes(fill = biome), linewidth = 0.01) +
+  scale_fill_brewer(palette = "Pastel1") +
   geom_sf(data = windsolar, aes(shape = type, colour = type, size = totalcapacity_mw)) +
-  scale_colour_brewer(palette = "Set1", name = "facility type") +
-  scale_shape(solid = FALSE, name = "facility type") +
+  scale_colour_discrete(type = my_colours$windsolar, name = "facility type") +
+  scale_shape(name = "facility type") +
   scale_size(name = "total capacity (mw)") +
   theme_void()
 ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
@@ -171,7 +171,7 @@ windsolar_biomesummary %>%
   ggplot(aes(x = biome, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "YlGnBu") +
   xlab("Biome") +
   ylab("Number of facilities") +
   coord_flip()

@@ -1,7 +1,7 @@
 # script to pre-process GLOBMAP LAI rasters, creating mean raster for global LAI
 # from 2001-2003 and 2021-2023 (to even out intra- and inter-annual variation in LAI)
 
-# descision point - could get e.g. 1995-1998 LAI data (pre-any of our wind farms)
+# decision point - could get e.g. 1995-1998 LAI data (pre-any of our wind farms)
 # but this is from AVHRR while post-2000 is from MODIS (better quality)
 
 LAI_rasters <- list()
