@@ -8,6 +8,8 @@ library(ggpubr)
 library(patchwork)
 library(jsonlite)
 library(networkD3)
+library(htmlwidgets)
+library(webshot)
 
 # functions ----
 source("scripts/functions/cache_csv.R")

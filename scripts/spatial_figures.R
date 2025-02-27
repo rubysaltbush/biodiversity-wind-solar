@@ -207,18 +207,20 @@ sankeylinks <- windsolar %>%
 sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", 
                                           sankeylinks$mvgpre1750_simplified)
 
+# add group for colouring
 # create nodes df for sankey
 sankeynodes <- data.frame(
   name = c(as.character(sankeylinks$mvgpre1750_simplified), 
            as.character(sankeylinks$mvg_simplified)) %>% unique()
 )
 
-# for colouring 
-# Add a 'group' column to the nodes data frame:
-sankeynodes$group <- as.factor(c("a","b","c","d","e","f","a","b","e","c","g"))
+# for colouring plot
+# add a 'group' column to the nodes and links data frame
+sankeylinks$group <- as.factor("a")
+sankeynodes$group <- as.factor("a")
 
 # prepare colour scale for groups
-sankey_col <- 'd3.scaleOrdinal() .domain(["a", "b", "c", "d", "e", "f", "g"]) .range(["#90d743", "#21918c", "#443983", "#440154", "#35b779", "#fde725", "#31688e"])'
+sankey_col <- 'd3.scaleOrdinal() .domain(["a"]) .range(["#FACB0F"])'
 
 # reformat name to id for networkD3 connection
 sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name) - 1
@@ -233,15 +235,76 @@ p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
                               Source = "IDsource", Target = "IDtarget",
                               Value = "sumcapmw", NodeID = "name", 
                               colourScale = sankey_col,
+                              LinkGroup="group", NodeGroup="group",
+                              sinksRight = FALSE)
+
+# takes wrangling to save as pdf
+require(htmlwidgets)
+htmlwidgets::saveWidget(p, file = "figures/sankey_solar.html")
+
+require(webshot)
+# replace below URL with your unique file path for above html!
+# also need to install phantomJS for webshot to work, so complicated
+webshot::webshot(url = "file:///Users/rubysaltbush/Desktop/R/biodiversity-wind-solar/figures/sankey_solar.html", 
+                 file = "figures/sankey_solar.pdf")
+# okay can edit text size/font from this pdf but colours more difficult
+
+### wind ----
+# need to work out source (pre-1750 veg), target (extant veg), value (MW)
+sankeylinks <- windsolar %>%
+  dplyr::filter(type == "wind") %>%
+  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
+  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
+  dplyr::ungroup()
+
+# add dummy spaces in one column so sankey diagram won't lump categories
+sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", 
+                                          sankeylinks$mvgpre1750_simplified)
+
+# add group for colouring
+# create nodes df for sankey
+sankeynodes <- data.frame(
+  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
+           as.character(sankeylinks$mvg_simplified)) %>% unique()
+)
+
+# for colouring plot
+# add a 'group' column to the nodes and links data frame
+sankeylinks$group <- as.factor("a")
+sankeynodes$group <- as.factor("a")
+
+# prepare colour scale for groups
+sankey_col <- 'd3.scaleOrdinal() .domain(["a"]) .range(["#377EB8"])'
+
+# reformat name to id for networkD3 connection
+sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name) - 1
+sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name) - 1
+
+# # prepare colour scale: rename below with categories and hex codes once ready to make final graph
+# # i.e. once have lumped all vegetation categories
+# sankey_col <- 'd3.scaleOrdinal() .domain([" Eucalypt forests and woodlands", "Eucalypt forests and woodlands", " Grasslands", "Grasslands", " Non-eucalypt forests and woodlands", "Non-eucalypt forests and woodlands", " Rainforests and Vine Thickets", " Shrublands", "Shrublands", "Bare ground, modified native vegetation, other", "Cleared, non-native vegetation, buildings"]) .range(["#7fc97f", "#7fc97f", "#fdc086" , "#fdc086", "#386cb0", "#386cb0", "#f0027f", "#beaed4", "#beaed4", "#ffff99", "#bf5b17"])'
+
+# Make the Network
+p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
+                              Source = "IDsource", Target = "IDtarget",
+                              Value = "sumcapmw", NodeID = "name", 
+                              colourScale = sankey_col,
+                              LinkGroup="group", NodeGroup="group",
                               sinksRight = FALSE)
 p
 
-# GAH can't get pre-1750 groups to have variable colours, bug??
-# looks much better with simplified veg categories!
+# takes wrangling to save as pdf
+htmlwidgets::saveWidget(p, file = "figures/sankey_wind.html", selfcontained = TRUE)
 
-# TO DO - separate sankeys for wind and solar
-#       - colour veg groups (and lines?) consistently
-rm(p, sankeylinks, sankeynodes)
+# replace below URL with your unique file path for above html!
+webshot::webshot(url = "file:///Users/rubysaltbush/Desktop/R/biodiversity-wind-solar/figures/sankey_wind.html", 
+                 file = "figures/sankey_wind.pdf")
+
+# looks much better with simplified veg categories!
+# can edit text font/size etc in Illustrator from pdf
+
+rm(p, sankeylinks, sankeynodes, sankey_col)
 
 # land capability mapping (Adams & Engert 2023) ----
 
