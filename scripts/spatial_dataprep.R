@@ -115,7 +115,6 @@ length(windsolar$project_name[duplicated(windsolar$project_name)])
 length(unique(windsolar$project_name))
 # 239 unique projects
 
-
 # biomes ----
 # read in shapefile of Australian biomes, borders = IBRA subregions
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
@@ -159,6 +158,8 @@ mvgcodes <- readr::read_csv("data_input/mvg_codes_names.csv")
 
 # vectorise wind and solar farm points
 windsolarV <- terra::vect(windsolar)
+# can now drop sf geometry from windsolar df
+windsolar <- sf::st_drop_geometry(windsolar)
 # re-project into raster's Albers equal area projection
 windsolarV <- terra::project(windsolarV, terra::crs(nvis_extant))
 

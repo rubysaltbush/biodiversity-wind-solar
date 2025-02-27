@@ -1,30 +1,17 @@
-# script to produce figures from cached spatial data from pre-prepared
-# spatial data on Australian wind and solar farm environments
+# script to produce figures from pre-prepared (cached)  data on Australian 
+# wind and solar farms and their environments
 
+# aus biome map ----
 
-# aus outline ----
-
-# read in shapefile of Aus outline
-aus <- terra::vect("data_input/Aus_outline.shp")
-# bit slow and over complex, simplify to make faster
-aus <- terra::simplifyGeom(aus, tolerance = 0.01)
-# crop to remove Norfolk and Christmas Islands from outline
-aus <- terra::crop(aus, terra::ext(c(xmin = 112, xmax = 155, ymin = -43.74, ymax = -9.14)))
-# convert aus to sf for easy plotting
-aus <- sf::st_as_sf(aus)
-
-# biomes ----
 # read in shapefile of Australian biomes, borders = IBRA subregions
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
 windsolar <- sf::st_as_sf(windsolar, coords = c("lon", "lat"), remove = FALSE, crs = "EPSG:4326")
-sf::st_crs(aus) <- "EPSG:4326"
 sf::st_crs(biomes) <- "EPSG:4326"
 
 # make map!
 ggplot() +
-  geom_sf(data = aus, fill = NA, linewidth = 0.1) +
   geom_sf(data = biomes, aes(fill = biome), linewidth = 0.01) +
   scale_fill_grey(start = 1, end = 0) +
   geom_sf(data = windsolar, aes(shape = type, colour = type, size = totalcapacity_mw)) +
@@ -33,6 +20,9 @@ ggplot() +
   scale_size(name = "total capacity (mw)") +
   theme_void()
 ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
+
+# drop windsolar geometry, not needed from here
+windsolar <- sf::st_drop_geometry(windsolar)
 
 # simplify to a df of biome with #s of wind and solar facilities in them
 # also summed maximum capacity (mw) of facilities
@@ -268,19 +258,6 @@ temp_raster <- terra::mask(temp_raster, region_polygon)
 rain_raster <- terra::mask(rain_raster, region_polygon)
 rm(region_polygon)
 
-# Extract raster values at the points
-windsolar_temp <- terra::extract(temp_raster, windsolar)
-windsolar_rain <- terra::extract(rain_raster, windsolar)
-
-# join these values back to windsolar df
-# join back onto data
-windsolar <- windsolar %>%
-  dplyr::bind_cols(windsolar_temp) %>%
-  dplyr::select(-ID) %>%
-  dplyr::bind_cols(windsolar_rain) %>%
-  dplyr::select(-ID)
-rm(windsolar_temp, windsolar_rain)
-
 # Convert the full rasters to a data frame
 temp_all <- terra::as.data.frame(temp_raster)
 rain_all <- terra::as.data.frame(rain_raster)
@@ -290,14 +267,12 @@ rain_all <- dplyr::mutate(rain_all, type = "All Australia")
 # append wind and solar data
 temp_all <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(type, `CHELSA_bio1_1981-2010_V.2.1`) %>%
-  dplyr::bind_rows(temp_all) %>%
-  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`)
+  dplyr::select(type, MAT) %>%
+  dplyr::bind_rows(temp_all)
 rain_all <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(type, `CHELSA_bio12_1981-2010_V.2.1`) %>%
-  dplyr::bind_rows(rain_all) %>%
-  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`)
+  dplyr::select(type, MAP) %>%
+  dplyr::bind_rows(rain_all)
 
 # now create density plots of these data
 # temperature first
@@ -381,36 +356,12 @@ rm(p, sankeylinks, sankeynodes)
 # but have checked that all points are currently in the middle of the impact area
 # which differs in magnitude for wind and solar - dif buffer sizes maybe?
 
-mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
-mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
 
-# extract values (should buffer first but just trying it for now)
-extraction <- terra::extract(mean_LAI_0103, windsolar)
 hist(extraction$lyr.1) # mostly low LAI values
-extraction2 <- terra::extract(mean_LAI_2123, windsolar)
 hist(extraction2$lyr.1) # mostly low still, some higher
-
-# join this data back to main df
-names(extraction) <- c("ID", "mean_LAI_0103")
-names(extraction2) <- c("ID", "mean_LAI_2123")
-windsolar <- windsolar %>%
-  dplyr::bind_cols(extraction) %>%
-  dplyr::select(-ID) %>%
-  dplyr::bind_cols(extraction2) %>%
-  dplyr::select(-ID) %>%
-  dplyr::mutate(difLAI = mean_LAI_2123 - mean_LAI_0103) # dif between LAI times?
-rm(extraction, extraction2, mean_LAI_0103, mean_LAI_2123)
-
 hist(windsolar$difLAI) # mostly close to 0, some -ve but most +ve
 
 # TO DOs
 #   - try buffering (prop to MW?) with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
 #   - cache all data as csv, make more graphs and a nice map to export
 
-# write data output for now
-
-readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
-
-# read back in
-
-windsolar <- readr::read_csv("data_output/windsolar_environments.csv")
