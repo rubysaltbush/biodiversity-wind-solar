@@ -265,26 +265,10 @@ rm(extraction, land_capability)
 
 # below adapted from Will's code, took out of function so can retain
 # climate data with wind/solar data
-# MIGHT HAVE TO REWRITE TO SEPARATE INTO PREP/FIGURE
 
 # load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
 temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
 rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
-
-# Load the region polygon
-region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = "Australia", returnclass = "sf")
-
-# convert region to SpatVector for terra operations
-region_polygon <- terra::vect(region_polygon)
-
-# crop rasters to the region extent
-temp_raster <- terra::crop(temp_raster, terra::ext(region_polygon))
-rain_raster <- terra::crop(rain_raster, terra::ext(region_polygon))
-
-# Mask the rasters with the region shape
-temp_raster <- terra::mask(temp_raster, region_polygon)
-rain_raster <- terra::mask(rain_raster, region_polygon)
-rm(region_polygon)
 
 # Extract raster values at the points
 windsolar_temp <- terra::extract(temp_raster, windsolar)
@@ -299,114 +283,20 @@ windsolar <- windsolar %>%
   dplyr::select(-ID)
 rm(windsolar_temp, windsolar_rain)
 
-# Convert the full rasters to a data frame
-temp_all <- terra::as.data.frame(temp_raster)
-rain_all <- terra::as.data.frame(rain_raster)
-rm(temp_raster, rain_raster)
-temp_all <- dplyr::mutate(temp_all, type = "All Australia")
-rain_all <- dplyr::mutate(rain_all, type = "All Australia")
-# append wind and solar data
-temp_all <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::select(type, `CHELSA_bio1_1981-2010_V.2.1`) %>%
-  dplyr::bind_rows(temp_all) %>%
-  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`)
-rain_all <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::select(type, `CHELSA_bio12_1981-2010_V.2.1`) %>%
-  dplyr::bind_rows(rain_all) %>%
-  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`)
-
-# now create density plots of these data
-# temperature first
-temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
-  geom_density(alpha = 0.5) +
-  labs(x = "Mean annual temperature (ºC)",
-       y = "Density",
-       colour = "",
-       fill = "") +
-  scale_fill_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  ggpubr::theme_pubr(legend = "right")
-
-# then precipitation
-rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
-  geom_density(alpha = 0.5) +
-  labs(x = "Mean annual precipitation (mm)",
-       y = "Density",
-       colour = "",
-       fill = "") +
-  scale_x_log10() +
-  ggpubr::theme_pubr(legend = "none")
-
-# use patchwork package to stitch plots together, and export
-temp_plot + rain_plot
-ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 4.5)
-# plots slow to draw because 10million+ points in density graph
-rm(rain_plot, rain_all, temp_plot, temp_all)
-
 # rename columns for future use
 windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
                            MAP = `CHELSA_bio12_1981-2010_V.2.1`)
 
-# sankey graph showing pre1750 to today change in veg for solar locations? ----
-
-# need to work out source (pre-1750 veg), target (extant veg), value (MW)
-sankeylinks <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
-  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>% # leave out solar/wind distinction for now
-  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
-
-# add dummy spaces in one column so sankey diagram won't lump categories
-sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", sankeylinks$mvgpre1750_simplified)
-
-# create nodes df for sankey
-sankeynodes <- data.frame(
-  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
-           as.character(sankeylinks$mvg_simplified)) %>% unique()
-)
-
-# reformat name to id for networkD3 connection
-sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name)-1
-sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name)-1
-
-# prepare colour scale: rename below with categories and hex codes once ready to make final graph
-# i.e. once have lumped all vegetation categories
-#my_color <- 'd3.scaleOrdinal() .domain(["group_A", "group_B","group_C", "group_D", "group_E", "group_F", "group_G", "group_H"]) .range(["blue", "blue" , "blue", "red", "red", "yellow", "purple", "purple"])'
-
-# Make the Network
-p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
-                              Source = "IDsource", Target = "IDtarget",
-                              Value = "sumcapmw", NodeID = "name", 
-                              sinksRight = FALSE)
-p
-
-# looks much better with simplified veg categories!
-
-# TO DO - separate sankeys for wind and solar
-#       - colour veg groups (and lines?) consistently
-rm(p, sankeylinks, sankeynodes)
-
-# LAI unfinished ----
+# LAI ----
 
 # load in pre-summarised Leaf Area Index rasters from GLOBMAP (doi.org/10.5281/zenodo.12698637)
 # for 2001-2003 and 2021-2023
-# can then compare pre- and post- development LAI for wind/solar locations?
-# theoretically should indicate change in density of vegetation
-# may want to BUFFER POINTS to pick up area
-# but have checked that all points are currently in the middle of the impact area
-# which differs in magnitude for wind and solar - dif buffer sizes maybe?
-
 mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
 mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
 
 # extract values (should buffer first but just trying it for now)
 extraction <- terra::extract(mean_LAI_0103, windsolar)
-hist(extraction$lyr.1) # mostly low LAI values
 extraction2 <- terra::extract(mean_LAI_2123, windsolar)
-hist(extraction2$lyr.1) # mostly low still, some higher
 
 # join this data back to main df
 names(extraction) <- c("ID", "mean_LAI_0103")
@@ -419,14 +309,7 @@ windsolar <- windsolar %>%
   dplyr::mutate(difLAI = mean_LAI_2123 - mean_LAI_0103) # dif between LAI times?
 rm(extraction, extraction2, mean_LAI_0103, mean_LAI_2123)
 
-hist(windsolar$difLAI) # mostly close to 0, some -ve but most +ve
-
-# TO DOs
-#   - try buffering (prop to MW?) with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
-#   - cache all data as csv, make more graphs and a nice map to export
-
 # write data output for now
-
 readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
 
 })
