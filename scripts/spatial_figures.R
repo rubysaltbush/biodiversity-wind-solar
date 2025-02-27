@@ -16,10 +16,10 @@ ggplot() +
   scale_fill_grey(start = 1, end = 0) +
   geom_sf(data = windsolar, aes(shape = type, colour = type, size = totalcapacity_mw)) +
   scale_colour_discrete(type = my_colours$windsolar, name = "facility type") +
-  scale_shape(name = "facility type") +
+  scale_shape(solid = FALSE, name = "facility type") +
   scale_size(name = "total capacity (mw)") +
   theme_void()
-ggsave("figures/map_windsolar_aus_biomes.png", width = 8, height = 7)
+ggsave("figures/map_windsolar_aus_biomes.pdf", width = 8, height = 7)
 
 # drop windsolar geometry, not needed from here
 windsolar <- sf::st_drop_geometry(windsolar)
@@ -27,7 +27,6 @@ windsolar <- sf::st_drop_geometry(windsolar)
 # simplify to a df of biome with #s of wind and solar facilities in them
 # also summed maximum capacity (mw) of facilities
 windsolar_biomesummary <- windsolar %>%
-  
   dplyr::select(biome, type, totalcapacity_mw) %>%
   dplyr::group_by(biome, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
@@ -57,7 +56,7 @@ windsolar_biomesummary %>%
   xlab("Biome") +
   ylab("Number of facilities") +
   coord_flip()
-ggsave("figures/aus_facilities_by_biome.png", width = 9, height = 7)
+ggsave("figures/aus_facilities_by_biome.pdf", width = 9, height = 7)
 # interesting that temperate forest is most represented biome
 # given deserts is our biggest biome by land area
 # bias of population centres, also concentrated in temp forest biome
@@ -73,7 +72,7 @@ windsolar_biomesummary %>%
   xlab("Biome") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
-ggsave("figures/aus_capacitymw_by_biome.png", width = 9, height = 7)
+ggsave("figures/aus_capacitymw_by_biome.pdf", width = 9, height = 7)
 # overall wind power has bigger share when measured by maximum capacity rather 
 # than just number of facilities
 
@@ -118,7 +117,7 @@ mvg_windsolarsummary %>%
   xlab("Major Vegetation Group") +
   ylab("Number of facilities") +
   coord_flip()
-ggsave("figures/aus_facilities_by_mvg.png", width = 9, height = 7)
+ggsave("figures/aus_facilities_by_mvg.pdf", width = 9, height = 7)
 
 # now display capacity in stacked bar chart
 mvg_windsolarsummary %>%
@@ -131,7 +130,7 @@ mvg_windsolarsummary %>%
   xlab("Major Vegetation Group") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
-ggsave("figures/aus_capacity_by_mvg.png", width = 9, height = 7)
+ggsave("figures/aus_capacity_by_mvg.pdf", width = 9, height = 7)
 # looking at it by capacity changes the order of vegetation groups affected
 # though all are still dwarfed by the cleared category
 
@@ -170,7 +169,7 @@ mvg_windsolarsummary %>%
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Number of facilities") +
   coord_flip()
-ggsave("figures/aus_facilities_by_mvgpre1750.png", width = 9, height = 7)
+ggsave("figures/aus_facilities_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # and stacked bar chart by total capacity
 mvg_windsolarsummary %>%
@@ -183,7 +182,7 @@ mvg_windsolarsummary %>%
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Total maximum capacity (MW)") +
   coord_flip()
-ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
+ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # again using capacity increases the dominance of wind (implying that there are
 # fewer but larger capacity wind farms vs solar farms)
@@ -310,7 +309,6 @@ rm(p, sankeylinks, sankeynodes, sankey_col)
 
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
-  
   dplyr::select(land_capability, type, totalcapacity_mw) %>%
   dplyr::group_by(land_capability, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
@@ -327,7 +325,7 @@ landcap_windsolarsummary %>%
   ylab("Number of facilities") +
   scale_x_continuous(breaks = c(1:9)) +
   coord_flip()
-ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
+ggsave("figures/aus_facilities_by_landcapability.pdf", width = 9, height = 7)
 
 # now display in stacked bar chart, with capacity instead
 landcap_windsolarsummary %>%
@@ -340,7 +338,7 @@ landcap_windsolarsummary %>%
   ylab("Total maximum capacity (MW)") +
   scale_x_continuous(breaks = c(1:9)) +
   coord_flip()
-ggsave("figures/aus_facilities_by_landcapability.png", width = 9, height = 7)
+ggsave("figures/aus_facilities_by_landcapability.pdf", width = 9, height = 7)
 # again increases proportion of wind, interesting that on the best 
 # agricultural land it is mostly wind farms not solar, which is probably more
 # compatible with continuing agriculture
@@ -351,7 +349,6 @@ rm(landcap_windsolarsummary)
 
 # below adapted from Will's code, took out of function so can retain
 # climate data with wind/solar data
-# MIGHT HAVE TO REWRITE TO SEPARATE INTO PREP/FIGURE
 
 # load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
 temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
@@ -376,15 +373,17 @@ rm(region_polygon)
 temp_all <- terra::as.data.frame(temp_raster)
 rain_all <- terra::as.data.frame(rain_raster)
 rm(temp_raster, rain_raster)
-temp_all <- dplyr::mutate(temp_all, type = "All Australia")
-rain_all <- dplyr::mutate(rain_all, type = "All Australia")
+temp_all <- temp_all %>%
+  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`) %>%
+  dplyr::mutate(type = "All Australia")
+rain_all <- rain_all %>%
+  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`) %>%
+  dplyr::mutate(type = "All Australia")
 # append wind and solar data
 temp_all <- windsolar %>%
-  
   dplyr::select(type, MAT) %>%
   dplyr::bind_rows(temp_all)
 rain_all <- windsolar %>%
-  
   dplyr::select(type, MAP) %>%
   dplyr::bind_rows(rain_all)
 
@@ -396,8 +395,10 @@ temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
        y = "Density",
        colour = "",
        fill = "") +
-  scale_fill_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_fill_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_colour_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
   ggpubr::theme_pubr(legend = "right")
 
 # then precipitation
@@ -408,6 +409,10 @@ rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
        colour = "",
        fill = "") +
   scale_x_log10() +
+  scale_fill_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_colour_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
   ggpubr::theme_pubr(legend = "none")
 
 # use patchwork package to stitch plots together, and export
