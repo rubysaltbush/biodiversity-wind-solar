@@ -4,5 +4,5 @@ my_colours <- list()
 
 # colours for wind versus solar
 
-my_colours$windsolar <- c("#F4DB31", "#377EB8")
+my_colours$windsolar <- c("#FACB0F", "#377EB8")
 names(my_colours$windsolar) <- c("solar", "wind")

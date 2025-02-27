@@ -566,23 +566,23 @@ windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
 # need to work out source (pre-1750 veg), target (extant veg), value (MW)
 sankeylinks <- windsolar %>%
   sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_name, mvg_name, type, totalcapacity_mw) %>% 
-  dplyr::group_by(mvgpre1750_name, mvg_name) %>% # leave out solar/wind distinction for now
+  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
+  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>% # leave out solar/wind distinction for now
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 
 # add dummy spaces in one column so sankey diagram won't lump categories
-sankeylinks$mvgpre1750_name <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", sankeylinks$mvgpre1750_name)
+sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", sankeylinks$mvgpre1750_simplified)
 
 # create nodes df for sankey
 sankeynodes <- data.frame(
-  name = c(as.character(sankeylinks$mvgpre1750_name), 
-           as.character(sankeylinks$mvg_name)) %>% unique()
+  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
+           as.character(sankeylinks$mvg_simplified)) %>% unique()
 )
 
 # reformat name to id for networkD3 connection
-sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_name, sankeynodes$name)-1
-sankeylinks$IDtarget <- match(sankeylinks$mvg_name, sankeynodes$name)-1
+sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name)-1
+sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name)-1
 
 # prepare colour scale: rename below with categories and hex codes once ready to make final graph
 # i.e. once have lumped all vegetation categories
@@ -595,9 +595,10 @@ p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
                    sinksRight = FALSE)
 p
 
-# can't colour by solar/wind, could make separate diagrams maybe?
+# looks much better with simplified veg categories!
 
-# but is there a better way to visualise this data?
+# TO DO - separate sankeys for wind and solar
+#       - colour veg groups (and lines?) consistently
 rm(p, sankeylinks, sankeynodes)
 
 # LAI unfinished ----
@@ -606,9 +607,9 @@ rm(p, sankeylinks, sankeynodes)
 # for 2001-2003 and 2021-2023
 # can then compare pre- and post- development LAI for wind/solar locations?
 # theoretically should indicate change in density of vegetation
-# BUT will have to BUFFER POINTS as many of these on roads adjacent to actual development
-# (BUT then doesn't this mean we could be picking up e.g. clearing across the road??)
-# but maybe that's okay??? could be influence of development on clearing in the neighbourhood??
+# may want to BUFFER POINTS to pick up area
+# but have checked that all points are currently in the middle of the impact area
+# which differs in magnitude for wind and solar - dif buffer sizes maybe?
 
 mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
 mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
@@ -619,13 +620,20 @@ hist(extraction$lyr.1) # mostly low LAI values
 extraction2 <- terra::extract(mean_LAI_2123, windsolar)
 hist(extraction2$lyr.1) # mostly low still, some higher
 
-# dif bw 2 values?
-difLAI <- extraction2$lyr.1 - extraction$lyr.1
-hist(difLAI) # mstly close to 0, some -ve but most +ve
+# join this data back to main df
+names(extraction) <- c("ID", "mean_LAI_0103")
+names(extraction2) <- c("ID", "mean_LAI_2123")
+windsolar <- windsolar %>%
+  dplyr::bind_cols(extraction) %>%
+  dplyr::select(-ID) %>%
+  dplyr::bind_cols(extraction2) %>%
+  dplyr::select(-ID) %>%
+  dplyr::mutate(difLAI = mean_LAI_2123 - mean_LAI_0103) # dif between LAI times?
+rm(extraction, extraction2, mean_LAI_0103, mean_LAI_2123)
 
+hist(windsolar$difLAI) # mostly close to 0, some -ve but most +ve
 
 # TO DOs
-#   - combine similar NVIS vegetation groups (e.g. eucalypt open forests, eucalypt woodlands)
 #   - try buffering (prop to MW?) with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
 #   - cache all data as csv, make more graphs and a nice map to export
 
