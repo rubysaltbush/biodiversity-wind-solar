@@ -3,7 +3,7 @@
 
 # aus biome map ----
 
-# read in shapefile of Australian biomes, borders = IBRA subregions
+# read in shapefile of major Australian biomes, borders = IBRA subregions
 biomes <- sf::st_read("data_input/ibra7_biomes_background.shp")
 
 # make sure all crs the same
@@ -27,7 +27,7 @@ windsolar <- sf::st_drop_geometry(windsolar)
 # simplify to a df of biome with #s of wind and solar facilities in them
 # also summed maximum capacity (mw) of facilities
 windsolar_biomesummary <- windsolar %>%
-  sf::st_drop_geometry() %>%
+  
   dplyr::select(biome, type, totalcapacity_mw) %>%
   dplyr::group_by(biome, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
@@ -84,10 +84,10 @@ rm(windsolar_biomesummary, biomes)
 # NVIS vegetation ----
 
 ## present day ----
+# rasters too large to produce map without difficulty, maybe not needed?
 
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
-  sf::st_drop_geometry() %>%
   dplyr::select(mvg_simplified, type, totalcapacity_mw) %>%
   dplyr::group_by(mvg_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
@@ -140,25 +140,24 @@ ggsave("figures/aus_capacity_by_mvg.png", width = 9, height = 7)
 
 # simplify to a df of MVG with #s of wind and solar facilities in them
 mvg_windsolarsummary <- windsolar %>%
-  sf::st_drop_geometry() %>%
   dplyr::select(mvgpre1750_simplified, type, totalcapacity_mw) %>%
   dplyr::group_by(mvgpre1750_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
   dplyr::ungroup()
 mvg_windsolarsummary
-# mvgpre1750_simplified              type  number sumcapmw
-# <chr>                              <chr>  <int>    <dbl>
-#   1 Eucalypt forests and woodlands     solar    110    8931.
-# 2 Eucalypt forests and woodlands     wind      68    9118.
-# 3 Grasslands                         solar     15     806.
-# 4 Grasslands                         wind      21    3467 
-# 5 Non-eucalypt forests and woodlands solar     13     847.
-# 6 Non-eucalypt forests and woodlands wind       2      96 
-# 7 Other                              wind       2     173 
-# 8 Rainforests and Vine Thickets      solar      1      40 
-# 9 Rainforests and Vine Thickets      wind       3     376 
-# 10 Shrublands                         solar     10     570.
-# 11 Shrublands                         wind      17    1672.
+# mvgpre1750_simplified                          type  number sumcapmw
+# <chr>                                          <chr>  <int>    <dbl>
+# 1 Bare ground, modified native vegetation, other wind       2     173 
+# 2 Eucalypt forests and woodlands                 solar    110    8931.
+# 3 Eucalypt forests and woodlands                 wind      68    9118.
+# 4 Grasslands                                     solar     15     806.
+# 5 Grasslands                                     wind      21    3467 
+# 6 Non-eucalypt forests and woodlands             solar     13     847.
+# 7 Non-eucalypt forests and woodlands             wind       2      96 
+# 8 Rainforests and Vine Thickets                  solar      1      40 
+# 9 Rainforests and Vine Thickets                  wind       3     376 
+# 10 Shrublands                                     solar     10     570.
+# 11 Shrublands                                     wind      17    1672.
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
@@ -192,11 +191,63 @@ ggsave("figures/aus_capacity_by_mvgpre1750.png", width = 9, height = 7)
 
 rm(mvg_windsolarsummary)
 
+## sankey graph ----
+# showing pre1750 to today change in veg for solar and wind locations
+
+### solar ----
+# need to work out source (pre-1750 veg), target (extant veg), value (MW)
+sankeylinks <- windsolar %>%
+  dplyr::filter(type == "solar") %>%
+  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
+  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>%
+  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
+  dplyr::ungroup()
+
+# add dummy spaces in one column so sankey diagram won't lump categories
+sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", 
+                                          sankeylinks$mvgpre1750_simplified)
+
+# create nodes df for sankey
+sankeynodes <- data.frame(
+  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
+           as.character(sankeylinks$mvg_simplified)) %>% unique()
+)
+
+# for colouring 
+# Add a 'group' column to the nodes data frame:
+sankeynodes$group <- as.factor(c("a","b","c","d","e","f","a","b","e","c","g"))
+
+# prepare colour scale for groups
+sankey_col <- 'd3.scaleOrdinal() .domain(["a", "b", "c", "d", "e", "f", "g"]) .range(["#90d743", "#21918c", "#443983", "#440154", "#35b779", "#fde725", "#31688e"])'
+
+# reformat name to id for networkD3 connection
+sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name) - 1
+sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name) - 1
+
+# # prepare colour scale: rename below with categories and hex codes once ready to make final graph
+# # i.e. once have lumped all vegetation categories
+# sankey_col <- 'd3.scaleOrdinal() .domain([" Eucalypt forests and woodlands", "Eucalypt forests and woodlands", " Grasslands", "Grasslands", " Non-eucalypt forests and woodlands", "Non-eucalypt forests and woodlands", " Rainforests and Vine Thickets", " Shrublands", "Shrublands", "Bare ground, modified native vegetation, other", "Cleared, non-native vegetation, buildings"]) .range(["#7fc97f", "#7fc97f", "#fdc086" , "#fdc086", "#386cb0", "#386cb0", "#f0027f", "#beaed4", "#beaed4", "#ffff99", "#bf5b17"])'
+
+# Make the Network
+p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
+                              Source = "IDsource", Target = "IDtarget",
+                              Value = "sumcapmw", NodeID = "name", 
+                              colourScale = sankey_col,
+                              sinksRight = FALSE)
+p
+
+# GAH can't get pre-1750 groups to have variable colours, bug??
+# looks much better with simplified veg categories!
+
+# TO DO - separate sankeys for wind and solar
+#       - colour veg groups (and lines?) consistently
+rm(p, sankeylinks, sankeynodes)
+
 # land capability mapping (Adams & Engert 2023) ----
 
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
-  sf::st_drop_geometry() %>%
+  
   dplyr::select(land_capability, type, totalcapacity_mw) %>%
   dplyr::group_by(land_capability, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
@@ -266,11 +317,11 @@ temp_all <- dplyr::mutate(temp_all, type = "All Australia")
 rain_all <- dplyr::mutate(rain_all, type = "All Australia")
 # append wind and solar data
 temp_all <- windsolar %>%
-  sf::st_drop_geometry() %>%
+  
   dplyr::select(type, MAT) %>%
   dplyr::bind_rows(temp_all)
 rain_all <- windsolar %>%
-  sf::st_drop_geometry() %>%
+  
   dplyr::select(type, MAP) %>%
   dplyr::bind_rows(rain_all)
 
@@ -306,45 +357,7 @@ rm(rain_plot, rain_all, temp_plot, temp_all)
 windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
                            MAP = `CHELSA_bio12_1981-2010_V.2.1`)
 
-# sankey graph showing pre1750 to today change in veg for solar locations? ----
 
-# need to work out source (pre-1750 veg), target (extant veg), value (MW)
-sankeylinks <- windsolar %>%
-  sf::st_drop_geometry() %>%
-  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
-  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>% # leave out solar/wind distinction for now
-  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
-
-# add dummy spaces in one column so sankey diagram won't lump categories
-sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", sankeylinks$mvgpre1750_simplified)
-
-# create nodes df for sankey
-sankeynodes <- data.frame(
-  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
-           as.character(sankeylinks$mvg_simplified)) %>% unique()
-)
-
-# reformat name to id for networkD3 connection
-sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name)-1
-sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name)-1
-
-# prepare colour scale: rename below with categories and hex codes once ready to make final graph
-# i.e. once have lumped all vegetation categories
-#my_color <- 'd3.scaleOrdinal() .domain(["group_A", "group_B","group_C", "group_D", "group_E", "group_F", "group_G", "group_H"]) .range(["blue", "blue" , "blue", "red", "red", "yellow", "purple", "purple"])'
-
-# Make the Network
-p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
-                              Source = "IDsource", Target = "IDtarget",
-                              Value = "sumcapmw", NodeID = "name", 
-                              sinksRight = FALSE)
-p
-
-# looks much better with simplified veg categories!
-
-# TO DO - separate sankeys for wind and solar
-#       - colour veg groups (and lines?) consistently
-rm(p, sankeylinks, sankeynodes)
 
 # LAI unfinished ----
 
