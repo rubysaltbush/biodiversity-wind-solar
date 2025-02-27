@@ -395,9 +395,9 @@ temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
        y = "Density",
        colour = "",
        fill = "") +
-  scale_fill_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+  scale_fill_discrete(type = c("#5ec962", "#FACB0F", "#3b528b"),
                       labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+  scale_colour_discrete(type = c("#5ec962", "#FACB0F", "#3b528b"),
                         labels = c('All Australia', 'Solar farms', 'Wind farms')) +
   ggpubr::theme_pubr(legend = "right")
 
