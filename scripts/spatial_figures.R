@@ -301,6 +301,9 @@ webshot::webshot(url = "file:///Users/rubysaltbush/Desktop/R/biodiversity-wind-s
                  file = "figures/sankey_wind.pdf")
 
 # looks much better with simplified veg categories!
+# comparing wind and solar, looks like greater number of wind farms still found
+# in extant eucalypt forests and woodlands, while a greater chunk of solar farms
+# are now cleared euc forests and woodlands...
 # can edit text font/size etc in Illustrator from pdf
 
 rm(p, sankeylinks, sankeynodes, sankey_col)
@@ -395,9 +398,9 @@ temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
        y = "Density",
        colour = "",
        fill = "") +
-  scale_fill_discrete(type = c("#5ec962", "#FACB0F", "#3b528b"),
+  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
                       labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(type = c("#5ec962", "#FACB0F", "#3b528b"),
+  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
                         labels = c('All Australia', 'Solar farms', 'Wind farms')) +
   ggpubr::theme_pubr(legend = "right")
 
@@ -409,9 +412,9 @@ rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
        colour = "",
        fill = "") +
   scale_x_log10() +
-  scale_fill_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
                       labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(type = c("#5ec962", "#fde725", "#3b528b"),
+  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
                         labels = c('All Australia', 'Solar farms', 'Wind farms')) +
   ggpubr::theme_pubr(legend = "none")
 
@@ -421,28 +424,4 @@ ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 4.5)
 # plots slow to draw because 10million+ points in density graph
 rm(rain_plot, rain_all, temp_plot, temp_all)
 
-# rename columns for future use
-windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
-                           MAP = `CHELSA_bio12_1981-2010_V.2.1`)
-
-
-
-# LAI unfinished ----
-
-# load in pre-summarised Leaf Area Index rasters from GLOBMAP (doi.org/10.5281/zenodo.12698637)
-# for 2001-2003 and 2021-2023
-# can then compare pre- and post- development LAI for wind/solar locations?
-# theoretically should indicate change in density of vegetation
-# may want to BUFFER POINTS to pick up area
-# but have checked that all points are currently in the middle of the impact area
-# which differs in magnitude for wind and solar - dif buffer sizes maybe?
-
-
-hist(extraction$lyr.1) # mostly low LAI values
-hist(extraction2$lyr.1) # mostly low still, some higher
-hist(windsolar$difLAI) # mostly close to 0, some -ve but most +ve
-
-# TO DOs
-#   - try buffering (prop to MW?) with leaf area index and Hansen forest cover mapping, from ~1998 (earliest start year) to most recent, to see change in cover
-#   - cache all data as csv, make more graphs and a nice map to export
 

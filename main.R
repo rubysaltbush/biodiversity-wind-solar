@@ -28,6 +28,6 @@ source("scripts/sysreview_analysis.R")
 ## spatial analysis ----
 # mapping wind and solar facilities against ecosystems and biodiversity across Aus
 source("scripts/spatial_dataprep.R")
-
+source("scripts/spatial_figures.R")
 
 

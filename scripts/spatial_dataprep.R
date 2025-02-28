@@ -269,11 +269,30 @@ rm(extraction, land_capability)
 
 # load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
 temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
+temp_raster
+# class       : SpatRaster 
+# dimensions  : 20880, 43200, 1  (nrow, ncol, nlyr)
+# resolution  : 0.008333333, 0.008333333  (x, y)
+# extent      : -180.0001, 179.9999, -90.00014, 83.99986  (xmin, xmax, ymin, ymax)
+# coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+# source      : CHELSA_bio1_1981-2010_V.2.1.tif 
+# name        : CHELSA_bio1_1981-2010_V.2.1 
 rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
+rain_raster
+# class       : SpatRaster 
+# dimensions  : 20880, 43200, 1  (nrow, ncol, nlyr)
+# resolution  : 0.008333333, 0.008333333  (x, y)
+# extent      : -180.0001, 179.9999, -90.00014, 83.99986  (xmin, xmax, ymin, ymax)
+# coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+# source      : CHELSA_bio12_1981-2010_V.2.1.tif 
+# name        : CHELSA_bio12_1981-2010_V.2.1 
+
+# check projections all similar
+windsolarV <- terra::project(windsolarV, terra::crs(temp_raster))
 
 # Extract raster values at the points
-windsolar_temp <- terra::extract(temp_raster, windsolar)
-windsolar_rain <- terra::extract(rain_raster, windsolar)
+windsolar_temp <- terra::extract(temp_raster, windsolarV)
+windsolar_rain <- terra::extract(rain_raster, windsolarV)
 
 # join these values back to windsolar df
 # join back onto data
@@ -282,7 +301,7 @@ windsolar <- windsolar %>%
   dplyr::select(-ID) %>%
   dplyr::bind_cols(windsolar_rain) %>%
   dplyr::select(-ID)
-rm(windsolar_temp, windsolar_rain)
+rm(windsolar_temp, windsolar_rain, rain_raster, temp_raster)
 
 # rename columns for future use
 windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
