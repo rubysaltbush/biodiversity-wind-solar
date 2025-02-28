@@ -314,9 +314,12 @@ windsolar <- dplyr::rename(windsolar, MAT = `CHELSA_bio1_1981-2010_V.2.1`,
 mean_LAI_0103 <- terra::rast("data_output/tiff2001_2003.tif")
 mean_LAI_2123 <- terra::rast("data_output/tiff2021_2023.tif")
 
+# check projections all similar
+windsolarV <- terra::project(windsolarV, terra::crs(mean_LAI_2123))
+
 # extract values (should buffer first but just trying it for now)
-extraction <- terra::extract(mean_LAI_0103, windsolar)
-extraction2 <- terra::extract(mean_LAI_2123, windsolar)
+extraction <- terra::extract(mean_LAI_0103, windsolarV)
+extraction2 <- terra::extract(mean_LAI_2123, windsolarV)
 
 # join this data back to main df
 names(extraction) <- c("ID", "mean_LAI_0103")
@@ -328,6 +331,8 @@ windsolar <- windsolar %>%
   dplyr::select(-ID) %>%
   dplyr::mutate(difLAI = mean_LAI_2123 - mean_LAI_0103) # dif between LAI times?
 rm(extraction, extraction2, mean_LAI_0103, mean_LAI_2123)
+
+# Hansen forest cover? ----
 
 # write data output for now
 readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
