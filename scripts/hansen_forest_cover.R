@@ -31,4 +31,11 @@ test <- exactextractr::exact_extract(lossyearall, windsolarVbuff,
 windsolar <- dplyr::bind_cols(windsolar, test)
 
 write_csv(windsolar, "data_output/windsolar_with_hansenetalGFCfractionofforestloss.csv")
-  
+
+# hmm but how to visualise this data??
+# boxplot by wind/solar of how much not cleared?
+ggplot(windsolar, aes(x = type, y = frac_0)) +
+  geom_boxplot() +
+  theme_pubr()
+
+# hard to assess significance of this. hmm.
