@@ -10,6 +10,7 @@ library(jsonlite)
 library(networkD3)
 library(htmlwidgets)
 library(webshot)
+library(exactextractr)
 
 # functions ----
 source("scripts/functions/cache_csv.R")
