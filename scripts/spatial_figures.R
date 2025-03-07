@@ -341,7 +341,7 @@ landcap_windsolarsummary %>%
   ylab("Total maximum capacity (MW)") +
   scale_x_continuous(breaks = c(1:9)) +
   coord_flip()
-ggsave("figures/aus_facilities_by_landcapability.pdf", width = 9, height = 7)
+ggsave("figures/aus_capacity_by_landcapability.pdf", width = 9, height = 7)
 # again increases proportion of wind, interesting that on the best 
 # agricultural land it is mostly wind farms not solar, which is probably more
 # compatible with continuing agriculture
