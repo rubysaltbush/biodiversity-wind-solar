@@ -332,7 +332,49 @@ windsolar <- windsolar %>%
   dplyr::mutate(difLAI = mean_LAI_2123 - mean_LAI_0103) # dif between LAI times?
 rm(extraction, extraction2, mean_LAI_0103, mean_LAI_2123)
 
-# Hansen forest cover? ----
+# Hansen forest cover ----
+
+## forest loss year ----
+lossyear <- terra::rast("data_cache/Hansen_GFC_lossyear_aus.tif")
+
+# now create buffer of points
+windsolarV <- sf::st_as_sf(windsolar, coords = c("lon", "lat"), remove = FALSE, crs = "EPSG:4326")
+# buffer points by 1km
+windsolarVbuff <- sf::st_buffer(windsolarV, dist = 1000)
+
+# now extract fraction of 0 (no clearing) and 00-23 (year cleared) values per 
+# buffer area from tree cover loss data
+fraclossyear <- exactextractr::exact_extract(lossyear, windsolarVbuff, 
+                                             fun = "frac")
+
+# also extract loss year for exact point
+lossyearpoint <- terra::extract(lossyear, windsolarV)
+
+# join outputs to OG wind/solar data
+fraclossyear <- dplyr::select(fraclossyear, frac_uncleared = frac_0) # don't think I want fractions for all other years of clearing at this point
+windsolar <- windsolar %>%
+  dplyr::bind_cols(lossyearpoint) %>%
+  dplyr::select(-ID) %>%
+  dplyr::rename(yr_pt_cleared = Layer_1) %>%
+  dplyr::bind_cols(fraclossyear)
+
+rm(fraclossyear, lossyear, lossyearpoint)
+
+## tree cover in year 2000 ----
+
+treecover <- terra::rast("data_cache/Hansen_GFC_treecover2000_aus.tif")
+
+# now extract mean percent tree cover in buffer area from year 2000
+meantreecoverbuff <- exactextractr::exact_extract(treecover, windsolarVbuff, 
+                                                  fun = "mean")
+# also extract points
+meantreecoverpt <- terra::extract(treecover, windsolarV)
+
+# join output to OG data
+windsolar$meantreecover2000_buff <- meantreecoverbuff
+windsolar$meantreecover2000_pt <- meantreecoverpt$`Hansen_GFC-2023-v1.11_treecover2000_10S_110E`
+
+rm(meantreecoverpt, meantreecoverbuff, treecover, windsolarV, windsolarVbuff)
 
 # write data output for now
 readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
