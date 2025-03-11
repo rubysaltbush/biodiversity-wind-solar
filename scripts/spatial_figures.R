@@ -424,4 +424,40 @@ ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 4.5)
 # plots slow to draw because 10million+ points in density graph
 rm(rain_plot, rain_all, temp_plot, temp_all)
 
+# hansen tree cover ----
+
+# what was tree cover at locations in 2000?
+ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
+  geom_violin(width = 1.4) +
+  geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  ylab("Tree cover in surrounding area in year 2000") +
+  xlab("Facility type")
+ggsave("figures/fraction_treecover2000.pdf", width = 5, height = 6)   
+# so wind facilities have more tree cover than solar in surrounding area
+# to start with
+
+t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
+       windsolar$meantreecover2000_buff[windsolar$type == "solar"])
+# difference significant by t-test, t = 3.477, df = 129.35, p-value = 0.000691
+
+# prepare fraction cleared column
+windsolar$frac_cleared <- 1 - windsolar$frac_uncleared
+
+# draw boxplot/violin plot of fraction cleared (in 1km radius of point, 3.14km2)
+ggplot(windsolar, aes(x = type, y = frac_cleared, fill = type)) +
+  geom_violin(width = 1.4) +
+  geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  ylab("Fraction surrounding area with tree cover cleared") +
+  xlab("Facility type")
+ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
+# so, doesn't look like solar or wind farms are associated with significant clearing
+# of tree cover in surrounding area
+
+t.test(windsolar$frac_cleared[windsolar$type == "wind"],
+       windsolar$frac_cleared[windsolar$type == "solar"])
+# t = -0.12453, df = 260, p-value = 0.901, differences not significant
 
