@@ -427,6 +427,7 @@ rm(rain_plot, rain_all, temp_plot, temp_all)
 # hansen tree cover ----
 
 # what was tree cover at locations in 2000?
+# violin plot with boxplot
 ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
   geom_violin(width = 1.4) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
@@ -437,6 +438,16 @@ ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
 ggsave("figures/fraction_treecover2000.pdf", width = 5, height = 6)   
 # so wind facilities have more tree cover than solar in surrounding area
 # to start with
+
+# ridgeline plot
+ggplot(windsolar, aes(x = meantreecover2000_buff, y = type, fill = type)) +
+  ggridges::geom_density_ridges() +
+  ggridges::theme_ridges() + 
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Tree cover in surrounding area in year 2000") +
+  ylab("Facility type")
+ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)   
 
 t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
        windsolar$meantreecover2000_buff[windsolar$type == "solar"])
@@ -451,11 +462,21 @@ ggplot(windsolar, aes(x = type, y = frac_cleared, fill = type)) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  ylab("Fraction surrounding area with tree cover cleared") +
+  ylab("Fraction surrounding area with tree cover cleared 2000-2023") +
   xlab("Facility type")
 ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
 # so, doesn't look like solar or wind farms are associated with significant clearing
 # of tree cover in surrounding area
+
+# ridgeline plot
+ggplot(windsolar, aes(x = frac_cleared, y = type, fill = type)) +
+  ggridges::geom_density_ridges() +
+  ggridges::theme_ridges() + 
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Proportion surrounding area with tree cover cleared 2000-2023") +
+  ylab("Facility type")
+ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5) 
 
 t.test(windsolar$frac_cleared[windsolar$type == "wind"],
        windsolar$frac_cleared[windsolar$type == "solar"])

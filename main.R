@@ -11,6 +11,7 @@ library(networkD3)
 library(htmlwidgets)
 library(webshot)
 library(exactextractr)
+library(ggridges)
 
 # functions ----
 source("scripts/functions/cache_csv.R")

@@ -11,3 +11,4 @@ install.packages("htmlwidgets") # saving Sankey diagram
 install.packages("webshot") # converting Sankey html to pdf
 webshot::install_phantomjs() # needed for above package to work
 install.packages("exactextractr") # fast extraction of raster values for buffered points
+install.packages("ggridges") # make nice ridgeline plots
