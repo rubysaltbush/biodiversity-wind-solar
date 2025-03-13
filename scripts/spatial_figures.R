@@ -346,6 +346,15 @@ ggsave("figures/aus_capacity_by_landcapability.pdf", width = 9, height = 7)
 # agricultural land it is mostly wind farms not solar, which is probably more
 # compatible with continuing agriculture
 
+t.test(windsolar$land_capability[windsolar$type == "wind"],
+       windsolar$land_capability[windsolar$type == "solar"])
+# t = -0.98105, df = 230.83, p-value = 0.3276
+# mean 3.743363 standard error 0.1718029 for wind
+# no difference in mean bw wind and solar
+
+# TO DO make into a density graph as per climate so can compare against
+# availability of different land capabilities across Aus - is current location biased?
+
 rm(landcap_windsolarsummary)
 
 # climate density graphs ----
