@@ -31,4 +31,3 @@ source("scripts/sysreview_analysis.R")
 source("scripts/spatial_dataprep.R")
 source("scripts/spatial_figures.R")
 
-# MONDAY - make figures of various extracted Hansen et al data
