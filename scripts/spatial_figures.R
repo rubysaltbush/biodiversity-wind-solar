@@ -476,7 +476,7 @@ ggplot(windsolar, aes(x = frac_cleared, y = type, fill = type)) +
   ggpubr::theme_pubr(legend = "none") +
   xlab("Proportion surrounding area with tree cover cleared 2000-2023") +
   ylab("Facility type")
-ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5) 
+ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
 
 t.test(windsolar$frac_cleared[windsolar$type == "wind"],
        windsolar$frac_cleared[windsolar$type == "solar"])
