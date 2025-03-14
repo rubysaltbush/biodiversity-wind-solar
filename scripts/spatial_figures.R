@@ -442,7 +442,7 @@ ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  ylab("Tree cover in surrounding area in year 2000") +
+  ylab("Tree cover in surrounding area in year 2000 (%)") +
   xlab("Facility type")
 ggsave("figures/fraction_treecover2000.pdf", width = 5, height = 6)   
 # so wind facilities have more tree cover than solar in surrounding area
@@ -454,7 +454,7 @@ ggplot(windsolar, aes(x = meantreecover2000_buff, y = type, fill = type)) +
   ggridges::theme_ridges() + 
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  xlab("Tree cover in surrounding area in year 2000") +
+  xlab("Tree cover in surrounding area in year 2000 (%)") +
   ylab("Facility type")
 ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)   
 
@@ -471,27 +471,27 @@ t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
 # sem solar 0.3048482
 
 # prepare fraction cleared column
-windsolar$frac_cleared <- 1 - windsolar$frac_uncleared
+windsolar$percent_cleared <- (1 - windsolar$frac_uncleared)*100
 
 # draw boxplot/violin plot of fraction cleared (in 1km radius of point, 3.14km2)
-ggplot(windsolar, aes(x = type, y = frac_cleared, fill = type)) +
+ggplot(windsolar, aes(x = type, y = percent_cleared, fill = type)) +
   geom_violin(width = 1.4) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  ylab("Fraction surrounding area with tree cover loss 2000-2023") +
+  ylab("Tree cover loss in surrounding area 2000-2023 (%)") +
   xlab("Facility type")
 ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
 # so, doesn't look like solar or wind farms are associated with significant clearing
 # of tree cover in surrounding area
 
 # ridgeline plot
-ggplot(windsolar, aes(x = frac_cleared, y = type, fill = type)) +
+ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
   ggridges::geom_density_ridges() +
   ggridges::theme_ridges() + 
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  xlab("Proportion surrounding area with tree cover loss 2000-2023") +
+  xlab("Tree cover loss in surrounding area 2000-2023 (%)") +
   ylab("Facility type")
 ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
 
