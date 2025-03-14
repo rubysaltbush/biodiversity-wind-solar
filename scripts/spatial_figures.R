@@ -452,6 +452,14 @@ ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)
 t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
        windsolar$meantreecover2000_buff[windsolar$type == "solar"])
 # difference significant by t-test, t = 3.477, df = 129.35, p-value = 0.000691
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#   1.707693 6.216979
+# sample estimates:
+#   mean of x mean of y 
+# 5.631321  1.668985
+# sem wind 1.098055
+# sem solar 0.3048482
 
 # prepare fraction cleared column
 windsolar$frac_cleared <- 1 - windsolar$frac_uncleared
@@ -462,7 +470,7 @@ ggplot(windsolar, aes(x = type, y = frac_cleared, fill = type)) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  ylab("Fraction surrounding area with tree cover cleared 2000-2023") +
+  ylab("Fraction surrounding area with tree cover loss 2000-2023") +
   xlab("Facility type")
 ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
 # so, doesn't look like solar or wind farms are associated with significant clearing
@@ -474,7 +482,7 @@ ggplot(windsolar, aes(x = frac_cleared, y = type, fill = type)) +
   ggridges::theme_ridges() + 
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  xlab("Proportion surrounding area with tree cover cleared 2000-2023") +
+  xlab("Proportion surrounding area with tree cover loss 2000-2023") +
   ylab("Facility type")
 ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
 
