@@ -498,4 +498,6 @@ ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5)
 t.test(windsolar$frac_cleared[windsolar$type == "wind"],
        windsolar$frac_cleared[windsolar$type == "solar"])
 # t = -0.12453, df = 260, p-value = 0.901, differences not significant
+# mean of x  mean of y 
+# 0.01395721 0.01455504 
 

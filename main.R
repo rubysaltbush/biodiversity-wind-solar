@@ -32,3 +32,5 @@ source("scripts/sysreview_analysis.R")
 source("scripts/spatial_dataprep.R")
 source("scripts/spatial_figures.R")
 
+# TO DO - extract mean population in area around wind and solar farms??
+#       - desnity plot for land capability???
