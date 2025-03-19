@@ -33,4 +33,5 @@ source("scripts/spatial_dataprep.R")
 source("scripts/spatial_figures.R")
 
 # TO DO - extract mean population in area around wind and solar farms??
-#       - desnity plot for land capability???
+#       - tried to create density plot for land capability but raster so large
+#         it crashes R every time I try to as.data.frame it, won't work for now

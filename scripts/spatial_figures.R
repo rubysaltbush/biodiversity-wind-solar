@@ -310,6 +310,8 @@ rm(p, sankeylinks, sankeynodes, sankey_col)
 
 # land capability mapping (Adams & Engert 2023) ----
 
+## bar charts ----
+
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
   dplyr::select(land_capability, type, totalcapacity_mw) %>%
@@ -351,9 +353,6 @@ t.test(windsolar$land_capability[windsolar$type == "wind"],
 # t = -0.98105, df = 230.83, p-value = 0.3276
 # mean 3.743363 standard error 0.1718029 for wind
 # no difference in mean bw wind and solar
-
-# TO DO make into a density graph as per climate so can compare against
-# availability of different land capabilities across Aus - is current location biased?
 
 rm(landcap_windsolarsummary)
 
