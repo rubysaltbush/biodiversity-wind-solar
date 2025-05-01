@@ -1,10 +1,27 @@
 # figures from final review data ----
 
 # get data
-sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
+#sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
+# temporary files from Ruby and Malan's data entry
+sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v3_RS.csv")
+sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v3_Malan29April2025.csv")
+
+# stitch together
+sysrevdata <- sysrevdata1 %>%
+  dplyr::filter(!is.na(latitude))
+sysrevdata2 <- sysrevdata2 %>%
+  dplyr::filter(!is.na(latitude)) %>%
+  dplyr::rows_delete(sysrevdata, unmatched = "ignore")
+sysrevdata <- sysrevdata %>%
+  dplyr::rows_insert(sysrevdata2)
+sysrevdata1 <- sysrevdata1 %>%
+  dplyr::rows_delete(sysrevdata)
+sysrevdata <- sysrevdata %>%
+  dplyr::rows_insert(sysrevdata1)
+rm(sysrevdata1, sysrevdata2)
+
 
 # how many papers included currently?
-
 length(unique(sysrevdata$title))
 # 351
 
@@ -73,7 +90,8 @@ ggplot() +
   geom_sf(data = worldmap, fill = "grey", colour = "white", linewidth = 0.1) +
   theme_void() +
   geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar)) +
-  labs(colour = "Facility type")
+  labs(colour = "Facility type") +
+  scale_colour_discrete(type = my_colours$windsolar)
 ggsave("figures/map_study_locations.png", width = 6, height = 4)
 rm(worldmap, sysrevlatlong)
 
@@ -105,7 +123,7 @@ sysrevdata %>%
   ggpubr::theme_pubr() +
   xlab("Impact on Biodiversity") +
   ylab("Number of Publications") +
-  scale_fill_discrete(name = "Facility")
+  scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
 ggsave("figures/effect_development_barchart.png", width = 5, height = 4)
 
 # mitigation ----
@@ -127,6 +145,7 @@ sysrevdata %>%
   ggpubr::theme_pubr() +
   xlab("Mitigation Category") +
   labs(fill = "Facility type") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::rotate_x_text(angle = 15, hjust = 0.7, vjust = 0.9) +
   ylab("Number of Publications")
 ggsave("figures/mitigation_cat_barplot.png", width = 5, height = 4)
@@ -140,7 +159,7 @@ sysrevdata %>%
   table()
 # mitigation_suggested
 #   no  yes 
-#   9   19 
+#   12   36 
 
 # mitigation category
 sysrevdata %>%
@@ -153,17 +172,18 @@ sysrevdata %>%
   # Count occurrences of each category
   dplyr::group_by(mitigation_category, wind_solar) %>%
   dplyr::summarise(count = n(), .groups = 'drop')
-# mitigation_category           wind_solar    count
-# <chr>                         <chr>         <int>
-# 1 curtailment                 wind           4
-# 2 offsetting                  solar          1
-# 3 offsetting                  wind           2
-# 4 on-site restoration         solar          5
-# 5 on-site restoration         wind           1
-# 6 siting                      solar          2
-# 7 siting                      wind           3
-# 8 technological modifications solar          1
-# 9 technological modifications wind           5
+# mitigation_category         wind_solar count
+# <chr>                       <chr>      <int>
+# 1 curtailment                 wind           5
+# 2 management decisions        solar          6
+# 3 offsetting                  solar          2
+# 4 offsetting                  wind           2
+# 5 on-site restoration         solar          6
+# 6 on-site restoration         wind           2
+# 7 siting                      solar          2
+# 8 siting                      wind          12
+# 9 technological modifications solar          1
+# 10 technological modifications wind           5
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -173,8 +193,8 @@ sysrevdata %>%
   dplyr::select(mitigation_tested) %>% 
   table()
 # mitigation_tested
-# no yes 
-# 20   8 
+# no   yes 
+# 31   15 
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -185,5 +205,5 @@ sysrevdata %>%
   table()
 # mitigation_supported_by_explicit_test
 # no yes 
-# 1   8 
+# 7   13 
 

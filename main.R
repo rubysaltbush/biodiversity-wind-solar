@@ -22,9 +22,9 @@ source("scripts/my_colours.R")
 # analysis scripts ----
 
 ## systematic review ----
-# first, preprocess systematic review data
+# first, preprocess systematic review data and make figures from categories
 source("scripts/sysreview_dataprep.R")
-# systematic review analysis (unfinished so far)
+# then analyse data from full manual systematic review
 source("scripts/sysreview_analysis.R")
 
 ## spatial analysis ----
