@@ -20,11 +20,16 @@ sysrevdata <- sysrevdata %>%
   dplyr::rows_insert(sysrevdata1)
 rm(sysrevdata1, sysrevdata2)
 
-
 # how many papers included currently?
 length(unique(sysrevdata$title))
 # 351
 
+# how many papers reviewed so far?
+reviewed <- dplyr::filter(sysrevdata, !is.na(latitude))
+length(unique(reviewed$title))
+# [1] 48
+rm(reviewed)
+  
 # filter to just unique papers, then count # wind, # solar
 sysrevdata %>%
   dplyr::select(title, wind_solar) %>%
