@@ -205,5 +205,112 @@ sysrevdata %>%
   table()
 # mitigation_supported_by_explicit_test
 # no yes 
-# 7   13 
+# 7   13
+
+#### preliminary graphs #####
+
+# how many papers included currently?
+length(unique(sysrevdata$title))
+# 351
+
+# make histogram of year of publication
+sysrevdata %>%
+  dplyr::select(title, year) %>%
+  dplyr::distinct() %>%
+  ggplot(aes(x = year)) +
+  geom_histogram(binwidth = 1) +
+  ggpubr::theme_pubr() +
+  xlab("Year of Publication") +
+  ylab("Number of Publications")
+ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
+
+# want to make map of country/region data
+# first get world map data without Antarctica (not included)
+worldmap <- rnaturalearth::ne_countries() %>% 
+  filter(sovereignt != "Antarctica")
+
+# create table of country count data
+counts <- sysrevdata %>%
+  dplyr::select(title, country, region) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(country, delim = ", ") %>%
+  dplyr::group_by(country, region) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup()
+# add regional count
+regioncount <- counts %>%
+  dplyr::group_by(region) %>%
+  dplyr::summarise(regioncount = sum(count))
+counts <- counts %>%
+  dplyr::left_join(regioncount, by = "region")
+rm(regioncount)
+
+# make histogram of country coloured by region, sorted by region+counts, to match map
+counts %>%
+  dplyr::arrange(-regioncount, -count) %>%
+  dplyr::mutate(country = forcats::fct_inorder(country)) %>%
+  ggplot(aes(x = country, y = count, fill = region)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "YlGnBu") +
+  xlab("Country") +
+  ylab("Number of Publications") +
+  coord_flip()
+ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
+
+# checking my countries against "admin" column of world map, need to change:
+# United States -> United States of America
+counts$country <- gsub("United States", "United States of America", counts$country)
+
+# join data together
+worldmapcount <- worldmap %>%
+  dplyr::select(country = admin, geometry) %>%
+  dplyr::left_join(counts, by = "country") %>%
+  dplyr::mutate(countlog = log(replace_na(count, 0)))
+
+# then plot world map coloured by number of studies
+ggplot(worldmapcount) +
+  geom_sf(aes(fill = countlog), linewidth = 0.1) +
+  theme_void() +
+  scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
+  labs(fill = "No. studies (log)")
+ggsave("figures/map_countrycounts.pdf", width = 6, height = 4)
+
+
+# make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
+# coloured by wind or solar, arranged by # studies??
+# create table of country count data
+sysrevdata %>%
+  dplyr::select(title, biodiversity_category, wind_solar) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
+  tidyr::separate_longer_delim(wind_solar, delim = "_") %>%
+  dplyr::group_by(biodiversity_category, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(-count) %>%
+  dplyr::mutate(biodiversity_category = forcats::fct_inorder(biodiversity_category)) %>%
+  ggplot(aes(x = biodiversity_category, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  xlab("Biodiversity Category") +
+  coord_flip() +
+  ylab("Number of Publications") +
+  labs(fill = "Facility type")
+ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
+
+# make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
+sysrevdata %>%
+  dplyr::select(title, biodiversity_metric) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
+  ggplot(aes(x = biodiversity_metric, fill = biodiversity_metric)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Biodiversity Metric") +
+  ggpubr::rotate_x_text(angle = 20) +
+  ylab("Number of Publications") +
+  scale_fill_discrete(type = colorRampPalette(RColorBrewer::brewer.pal(9, name = 'YlGnBu'))(11))
+ggsave("figures/biodiversity_metric_histogram.png", width = 5, height = 4)
 
