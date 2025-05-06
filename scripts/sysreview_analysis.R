@@ -3,22 +3,31 @@
 # get data
 #sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
 # temporary files from Ruby and Malan's data entry
-sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v3_RS.csv")
-sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v3_Malan29April2025.csv")
+sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v3_RS_20250507.csv")
+sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_MB_06_05_2025.csv")
 
 # stitch together
+# first get all filled out values from RS data
 sysrevdata <- sysrevdata1 %>%
-  dplyr::filter(!is.na(latitude))
+  dplyr::filter(!is.na(data_entered_by))
+# then get MB data filled out values
 sysrevdata2 <- sysrevdata2 %>%
-  dplyr::filter(!is.na(latitude)) %>%
+  dplyr::filter(!is.na(data_entered_by)) %>%
+  # and delete any already in RS data
   dplyr::rows_delete(sysrevdata, unmatched = "ignore")
+# then update RS data with MB data
 sysrevdata <- sysrevdata %>%
   dplyr::rows_insert(sysrevdata2)
+# then delete rows from OG RS full data that already filled out in combined MB and RS data
 sysrevdata1 <- sysrevdata1 %>%
   dplyr::rows_delete(sysrevdata)
+# and add these in as still needing filling out
 sysrevdata <- sysrevdata %>%
   dplyr::rows_insert(sysrevdata1)
 rm(sysrevdata1, sysrevdata2)
+
+# write output of combined data sheet for continued data entry
+readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v4.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
