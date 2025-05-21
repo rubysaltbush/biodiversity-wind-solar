@@ -27,15 +27,20 @@ rm(sysrevdata1, sysrevdata2)
 # write output of combined data sheet for continued data entry
 readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v5.csv")
 
+
 # how many papers included currently?
 length(unique(sysrevdata$title))
 # 351
 
 # how many papers reviewed so far?
-reviewed <- dplyr::filter(sysrevdata, !is.na(latitude))
+reviewed <- dplyr::filter(sysrevdata, !is.na(data_entered_by))
 length(unique(reviewed$title))
-# [1] 48
+# [1] 108
 rm(reviewed)
+
+# DROP EXCLUDED PAPERS
+sysrevdata <- sysrevdata %>%
+  dplyr::filter(is.na(exclude)|exclude == FALSE)
   
 # filter to just unique papers, then count # wind, # solar
 sysrevdata %>%
@@ -45,7 +50,7 @@ sysrevdata %>%
   table()
 # wind_solar
 # solar         wind windandsolar 
-# 50          300            1 
+# 49          298            1 
 
 # filter to just unique papers, then count # impact, # mitigation
 sysrevdata %>%
@@ -55,7 +60,7 @@ sysrevdata %>%
   table()
 # impact_mitigation
 # impact impactandmitigation          mitigation 
-# 301                  30                  20 
+# 297                  30                  21 
 
 # filter to just unique papers, then count wind/solar vs impact/mitigation
 sysrevdata %>%
@@ -65,12 +70,12 @@ sysrevdata %>%
   dplyr::summarise(count_by_windsolarimpactmitigation = n())
 # wind_solar   impact_mitigation               count_by_windsolarimpactmitigation
 # <chr>        <chr>                                            <int>
-# 1 solar      impact                                            36
+# 1 solar      impact                                            35
 # 2 solar      impact_mitigation                                  5
 # 3 solar      mitigation                                         9
-# 4 wind       impact                                           264
+# 4 wind       impact                                           261
 # 5 wind       impact_mitigation                                 25
-# 6 wind       mitigation                                        11
+# 6 wind       mitigation                                        12
 # 7 wind_solar impact                                             1
 
 
@@ -84,7 +89,7 @@ sysrevdata %>%
   table()
 # region
 # Africa          Asia        Europe North America       Oceania South America 
-# 8            22           141           164             6            10 
+# 8            22           142           160             6            10 
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
@@ -98,6 +103,7 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::distinct()
 
 # then plot background world map and points coloured by wind or solar
+# FIX TO INCORPORATE WIND_SOLAR STUDY
 ggplot() +
   geom_sf(data = worldmap, fill = "grey", colour = "white", linewidth = 0.1) +
   theme_void() +
@@ -115,17 +121,24 @@ sysrevdata %>%
   dplyr::select(biodiversity_category) %>% 
   table()
 # biodiversity_category
-# amphibians        animals      bats       bats, birds    bats, birds, invertebrates 
-# 2                 1            94          12                1 
-# bats, invertebrates     birds     birds, fish, invertebrates    birds, mammals    birds, reptiles 
-# 1                        164          1                          4                1 
-# invertebrates      mammals        plants       plants, animals     pollinators, invertebrates 
-# 15                  21            19             2                   3 
+# amphibians                    animals                       bats 
+# 2                          1                         93 
+# bats, birds bats, birds, invertebrates        bats, invertebrates 
+# 12                          1                          1 
+# birds birds, fish, invertebrates             birds, mammals 
+# 161                          1                          4 
+# birds, reptiles              invertebrates                    mammals 
+# 1                         15                         21 
+# plants            plants, animals pollinators, invertebrates 
+# 19                          2                          3 
 # reptiles 
 # 10 
 
 # make histogram of effect of wind and solar
+# FIX TO INCORPORATE WIND_SOLAR STUDY
+# FOR NOW JUST EXCLUDE
 sysrevdata %>%
+  dplyr::filter(wind_solar %in% c("wind", "solar")) %>%
   dplyr::select(title, wind_solar, effect_wind, effect_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter_at(vars(effect_wind, effect_solar), any_vars(!is.na(.))) %>%
