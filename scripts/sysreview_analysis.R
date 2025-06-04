@@ -3,8 +3,8 @@
 # get data
 #sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
 # temporary files from Ruby and Malan's data entry
-sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v5_RS20250530.csv")
-sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v4_MB20250520.csv")
+sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v5_RS20250604.csv")
+sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v5_MB20250604.csv")
 
 # stitch together
 # first get all RS filled out values from RS data
@@ -25,7 +25,7 @@ sysrevdata <- sysrevdata %>%
 rm(sysrevdata1, sysrevdata2)
 
 # write output of combined data sheet for continued data entry
-readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v5.csv")
+readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v6.csv")
 
 
 # how many papers included currently?
@@ -35,7 +35,7 @@ length(unique(sysrevdata$title))
 # how many papers reviewed so far?
 reviewed <- dplyr::filter(sysrevdata, !is.na(data_entered_by))
 length(unique(reviewed$title))
-# [1] 128
+# [1] 164
 rm(reviewed)
 
 # DROP EXCLUDED PAPERS
@@ -103,11 +103,11 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::distinct()
 
 # then plot background world map and points coloured by wind or solar
-# FIX TO INCORPORATE WIND_SOLAR STUDY
+# FIX TO INCORPORATE WIND_SOLAR STUDY, EXCLUDED FOR NOW
 ggplot() +
   geom_sf(data = worldmap, fill = "grey", colour = "white", linewidth = 0.1) +
   theme_void() +
-  geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar)) +
+  geom_point(data = dplyr::filter(sysrevlatlong, wind_solar %in% c("wind", "solar")), aes(x = longitude, y = latitude, colour = wind_solar)) +
   labs(colour = "Facility type") +
   scale_colour_discrete(type = my_colours$windsolar)
 ggsave("figures/map_study_locations.png", width = 6, height = 4)
@@ -187,7 +187,7 @@ sysrevdata %>%
   table()
 # mitigation_suggested
 #   no  yes 
-#   35   89 
+#   45   115 
 
 # mitigation category
 sysrevdata %>%
@@ -201,19 +201,19 @@ sysrevdata %>%
   dplyr::group_by(mitigation_category, wind_solar) %>%
   dplyr::summarise(count = n(), .groups = 'drop')
 # mitigation_category         wind_solar count
-# <chr>                          <chr>      <int>
-# 1 curtailment                  wind           6
-# 2 management decisions         solar         10
-# 3 management decisions         wind           4
-# 4 offsetting                   solar          3
-# 5 offsetting                   wind           4
-# 6 offsetting                   wind_solar     1
-# 7 on-site restoration          solar         14
-# 8 on-site restoration          wind           5
-# 9 siting                       solar         12
-# 10 siting                      wind          32
+# <chr>                       <chr>      <int>
+# 1 curtailment                 wind          10
+# 2 management decisions        solar         10
+# 3 management decisions        wind           8
+# 4 offsetting                  solar          3
+# 5 offsetting                  wind           5
+# 6 offsetting                  wind_solar     1
+# 7 on-site restoration         solar         14
+# 8 on-site restoration         wind           7
+# 9 siting                      solar         12
+# 10 siting                      wind          52
 # 11 technological modifications solar          7
-# 12 technological modifications wind           9
+# 12 technological modifications wind          15
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -224,18 +224,18 @@ sysrevdata %>%
   table()
 # mitigation_tested
 # no   yes 
-# 70   27 
+# 95   28 
 
 # explicit tests of mitigation
 sysrevdata %>%
+  dplyr::filter(mitigation_tested == "yes") %>%
   dplyr::select(title, mitigation_supported_by_explicit_test) %>%
   dplyr::distinct() %>%
-  dplyr::filter(!is.na(.$mitigation_supported_by_explicit_test)) %>% 
   dplyr::select(mitigation_supported_by_explicit_test) %>% 
   table()
 # mitigation_supported_by_explicit_test
 # no yes 
-# 36   24
+# 3   26
 
 #### preliminary graphs #####
 
