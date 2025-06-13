@@ -3,8 +3,8 @@
 # get data
 #sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
 # temporary files from Ruby and Malan's data entry
-sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v6_RS20250611.csv")
-sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v6_MB20250611.csv")
+sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v7_RS20250613.csv")
+sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v7_MB20250613.csv")
 
 # stitch together
 # first get all RS filled out values from RS data
@@ -25,7 +25,7 @@ sysrevdata <- sysrevdata %>%
 rm(sysrevdata1, sysrevdata2)
 
 # write output of combined data sheet for continued data entry
-readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v7.csv")
+readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v8.csv")
 
 
 # how many papers included currently?
@@ -35,10 +35,10 @@ length(unique(sysrevdata$title))
 # how many papers reviewed so far?
 reviewed <- dplyr::filter(sysrevdata, !is.na(data_entered_by))
 length(unique(reviewed$title))
-# [1] 214
+# [1] 244
 rm(reviewed)
 
-# 137 to go! less than half!!
+# 107 to go! a third!!!
 
 # DROP EXCLUDED PAPERS
 sysrevdata <- sysrevdata %>%
@@ -52,7 +52,7 @@ sysrevdata %>%
   table()
 # wind_solar
 # solar         wind windandsolar 
-# 48          295            1 
+# 48          293            1 
 
 # filter to just unique papers, then count # impact, # mitigation
 sysrevdata %>%
@@ -62,7 +62,7 @@ sysrevdata %>%
   table()
 # impact_mitigation
 # impact impactandmitigation          mitigation 
-# 293                  30                  21 
+# 291                  30                  21 
 
 # filter to just unique papers, then count wind/solar vs impact/mitigation
 sysrevdata %>%
@@ -75,7 +75,7 @@ sysrevdata %>%
 # 1 solar      impact                                            33
 # 2 solar      impact_mitigation                                  6
 # 3 solar      mitigation                                         9
-# 4 wind       impact                                           259
+# 4 wind       impact                                           257
 # 5 wind       impact_mitigation                                 24
 # 6 wind       mitigation                                        12
 # 7 wind_solar impact                                             1
@@ -91,7 +91,7 @@ sysrevdata %>%
   table()
 # region
 # Africa          Asia        Europe North America       Oceania South America 
-# 8            22           141           159             6            8 
+# 8            22           141           157             6            8 
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
@@ -126,13 +126,13 @@ sysrevdata %>%
 # amphibians                    animals                       bats 
 # 2                          1                         94 
 # bats, birds bats, birds, invertebrates        bats, invertebrates 
-# 12                          1                          1 
+# 10                          1                          1 
 # birds                birds, bats birds, fish, invertebrates 
-# 157                          1                          1 
+# 159                          1                          1 
 # birds, mammals            birds, reptiles              invertebrates 
-# 4                          1                         14 
+# 3                          1                         14 
 # mammals                     plants            plants, animals 
-# 21                         19                          2 
+# 22                         19                          2 
 # pollinators, invertebrates                   reptiles 
 # 3                         10 
 
@@ -189,7 +189,7 @@ sysrevdata %>%
   table()
 # mitigation_suggested
 # FALSE  TRUE 
-# 63   144 
+# 73   162 
 
 # mitigation category
 sysrevdata %>%
@@ -204,18 +204,18 @@ sysrevdata %>%
   dplyr::summarise(count = n(), .groups = 'drop')
 # mitigation_category         wind_solar count
 # <chr>                       <chr>      <int>
-#   1 curtailment                 wind          17
+#   1 curtailment                 wind          21
 # 2 management decisions        solar         10
-# 3 management decisions        wind          16
+# 3 management decisions        wind          19
 # 4 offsetting                  solar          3
 # 5 offsetting                  wind           7
 # 6 offsetting                  wind_solar     1
 # 7 on-site restoration         solar         14
 # 8 on-site restoration         wind           7
 # 9 siting                      solar         12
-# 10 siting                      wind          71
+# 10 siting                      wind          85
 # 11 technological modifications solar          7
-# 12 technological modifications wind          18
+# 12 technological modifications wind          23
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -226,7 +226,7 @@ sysrevdata %>%
   table()
 # mitigation_tested
 # FALSE  TRUE 
-# 125    31 
+# 139    35 
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -237,13 +237,13 @@ sysrevdata %>%
   table()
 # mitigation_supported_by_explicit_test
 # FALSE  TRUE 
-# 4    28
+# 5    31
 
 #### preliminary graphs #####
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
-# 344
+# 342
 
 # make histogram of year of publication
 sysrevdata %>%
