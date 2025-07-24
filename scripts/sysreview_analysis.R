@@ -1,49 +1,20 @@
 # figures from final review data ----
 
 # get data
-#sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview.csv")
-# temporary files from Ruby and Malan's data entry
-sysrevdata1 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v7_RS20250613.csv")
-sysrevdata2 <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v7_MB20250613.csv")
-
-# stitch together
-# first get all RS filled out values from RS data
-sysrevdata <- sysrevdata1 %>%
-  dplyr::filter(data_entered_by == "Ruby Stephens")
-# then get MB data filled out values
-sysrevdata2 <- sysrevdata2 %>%
-  dplyr::filter(data_entered_by == "Malan Bothma")
-# then update RS data with MB data
-sysrevdata <- sysrevdata %>%
-  dplyr::rows_insert(sysrevdata2)
-# then delete rows from OG RS full data that already filled out in combined MB and RS data
-sysrevdata1 <- sysrevdata1 %>%
-  dplyr::rows_delete(sysrevdata)
-# and add these in as still needing filling out
-sysrevdata <- sysrevdata %>%
-  dplyr::rows_insert(sysrevdata1)
-rm(sysrevdata1, sysrevdata2)
-
-# write output of combined data sheet for continued data entry
-readr::write_csv(sysrevdata, "data_output/wind_solar_biodiversity_sysreview_v8.csv")
-
+sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250723.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
 # 351
 
-# how many papers reviewed so far?
-reviewed <- dplyr::filter(sysrevdata, !is.na(data_entered_by))
-length(unique(reviewed$title))
-# [1] 244
-rm(reviewed)
-
-# 107 to go! a third!!!
-
-# DROP EXCLUDED PAPERS
+# drop excluded papers and 1 NA (paper for which full text couldn't be found)
 sysrevdata <- sysrevdata %>%
-  dplyr::filter(is.na(exclude)|exclude == FALSE)
-  
+  dplyr::filter(exclude == FALSE)
+
+# how many papers without excluded?
+length(unique(sysrevdata$title))
+# 331
+
 # filter to just unique papers, then count # wind, # solar
 sysrevdata %>%
   dplyr::select(title, wind_solar) %>%
@@ -51,8 +22,8 @@ sysrevdata %>%
   dplyr::select(wind_solar) %>%
   table()
 # wind_solar
-# solar         wind windandsolar 
-# 48          293            1 
+# solar      wind 
+# 49          283 
 
 # filter to just unique papers, then count # impact, # mitigation
 sysrevdata %>%
@@ -62,7 +33,7 @@ sysrevdata %>%
   table()
 # impact_mitigation
 # impact impactandmitigation          mitigation 
-# 291                  30                  21 
+# 282                  27                  22 
 
 # filter to just unique papers, then count wind/solar vs impact/mitigation
 sysrevdata %>%
@@ -70,16 +41,14 @@ sysrevdata %>%
   dplyr::distinct() %>%
   dplyr::group_by(wind_solar, impact_mitigation) %>%
   dplyr::summarise(count_by_windsolarimpactmitigation = n())
-# wind_solar   impact_mitigation               count_by_windsolarimpactmitigation
-# <chr>        <chr>                                            <int>
-# 1 solar      impact                                            33
+# wind_solar   impact_mitigation          count_by_windsolarimpactmitigation
+# <chr>        <chr>                                          <int>
+# 1 solar      impact                                            34
 # 2 solar      impact_mitigation                                  6
 # 3 solar      mitigation                                         9
-# 4 wind       impact                                           257
-# 5 wind       impact_mitigation                                 24
-# 6 wind       mitigation                                        12
-# 7 wind_solar impact                                             1
-
+# 4 wind       impact                                           249
+# 5 wind       impact_mitigation                                 21
+# 6 wind       mitigation                                        13
 
 # locations ----
 
@@ -90,8 +59,8 @@ sysrevdata %>%
   dplyr::select(region) %>%
   table()
 # region
-# Africa          Asia        Europe North America       Oceania South America 
-# 8            22           141           157             6            8 
+# Africa       Asia         Europe       North America   Oceania   South America 
+# 8            21           137           151             6            8 
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
@@ -105,15 +74,15 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::distinct()
 
 # then plot background world map and points coloured by wind or solar
-# FIX TO INCORPORATE WIND_SOLAR STUDY, EXCLUDED FOR NOW
 ggplot() +
   geom_sf(data = worldmap, fill = "grey", colour = "white", linewidth = 0.1) +
   theme_void() +
-  geom_point(data = dplyr::filter(sysrevlatlong, wind_solar %in% c("wind", "solar")), aes(x = longitude, y = latitude, colour = wind_solar)) +
+  geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar)) +
   labs(colour = "Facility type") +
   scale_colour_discrete(type = my_colours$windsolar)
 ggsave("figures/map_study_locations.png", width = 6, height = 4)
 rm(worldmap, sysrevlatlong)
+# COULD combine these points with coloured background map??
 
 # table of biodiversity categories
 sysrevdata %>%
@@ -137,10 +106,8 @@ sysrevdata %>%
 # 3                         10 
 
 # make histogram of effect of wind and solar
-# FIX TO INCORPORATE WIND_SOLAR STUDY
-# FOR NOW JUST EXCLUDE
+# MAYBE WANT TO MAKE THIS PROPORTIONAL SOMEHOW SO WIND DOESN"T DWARF SOLAR???
 sysrevdata %>%
-  dplyr::filter(wind_solar %in% c("wind", "solar")) %>%
   dplyr::select(title, wind_solar, effect_wind, effect_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter_at(vars(effect_wind, effect_solar), any_vars(!is.na(.))) %>%
@@ -157,10 +124,8 @@ ggsave("figures/effect_development_barchart.png", width = 5, height = 4)
 
 # now a bar chart showing mitigations suggested, and mitigation heirarchy
 # given some have multiple suggestions have to summarise data a bit
-# FIX TO INCORPORATE WIND_SOLAR STUDY
-# FOR NOW JUST EXCLUDE
+# AS ABOVE MAKE PROPORTIONAL
 sysrevdata %>%
-  dplyr::filter(wind_solar %in% c("wind", "solar")) %>%
   dplyr::select(title, mitigation_category, wind_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter(!is.na(.$mitigation_category)) %>%
@@ -189,7 +154,7 @@ sysrevdata %>%
   table()
 # mitigation_suggested
 # FALSE  TRUE 
-# 73   162 
+# 110   221 
 
 # mitigation category
 sysrevdata %>%
@@ -202,20 +167,19 @@ sysrevdata %>%
   # Count occurrences of each category
   dplyr::group_by(mitigation_category, wind_solar) %>%
   dplyr::summarise(count = n(), .groups = 'drop')
-# mitigation_category         wind_solar count
+# mitigation_category         wind_solar    count
 # <chr>                       <chr>      <int>
-#   1 curtailment                 wind          21
+# 1 curtailment                 wind          60
 # 2 management decisions        solar         10
-# 3 management decisions        wind          19
-# 4 offsetting                  solar          3
-# 5 offsetting                  wind           7
-# 6 offsetting                  wind_solar     1
-# 7 on-site restoration         solar         14
-# 8 on-site restoration         wind           7
-# 9 siting                      solar         12
-# 10 siting                      wind          85
-# 11 technological modifications solar          7
-# 12 technological modifications wind          23
+# 3 management decisions        wind          21
+# 4 offsetting                  solar          4
+# 5 offsetting                  wind          15
+# 6 on-site restoration         solar         14
+# 7 on-site restoration         wind           7
+# 8 siting                      solar         12
+# 9 siting                      wind         106
+# 10 technological modifications solar          7
+# 11 technological modifications wind          35
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -226,7 +190,7 @@ sysrevdata %>%
   table()
 # mitigation_tested
 # FALSE  TRUE 
-# 139    35 
+# 180    53 
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -237,13 +201,7 @@ sysrevdata %>%
   table()
 # mitigation_supported_by_explicit_test
 # FALSE  TRUE 
-# 5    31
-
-#### preliminary graphs #####
-
-# how many papers included currently?
-length(unique(sysrevdata$title))
-# 342
+# 7    47
 
 # make histogram of year of publication
 sysrevdata %>%
