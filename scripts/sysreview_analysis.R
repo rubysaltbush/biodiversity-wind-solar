@@ -1,4 +1,4 @@
-# figures from final review data ----
+# final review data ----
 
 # get data
 sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250723.csv")
@@ -14,6 +14,8 @@ sysrevdata <- sysrevdata %>%
 # how many papers without excluded?
 length(unique(sysrevdata$title))
 # 331
+
+# describe data ----
 
 # filter to just unique papers, then count # wind, # solar
 sysrevdata %>%
@@ -50,7 +52,23 @@ sysrevdata %>%
 # 5 wind       impact_mitigation                                 21
 # 6 wind       mitigation                                        13
 
-# locations ----
+# make histogram of year of publication, coloured by wind/solar
+sysrevdata %>%
+  dplyr::select(title, year, wind_solar) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(year, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  ggplot(aes(x = year, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  xlab("Year of Publication") +
+  ylab("Number of Publications") +
+  labs(fill = "Facility type")
+ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
+
+# map data ----
 
 # count where studies located
 sysrevdata %>%
@@ -61,6 +79,36 @@ sysrevdata %>%
 # region
 # Africa       Asia         Europe       North America   Oceania   South America 
 # 8            21           137           151             6            8 
+
+# create table of country count data
+counts <- sysrevdata %>%
+  dplyr::select(title, country, region) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(country, delim = ", ") %>%
+  dplyr::group_by(country, region) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup()
+# add regional count
+regioncount <- counts %>%
+  dplyr::group_by(region) %>%
+  dplyr::summarise(regioncount = sum(count))
+counts <- counts %>%
+  dplyr::left_join(regioncount, by = "region")
+rm(regioncount)
+
+# make histogram of country coloured by region, sorted by region+counts, to match map
+#TO DO: colour by wind/solar?
+counts %>%
+  dplyr::arrange(-regioncount, -count) %>%
+  dplyr::mutate(country = forcats::fct_inorder(country)) %>%
+  ggplot(aes(x = country, y = count, fill = region)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_brewer(palette = "YlGnBu") +
+  xlab("Country") +
+  ylab("Number of Publications") +
+  coord_flip()
+ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
@@ -73,16 +121,27 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::filter(!is.na(latitude)) %>%
   dplyr::distinct()
 
+# checking my countries against "admin" column of world map, need to change:
+# United States -> United States of America
+counts$country <- gsub("United States", "United States of America", counts$country)
+
+# join data together
+worldmapcount <- worldmap %>%
+  dplyr::select(country = admin, geometry) %>%
+  dplyr::left_join(counts, by = "country") %>%
+  dplyr::mutate(countlog = log(replace_na(count, 0)))
+
 # then plot background world map and points coloured by wind or solar
 ggplot() +
-  geom_sf(data = worldmap, fill = "grey", colour = "white", linewidth = 0.1) +
+  geom_sf(data = worldmapcount, aes(fill = countlog)) +
   theme_void() +
   geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar)) +
   labs(colour = "Facility type") +
-  scale_colour_discrete(type = my_colours$windsolar)
-ggsave("figures/map_study_locations.png", width = 6, height = 4)
-rm(worldmap, sysrevlatlong)
-# COULD combine these points with coloured background map??
+  scale_colour_discrete(type = my_colours$windsolar) +
+  scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
+  labs(fill = "No. studies (log)")
+ggsave("figures/map_study_locations.pdf", width = 6, height = 4)
+rm(sysrevlatlong, worldmap, worldmapcount, counts)
 
 # table of biodiversity categories
 sysrevdata %>%
@@ -93,17 +152,17 @@ sysrevdata %>%
   table()
 # biodiversity_category
 # amphibians                    animals                       bats 
-# 2                          1                         94 
+# 2                                 1                         85 
 # bats, birds bats, birds, invertebrates        bats, invertebrates 
-# 10                          1                          1 
+# 11                          1                          1 
 # birds                birds, bats birds, fish, invertebrates 
-# 159                          1                          1 
-# birds, mammals            birds, reptiles              invertebrates 
-# 3                          1                         14 
-# mammals                     plants            plants, animals 
-# 22                         19                          2 
-# pollinators, invertebrates                   reptiles 
-# 3                         10 
+# 155                          1                          1 
+# birds, mammals            birds, reptiles                    insects 
+# 3                          1                                  1 
+# invertebrates                    mammals                     plants 
+# 14                                 22                         19 
+# plants, animals pollinators, invertebrates                   reptiles 
+# 2                               3                             11 
 
 # make histogram of effect of wind and solar
 # MAYBE WANT TO MAKE THIS PROPORTIONAL SOMEHOW SO WIND DOESN"T DWARF SOLAR???
@@ -203,68 +262,9 @@ sysrevdata %>%
 # FALSE  TRUE 
 # 7    47
 
-# make histogram of year of publication
-sysrevdata %>%
-  dplyr::select(title, year) %>%
-  dplyr::distinct() %>%
-  ggplot(aes(x = year)) +
-  geom_histogram(binwidth = 1) +
-  ggpubr::theme_pubr() +
-  xlab("Year of Publication") +
-  ylab("Number of Publications")
-ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
 
-# want to make map of country/region data
-# first get world map data without Antarctica (not included)
-worldmap <- rnaturalearth::ne_countries() %>% 
-  filter(sovereignt != "Antarctica")
 
-# create table of country count data
-counts <- sysrevdata %>%
-  dplyr::select(title, country, region) %>%
-  dplyr::distinct() %>%
-  tidyr::separate_longer_delim(country, delim = ", ") %>%
-  dplyr::group_by(country, region) %>%
-  dplyr::summarise(count = n()) %>%
-  dplyr::ungroup()
-# add regional count
-regioncount <- counts %>%
-  dplyr::group_by(region) %>%
-  dplyr::summarise(regioncount = sum(count))
-counts <- counts %>%
-  dplyr::left_join(regioncount, by = "region")
-rm(regioncount)
-
-# make histogram of country coloured by region, sorted by region+counts, to match map
-counts %>%
-  dplyr::arrange(-regioncount, -count) %>%
-  dplyr::mutate(country = forcats::fct_inorder(country)) %>%
-  ggplot(aes(x = country, y = count, fill = region)) +
-  geom_bar(stat = "identity") +
-  ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
-  xlab("Country") +
-  ylab("Number of Publications") +
-  coord_flip()
-ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
-
-# checking my countries against "admin" column of world map, need to change:
-# United States -> United States of America
-counts$country <- gsub("United States", "United States of America", counts$country)
-
-# join data together
-worldmapcount <- worldmap %>%
-  dplyr::select(country = admin, geometry) %>%
-  dplyr::left_join(counts, by = "country") %>%
-  dplyr::mutate(countlog = log(replace_na(count, 0)))
-
-# then plot world map coloured by number of studies
-ggplot(worldmapcount) +
-  geom_sf(aes(fill = countlog), linewidth = 0.1) +
-  theme_void() +
-  scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
-  labs(fill = "No. studies (log)")
-ggsave("figures/map_countrycounts.pdf", width = 6, height = 4)
+# what studied ----
 
 
 # make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
