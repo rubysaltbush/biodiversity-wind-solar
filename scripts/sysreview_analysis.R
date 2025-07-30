@@ -1,7 +1,7 @@
 # final review data ----
 
 # get data
-sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250723.csv")
+sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250730.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
@@ -52,6 +52,7 @@ sysrevdata %>%
 # 5 wind       impact_mitigation                                 21
 # 6 wind       mitigation                                        13
 
+# when ----
 # make histogram of year of publication, coloured by wind/solar
 sysrevdata %>%
   dplyr::select(title, year, wind_solar) %>%
@@ -68,7 +69,7 @@ sysrevdata %>%
   labs(fill = "Facility type")
 ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
 
-# map data ----
+# where ----
 
 # count where studies located
 sysrevdata %>%
@@ -130,11 +131,16 @@ sysrevlatlong <- sysrevdata %>%
 # United States -> United States of America
 counts$country <- gsub("United States", "United States of America", counts$country)
 
+# and summarise counts back down to one per country
+counts <- counts %>%
+  dplyr::select(country, country_total) %>%
+  dplyr::distinct()
+
 # join data together
 worldmapcount <- worldmap %>%
   dplyr::select(country = admin, geometry) %>%
   dplyr::left_join(counts, by = "country") %>%
-  dplyr::mutate(countlog = log(replace_na(count, 0)))
+  dplyr::mutate(countlog = log(replace_na(country_total, 0)))
 
 # then plot background world map and points coloured by wind or solar
 ggplot() +
@@ -148,6 +154,7 @@ ggplot() +
 ggsave("figures/map_study_locations.pdf", width = 6, height = 4)
 rm(sysrevlatlong, worldmap, worldmapcount, counts)
 
+# who/what ----
 # table of biodiversity categories
 sysrevdata %>%
   dplyr::select(title, biodiversity_category) %>%
@@ -169,6 +176,43 @@ sysrevdata %>%
 # plants, animals pollinators, invertebrates                   reptiles 
 # 2                               3                             11 
 
+# make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
+# coloured by wind or solar, arranged by # studies??
+sysrevdata %>%
+  dplyr::select(title, biodiversity_category, wind_solar) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
+  tidyr::separate_longer_delim(wind_solar, delim = "_") %>%
+  dplyr::group_by(biodiversity_category, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(-count) %>%
+  dplyr::mutate(biodiversity_category = forcats::fct_inorder(biodiversity_category)) %>%
+  ggplot(aes(x = biodiversity_category, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = "right") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  xlab("Biodiversity Category") +
+  coord_flip() +
+  ylab("Number of Publications") +
+  labs(fill = "Facility type")
+ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
+
+# make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
+sysrevdata %>%
+  dplyr::select(title, biodiversity_metric) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
+  ggplot(aes(x = biodiversity_metric, fill = biodiversity_metric)) +
+  geom_bar() +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Biodiversity Metric") +
+  ggpubr::rotate_x_text(angle = 20) +
+  ylab("Number of Publications") +
+  scale_fill_discrete(type = colorRampPalette(RColorBrewer::brewer.pal(9, name = 'YlGnBu'))(11))
+ggsave("figures/biodiversity_metric_histogram.png", width = 5, height = 4)
+
+# outcome ----
 # make histogram of effect of wind and solar
 # MAYBE WANT TO MAKE THIS PROPORTIONAL SOMEHOW SO WIND DOESN"T DWARF SOLAR???
 sysrevdata %>%
@@ -267,45 +311,8 @@ sysrevdata %>%
 # FALSE  TRUE 
 # 7    47
 
+s
 
 
-# what studied ----
 
-
-# make histogram of biodiversity category, counting some pubs with multiple cats in multiple bars
-# coloured by wind or solar, arranged by # studies??
-# create table of country count data
-sysrevdata %>%
-  dplyr::select(title, biodiversity_category, wind_solar) %>%
-  dplyr::distinct() %>%
-  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
-  tidyr::separate_longer_delim(wind_solar, delim = "_") %>%
-  dplyr::group_by(biodiversity_category, wind_solar) %>%
-  dplyr::summarise(count = n()) %>%
-  dplyr::ungroup() %>%
-  dplyr::arrange(-count) %>%
-  dplyr::mutate(biodiversity_category = forcats::fct_inorder(biodiversity_category)) %>%
-  ggplot(aes(x = biodiversity_category, y = count, fill = wind_solar)) +
-  geom_bar(stat = "identity") +
-  ggpubr::theme_pubr(legend = "right") +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Biodiversity Category") +
-  coord_flip() +
-  ylab("Number of Publications") +
-  labs(fill = "Facility type")
-ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
-
-# make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
-sysrevdata %>%
-  dplyr::select(title, biodiversity_metric) %>%
-  dplyr::distinct() %>%
-  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
-  ggplot(aes(x = biodiversity_metric, fill = biodiversity_metric)) +
-  geom_bar() +
-  ggpubr::theme_pubr(legend = "none") +
-  xlab("Biodiversity Metric") +
-  ggpubr::rotate_x_text(angle = 20) +
-  ylab("Number of Publications") +
-  scale_fill_discrete(type = colorRampPalette(RColorBrewer::brewer.pal(9, name = 'YlGnBu'))(11))
-ggsave("figures/biodiversity_metric_histogram.png", width = 5, height = 4)
 
