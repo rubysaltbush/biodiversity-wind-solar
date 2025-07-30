@@ -67,7 +67,7 @@ sysrevdata %>%
   xlab("Year of Publication") +
   ylab("Number of Publications") +
   labs(fill = "Facility type")
-ggsave("figures/year_pub_histogram.png", width = 5, height = 4)
+ggsave("figures/year_pub_histogram.pdf", width = 5, height = 4)
 
 # where ----
 
@@ -163,18 +163,26 @@ sysrevdata %>%
   dplyr::select(biodiversity_category) %>% 
   table()
 # biodiversity_category
-# amphibians                    animals                       bats 
-# 2                                 1                         85 
-# bats, birds bats, birds, invertebrates        bats, invertebrates 
-# 11                          1                          1 
-# birds                birds, bats birds, fish, invertebrates 
-# 155                          1                          1 
-# birds, mammals            birds, reptiles                    insects 
-# 3                          1                                  1 
-# invertebrates                    mammals                     plants 
-# 14                                 22                         19 
-# plants, animals pollinators, invertebrates                   reptiles 
-# 2                               3                             11 
+# amphibians                                                 bats 
+# 2                                                          85 
+# bats, birds                                        bats, birds, insects 
+# 11                                                           1 
+# bats, insects                                             birds 
+# 1                                                         155 
+# birds, bats                            birds, fish, other invertebrates 
+# 1                                                           1 
+# birds, other mammals                                   birds, reptiles 
+# 3                                                           1 
+# insects                                insects, other invertebrates 
+# 11                                                           4 
+# other invertebrates                                     other mammals 
+# 1                                                          22 
+# other mammals, amphibians                                plants 
+# 1                                                          19 
+# plants, insects                      plants, other mammals, birds, reptiles 
+# 2                                                           1 
+# plants, other mammals, birds, reptiles, other invertebrates      reptiles 
+# 1                                                                   11 
 
 # make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
 # coloured by wind or solar, arranged by # studies??
@@ -200,17 +208,18 @@ ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
 
 # make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
 sysrevdata %>%
-  dplyr::select(title, biodiversity_metric) %>%
+  dplyr::select(title, biodiversity_metric, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
-  ggplot(aes(x = biodiversity_metric, fill = biodiversity_metric)) +
+  ggplot(aes(x = biodiversity_metric, fill = wind_solar)) +
   geom_bar() +
-  ggpubr::theme_pubr(legend = "none") +
+  ggpubr::theme_pubr() +
   xlab("Biodiversity Metric") +
   ggpubr::rotate_x_text(angle = 20) +
   ylab("Number of Publications") +
-  scale_fill_discrete(type = colorRampPalette(RColorBrewer::brewer.pal(9, name = 'YlGnBu'))(11))
-ggsave("figures/biodiversity_metric_histogram.png", width = 5, height = 4)
+  scale_fill_discrete(type = my_colours$windsolar) +
+  labs(fill = "Facility type")
+ggsave("figures/biodiversity_metric_histogram.pdf", width = 5, height = 4)
 
 # outcome ----
 # make histogram of effect of wind and solar
