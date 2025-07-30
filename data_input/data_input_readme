@@ -2,9 +2,6 @@ This file records details of all data files in the data_input folder.
 
 Rayyan_take3_export_articles.csv - Ruby Stephens - 2024-11-12 - Exported articles with labels and tags from third round of article screening for systematic review.
 
-wind_solar_biodiversity_sysreview.csv - Ruby Stephens - updated 2024-12-19 -
-Details and data extracted from papers included in systematic review.
-
 solar_nationalmap_20241203 and wind_nationalmap_20241203 - National Map - Ruby Stephens - 2024-12-03 - data downloaded from nationalmap.gov.au on locations and power generation of wind and solar facilities in the National Energy Market (southeast Australia)
 
 ibra7_biomes_background.shp - created 2021-03-05 - updated 2021-03-22 - IBRA7 regions file, manually updated with biomes from WWF 2001 Olsen/2017 Dinerstein study, simplified using JSON script to help R display more easily (not suitable for detailed analysis)
@@ -20,5 +17,7 @@ windfarms_aus_updated.csv - Renew Economy and Ruby Stephens - added 2024-12-20 -
 Global-Solar-Power-Tracker-June-2024-v2.xlsx - Global Energy Monitor - added 2025-01-22 - Global Solar Power Tracker, Global Energy Monitor and TransitionZero, June 2024 release https://globalenergymonitor.org/projects/global-integrated-power-tracker/
 
 Global-Wind-Power-Tracker-June-2024.xlsx - Global Energy Monitor - added 2025-01-22 - Global Energy Monitor, Global Wind Power Tracker, June 2024 release https://globalenergymonitor.org/projects/global-integrated-power-tracker/
+
+windsolar_gipt_aus_checked.csv - Ruby Stephens - updated 2025-02-24 - data on locations, capacity and start year of wind and solar facilities located across Australia. Original list from the Global Energy Monitor manually checked and updated using project websites and Google Earth.
 
 wind_solar_biodiversity_sysreview... - Ruby Stephens and Malan Bothma - added 2024-12 - updated 2025-07-23s - systematic review data entered by Ruby Stephens and Malan Bothma
