@@ -82,33 +82,38 @@ sysrevdata %>%
 
 # create table of country count data
 counts <- sysrevdata %>%
-  dplyr::select(title, country, region) %>%
+  dplyr::select(title, country, region, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(country, delim = ", ") %>%
-  dplyr::group_by(country, region) %>%
+  dplyr::group_by(country, region, wind_solar) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::ungroup()
-# add regional count
+# add country total count
+countrycount <- counts %>%
+  dplyr::group_by(country) %>%
+  dplyr::summarise(country_total = sum(count))
+# add region total count
 regioncount <- counts %>%
   dplyr::group_by(region) %>%
-  dplyr::summarise(regioncount = sum(count))
+  dplyr::summarise(region_total = sum(count))
 counts <- counts %>%
+  dplyr::left_join(countrycount, by = "country") %>%
   dplyr::left_join(regioncount, by = "region")
-rm(regioncount)
+rm(countrycount, regioncount)
 
-# make histogram of country coloured by region, sorted by region+counts, to match map
-#TO DO: colour by wind/solar?
+# make histogram of country coloured by wind/solar, sorted by region+counts
 counts %>%
-  dplyr::arrange(-regioncount, -count) %>%
+  dplyr::arrange(-region_total, -country_total) %>%
   dplyr::mutate(country = forcats::fct_inorder(country)) %>%
-  ggplot(aes(x = country, y = count, fill = region)) +
+  ggplot(aes(x = country, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
-  scale_fill_brewer(palette = "YlGnBu") +
+  scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Country") +
   ylab("Number of Publications") +
+  labs(fill = "Facility type") +
   coord_flip()
-ggsave("figures/countries_by_region_histogram.pdf", width = 8, height = 7)
+ggsave("figures/countries_by_region_histogram_windsolar.pdf", width = 8, height = 7)
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
