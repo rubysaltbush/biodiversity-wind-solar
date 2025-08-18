@@ -185,7 +185,7 @@ sysrevdata %>%
 # 1                                                                   11 
 
 # make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
-# coloured by wind or solar, arranged by # studies??
+# coloured by wind or solar, arranged by # studies
 sysrevdata %>%
   dplyr::select(title, biodiversity_category, wind_solar) %>%
   dplyr::distinct() %>%
