@@ -1,7 +1,7 @@
 # final review data ----
 
 # get data
-sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250730.csv")
+sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250818.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
@@ -219,7 +219,7 @@ sysrevdata %>%
   ylab("Number of Publications") +
   scale_fill_discrete(type = my_colours$windsolar) +
   labs(fill = "Facility type")
-ggsave("figures/biodiversity_metric_histogram.pdf", width = 5, height = 4)
+ggsave("figures/biodiversity_metric_histogram.pdf", width = 6, height = 5)
 
 # outcome ----
 # make histogram of effect of wind and solar
