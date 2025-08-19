@@ -159,7 +159,6 @@ rm(sysrevlatlong, worldmap, worldmapcount, counts)
 sysrevdata %>%
   dplyr::select(title, biodiversity_category) %>%
   dplyr::distinct() %>%
-  dplyr::filter(!is.na(.$biodiversity_category)) %>% 
   dplyr::select(biodiversity_category) %>% 
   table()
 # biodiversity_category
@@ -190,7 +189,6 @@ sysrevdata %>%
   dplyr::select(title, biodiversity_category, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
-  tidyr::separate_longer_delim(wind_solar, delim = "_") %>%
   dplyr::group_by(biodiversity_category, wind_solar) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::ungroup() %>%
@@ -205,6 +203,34 @@ sysrevdata %>%
   ylab("Number of Publications") +
   labs(fill = "Facility type")
 ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
+
+# table of biodiversity measure
+sysrevdata %>%
+  dplyr::select(title, biodiversity_metric, wind_solar) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
+  dplyr::group_by(biodiversity_metric, wind_solar) %>%
+  dplyr::summarise(count = n())
+# biodiversity_metric wind_solar count
+# <chr>               <chr>      <int>
+# 1 abundance           solar          4
+# 2 abundance           wind          19
+# 3 behaviour           solar          6
+# 4 behaviour           wind          63
+# 5 distribution        solar          4
+# 6 distribution        wind          44
+# 7 diversity           solar         24
+# 8 diversity           wind          18
+# 9 genetics            solar          1
+# 10 health              solar          2
+# 11 health              wind           7
+# 12 mortality           solar          6
+# 13 mortality           wind         127
+# 14 native cover        solar          2
+# 15 predation           wind           2
+# 16 reproduction        wind          21
+# 17 survival            solar          5
+# 18 survival            wind           7
 
 # make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
 sysrevdata %>%
@@ -222,20 +248,47 @@ sysrevdata %>%
 ggsave("figures/biodiversity_metric_histogram.pdf", width = 6, height = 5)
 
 # outcome ----
-# make histogram of effect of wind and solar
-# MAYBE WANT TO MAKE THIS PROPORTIONAL SOMEHOW SO WIND DOESN"T DWARF SOLAR???
-sysrevdata %>%
+
+# table of effects
+ effect <- sysrevdata %>%
   dplyr::select(title, wind_solar, effect_wind, effect_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter_at(vars(effect_wind, effect_solar), any_vars(!is.na(.))) %>%
   tidyr::unite(col = "effect", effect_wind:effect_solar, na.rm = TRUE) %>%
-  ggplot(aes(x = effect, fill = wind_solar)) +
-  geom_bar(position = "dodge") +
+  dplyr::group_by(effect, wind_solar) %>%
+  dplyr::summarise(count = n())
+
+# make column with total number of studies for wind/solar
+totals <- effect %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::summarise(total = sum(count))
+totals
+
+# join back on and calculate proportion
+effect <- effect %>%
+  dplyr::left_join(totals, by = "wind_solar") %>%
+  dplyr::mutate(proportion = count/total)
+rm(totals)
+effect
+# effect   wind_solar count total proportion
+# <chr>    <chr>      <int> <int>      <dbl>
+# 1 negative solar         17    49     0.347 
+# 2 negative wind         192   299     0.642 
+# 3 neutral  solar         26    49     0.531 
+# 4 neutral  wind          94   299     0.314 
+# 5 positive solar          6    49     0.122 
+# 6 positive wind          13   299     0.0435
+
+
+# make histogram of effect of wind and solar by proportion publications
+effect %>%
+  ggplot(aes(x = effect, y = proportion, fill = wind_solar)) +
+  geom_bar(stat = "identity", position = "dodge") +
   ggpubr::theme_pubr() +
   xlab("Impact on Biodiversity") +
-  ylab("Number of Publications") +
+  ylab("Proportion of Publications") +
   scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
-ggsave("figures/effect_development_barchart.png", width = 5, height = 4)
+ggsave("figures/effect_development_barchart_proportion.pdf", width = 5, height = 4)
 
 # mitigation ----
 
