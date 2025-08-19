@@ -289,33 +289,11 @@ effect %>%
   ylab("Proportion of Publications") +
   scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
 ggsave("figures/effect_development_barchart_proportion.pdf", width = 5, height = 4)
+rm(effect)
 
 # mitigation ----
 
-# now a bar chart showing mitigations suggested, and mitigation heirarchy
-# given some have multiple suggestions have to summarise data a bit
-# AS ABOVE MAKE PROPORTIONAL
-sysrevdata %>%
-  dplyr::select(title, mitigation_category, wind_solar) %>%
-  dplyr::distinct() %>%
-  dplyr::filter(!is.na(.$mitigation_category)) %>%
-  # Split the categories and unnest them
-  dplyr::mutate(mitigation_category = stringr::str_split(mitigation_category, ", ")) %>%
-  tidyr::unnest(mitigation_category) %>%
-  # Count occurrences of each category
-  dplyr::group_by(mitigation_category, wind_solar) %>%
-  dplyr::summarise(count = n(), .groups = 'drop') %>%
-  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = wind_solar)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  ggpubr::theme_pubr() +
-  xlab("Mitigation Category") +
-  labs(fill = "Facility type") +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::rotate_x_text(angle = 15, hjust = 0.7, vjust = 0.9) +
-  ylab("Number of Publications")
-ggsave("figures/mitigation_cat_barplot.png", width = 5, height = 4)
-
-# tables for numbers
+# how many studies suggested any form of mitigation
 sysrevdata %>%
   dplyr::select(title, mitigation_suggested) %>%
   dplyr::distinct() %>%
@@ -326,8 +304,8 @@ sysrevdata %>%
 # FALSE  TRUE 
 # 110   221 
 
-# mitigation category
-sysrevdata %>%
+# what sort of mitigation suggested
+mitigation_cat <- sysrevdata %>%
   dplyr::select(title, mitigation_category, wind_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter(!is.na(.$mitigation_category)) %>%
@@ -337,30 +315,51 @@ sysrevdata %>%
   # Count occurrences of each category
   dplyr::group_by(mitigation_category, wind_solar) %>%
   dplyr::summarise(count = n(), .groups = 'drop')
-# mitigation_category         wind_solar    count
-# <chr>                       <chr>      <int>
-# 1 curtailment                 wind          60
-# 2 management decisions        solar         10
-# 3 management decisions        wind          21
-# 4 offsetting                  solar          4
-# 5 offsetting                  wind          15
-# 6 on-site restoration         solar         14
-# 7 on-site restoration         wind           7
-# 8 siting                      solar         12
-# 9 siting                      wind         106
-# 10 technological modifications solar          7
-# 11 technological modifications wind          35
+totals <- mitigation_cat %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::summarise(total = sum(count))
+mitigation_cat <- mitigation_cat %>%
+  dplyr::left_join(totals, by = "wind_solar") %>%
+  dplyr::mutate(proportion = count/total)
+rm(totals)
+mitigation_cat
+# mitigation_category         wind_solar count total proportion
+# <chr>                       <chr>      <int> <int>      <dbl>
+# 1 curtailment                 wind          60   244     0.246 
+# 2 management decisions        solar         10    47     0.213 
+# 3 management decisions        wind          21   244     0.0861
+# 4 offsetting                  solar          4    47     0.0851
+# 5 offsetting                  wind          15   244     0.0615
+# 6 on-site restoration         solar         14    47     0.298 
+# 7 on-site restoration         wind           7   244     0.0287
+# 8 siting                      solar         12    47     0.255 
+# 9 siting                      wind         106   244     0.434 
+# 10 technological modifications solar          7    47     0.149 
+# 11 technological modifications wind          35   244     0.143 
 
-# explicit tests of mitigation
+# now a bar chart showing mitigations suggested, and mitigation heirarchy
+mitigation_cat %>%
+  ggplot(aes(x = reorder(mitigation_category, -proportion), y = proportion, fill = wind_solar)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  ggpubr::theme_pubr() +
+  xlab("Mitigation Category") +
+  labs(fill = "Facility type") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::rotate_x_text(angle = 15, hjust = 0.7, vjust = 0.9) +
+  ylab("Proportion of Publications")
+ggsave("figures/mitigation_cat_barplot_proportion.pdf", width = 5, height = 4)
+rm(mitigation_cat)
+
+# how many studies conducted explicit tests of suggested mitigations' effectiveness
 sysrevdata %>%
-  dplyr::select(title, mitigation_tested) %>%
+  dplyr::select(title, mitigation_suggested, mitigation_tested) %>%
   dplyr::distinct() %>%
-  dplyr::filter(!is.na(.$mitigation_tested)) %>% 
+  dplyr::filter(mitigation_suggested == TRUE) %>% 
   dplyr::select(mitigation_tested) %>% 
   table()
 # mitigation_tested
 # FALSE  TRUE 
-# 180    53 
+# 166    53 
 
 # explicit tests of mitigation
 sysrevdata %>%
@@ -373,7 +372,8 @@ sysrevdata %>%
 # FALSE  TRUE 
 # 7    47
 
-s
+# MAKE GRAPH OF ABOVE, SPLIT BY MITIGATION CATEGORY
+
 
 
 
