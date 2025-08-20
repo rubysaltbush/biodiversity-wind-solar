@@ -64,8 +64,8 @@ sysrevdata %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Year of Publication") +
-  ylab("Number of Publications") +
+  xlab("Year of publication") +
+  ylab("Number of studies") +
   labs(fill = "Facility type")
 ggsave("figures/year_pub_histogram.pdf", width = 5, height = 4)
 
@@ -111,7 +111,7 @@ counts %>%
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Country") +
-  ylab("Number of Publications") +
+  ylab("Number of studies") +
   labs(fill = "Facility type") +
   coord_flip()
 ggsave("figures/countries_by_region_histogram_windsolar.pdf", width = 8, height = 7)
@@ -198,11 +198,11 @@ sysrevdata %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Biodiversity Category") +
+  xlab("Biodiversity category") +
   coord_flip() +
-  ylab("Number of Publications") +
+  ylab("Number of studies") +
   labs(fill = "Facility type")
-ggsave("figures/biodiversity_cat_histogram.pdf", width = 6, height = 2.5)
+ggsave("figures/biodiversity_cat_histogram.pdf", width = 7, height = 5)
 
 # table of biodiversity measure
 sysrevdata %>%
@@ -237,15 +237,18 @@ sysrevdata %>%
   dplyr::select(title, biodiversity_metric, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
-  ggplot(aes(x = biodiversity_metric, fill = wind_solar)) +
-  geom_bar() +
+  dplyr::group_by(biodiversity_metric, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  ggplot(aes(x = reorder(biodiversity_metric, -count), y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Biodiversity Metric") +
-  ggpubr::rotate_x_text(angle = 20) +
-  ylab("Number of Publications") +
+  xlab("Biodiversity metric") +
+  ylab("Number of studies") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  labs(fill = "Facility type")
-ggsave("figures/biodiversity_metric_histogram.pdf", width = 6, height = 5)
+  labs(fill = "Facility type") +
+  coord_flip()
+ggsave("figures/biodiversity_metric_histogram.pdf", width = 7, height = 5)
 
 # outcome ----
 
@@ -285,8 +288,8 @@ effect %>%
   ggplot(aes(x = effect, y = proportion, fill = wind_solar)) +
   geom_bar(stat = "identity", position = "dodge") +
   ggpubr::theme_pubr() +
-  xlab("Impact on Biodiversity") +
-  ylab("Proportion of Publications") +
+  xlab("Impact on biodiversity") +
+  ylab("Proportion of studies") +
   scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
 ggsave("figures/effect_development_barchart_proportion.pdf", width = 5, height = 4)
 rm(effect)
@@ -339,15 +342,15 @@ mitigation_cat
 
 # now a bar chart showing mitigations suggested, and mitigation heirarchy
 mitigation_cat %>%
-  ggplot(aes(x = reorder(mitigation_category, -proportion), y = proportion, fill = wind_solar)) +
-  geom_bar(stat = "identity", position = "dodge") +
+  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Mitigation Category") +
+  xlab("Mitigation category") +
   labs(fill = "Facility type") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::rotate_x_text(angle = 15, hjust = 0.7, vjust = 0.9) +
-  ylab("Proportion of Publications")
-ggsave("figures/mitigation_cat_barplot_proportion.pdf", width = 5, height = 4)
+  ylab("Number of studies") +
+  coord_flip()
+ggsave("figures/mitigation_cat_barplot_proportion.pdf", width = 7, height = 5)
 rm(mitigation_cat)
 
 # how many studies conducted explicit tests of suggested mitigations' effectiveness
@@ -361,7 +364,7 @@ sysrevdata %>%
 # FALSE  TRUE 
 # 166    53 
 
-# explicit tests of mitigation
+# how many explicit tests support mitigation method
 sysrevdata %>%
   dplyr::filter(mitigation_tested == "TRUE") %>%
   dplyr::select(title, mitigation_supported_by_explicit_test) %>%
@@ -373,8 +376,25 @@ sysrevdata %>%
 # 7    47
 
 # MAKE GRAPH OF ABOVE, SPLIT BY MITIGATION CATEGORY
-
-
-
+sysrevdata %>%
+  dplyr::filter(mitigation_tested == "TRUE") %>%
+  dplyr::select(title, mitigation_category, mitigation_supported_by_explicit_test) %>%
+  dplyr::distinct() %>%
+  # Split the categories and unnest them
+  dplyr::mutate(mitigation_category = stringr::str_split(mitigation_category, ", ")) %>%
+  tidyr::unnest(mitigation_category) %>%
+  # Count occurrences of each category
+  dplyr::group_by(mitigation_category, mitigation_supported_by_explicit_test) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::mutate(mitigation_supported_by_explicit_test = factor(mitigation_supported_by_explicit_test, levels = c("TRUE", "FALSE"))) %>%
+  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = mitigation_supported_by_explicit_test)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr() +
+  xlab("Mitigation category") +
+  labs(fill = "Mitigation supported") +
+  scale_fill_manual(values = c("#67a9cf", "#ef8a62")) +
+  ylab("Number of studies") +
+  coord_flip()
+ggsave("figures/mitigation_support_barchart.pdf", width = 7, height = 5)
 
 
