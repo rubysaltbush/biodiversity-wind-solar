@@ -1,7 +1,7 @@
 # final review data ----
 
 # get data
-sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250818.csv")
+sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250821.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
@@ -79,7 +79,7 @@ sysrevdata %>%
   table()
 # region
 # Africa       Asia         Europe       North America   Oceania   South America 
-# 8            21           137           151             6            8 
+# 8            21           137           152             6            7 
 
 # create table of country count data
 counts <- sysrevdata %>%
