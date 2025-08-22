@@ -18,6 +18,10 @@ Global-Solar-Power-Tracker-June-2024-v2.xlsx - Global Energy Monitor - added 202
 
 Global-Wind-Power-Tracker-June-2024.xlsx - Global Energy Monitor - added 2025-01-22 - Global Energy Monitor, Global Wind Power Tracker, June 2024 release https://globalenergymonitor.org/projects/global-integrated-power-tracker/
 
-windsolar_gipt_aus_checked.csv - Ruby Stephens - updated 2025-02-24 - data on locations, capacity and start year of wind and solar facilities located across Australia. Original list from the Global Energy Monitor manually checked and updated using project websites and Google Earth.
+windsolar_gipt_aus_checked.csv - Ruby Stephens - updated 2025-02-24 - data on locations, capacity and start year of wind and solar facilities located across Australia. Original list from the Global Energy Monitor manually checked and updated using project websites and Google Earth. Only projects above 3MW capacity included.
 
 wind_solar_biodiversity_sysreview... - Ruby Stephens and Malan Bothma - added 2024-12 - updated 2025-08-21 - systematic review data entered by Ruby Stephens and Malan Bothma
+
+Global-Wind-Power-Tracker-February-2025 - Global Energy Monitor - added 2025-08-22 - data on locations and capacity of global utility-scale wind power facilities to create a global map 
+
+Global-Solar-Power-Tracker-February-2025 - Global Energy Monitor - added 2025-08-22 - data on locations and capacity of global utility-scale solar power facilities to create a global map 
