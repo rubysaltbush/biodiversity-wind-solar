@@ -202,7 +202,7 @@ plotcat <- sysrevdata %>%
   coord_flip() +
   ylab("Number of studies") +
   labs(fill = "Facility type") +
-  scale_y_continuous(limits = c(0, 177))
+  scale_y_continuous(limits = c(0, 192))
 plotcat
 ggsave("figures/biodiversity_cat_histogram.pdf", width = 5, height = 5)
 
@@ -250,21 +250,22 @@ plotmeas <- sysrevdata %>%
   scale_fill_discrete(type = my_colours$windsolar) +
   labs(fill = "Facility type") +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 177))
+  scale_y_continuous(limits = c(0, 192))
 plotmeas
 ggsave("figures/biodiversity_metric_histogram.pdf", width = 5, height = 5)
 
 # combine vertically with patchwork
-combined <- plotcat / plotmeas + plot_layout(guides = "collect") & theme(legend.position = "top")
+combined <- plotcat / plotmeas + patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
 combined
 
 ggsave("figures/biodiversity_catmeas_combined.pdf", combined, width = 6, height = 9)
-rm(plotcat, plotmeas, combined)
+rm(combined)
+# keep two other plots to try combining with effect figure
 
 # outcome ----
 
 # table of effects
- effect <- sysrevdata %>%
+effect <- sysrevdata %>%
   dplyr::select(title, wind_solar, effect_wind, effect_solar) %>%
   dplyr::distinct() %>%
   dplyr::filter_at(vars(effect_wind, effect_solar), any_vars(!is.na(.))) %>%
@@ -303,7 +304,28 @@ effect %>%
   ylab("Proportion of studies") +
   scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
 ggsave("figures/effect_development_barchart_proportion.pdf", width = 5, height = 4)
-rm(effect)
+
+# histogram of number of studies to match above flipped coordinate histograms
+ploteffect <- effect %>%
+  ggplot(aes(x = effect, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  ggpubr::theme_pubr() +
+  xlab("Impact on biodiversity") +
+  ylab("Number of studies") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  labs(fill = "Facility type") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 192))
+ploteffect
+ggsave("figures/effect_development_histogram.pdf", width = 5, height = 5)  
+  
+# combine vertically with patchwork
+combined <- plotcat / plotmeas / ploteffect + 
+  patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
+combined
+
+ggsave("figures/biodiversity_catmeaseffect_combined.pdf", combined, width = 6, height = 13)
+rm(plotcat, plotmeas, ploteffect, combined, effect)
 
 # mitigation ----
 
