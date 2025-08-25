@@ -185,7 +185,7 @@ sysrevdata %>%
 
 # make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
 # coloured by wind or solar, arranged by # studies
-sysrevdata %>%
+plotcat <- sysrevdata %>%
   dplyr::select(title, biodiversity_category, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
@@ -196,13 +196,15 @@ sysrevdata %>%
   dplyr::mutate(biodiversity_category = forcats::fct_inorder(biodiversity_category)) %>%
   ggplot(aes(x = biodiversity_category, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
-  ggpubr::theme_pubr(legend = "right") +
+  ggpubr::theme_pubr() +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Biodiversity category") +
   coord_flip() +
   ylab("Number of studies") +
-  labs(fill = "Facility type")
-ggsave("figures/biodiversity_cat_histogram.pdf", width = 7, height = 5)
+  labs(fill = "Facility type") +
+  scale_y_continuous(limits = c(0, 177))
+plotcat
+ggsave("figures/biodiversity_cat_histogram.pdf", width = 5, height = 5)
 
 # table of biodiversity measure
 sysrevdata %>%
@@ -233,7 +235,7 @@ sysrevdata %>%
 # 18 survival            wind           7
 
 # make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
-sysrevdata %>%
+plotmeas <- sysrevdata %>%
   dplyr::select(title, biodiversity_metric, wind_solar) %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
@@ -247,8 +249,17 @@ sysrevdata %>%
   ylab("Number of studies") +
   scale_fill_discrete(type = my_colours$windsolar) +
   labs(fill = "Facility type") +
-  coord_flip()
-ggsave("figures/biodiversity_metric_histogram.pdf", width = 7, height = 5)
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 177))
+plotmeas
+ggsave("figures/biodiversity_metric_histogram.pdf", width = 5, height = 5)
+
+# combine vertically with patchwork
+combined <- plotcat / plotmeas + plot_layout(guides = "collect") & theme(legend.position = "top")
+combined
+
+ggsave("figures/biodiversity_catmeas_combined.pdf", combined, width = 6, height = 9)
+rm(plotcat, plotmeas, combined)
 
 # outcome ----
 
