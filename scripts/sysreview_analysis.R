@@ -146,7 +146,7 @@ worldmapcount <- worldmap %>%
 ggplot() +
   geom_sf(data = worldmapcount, aes(fill = countlog)) +
   theme_void() +
-  geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar)) +
+  geom_point(data = sysrevlatlong, aes(x = longitude, y = latitude, colour = wind_solar), alpha = 0.9, size = 0.8) +
   labs(colour = "Facility type") +
   scale_colour_discrete(type = my_colours$windsolar) +
   scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +

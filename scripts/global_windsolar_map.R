@@ -115,7 +115,7 @@ windsolar_gipt_spat <- windsolar_gipt %>%
 ggplot() +
   geom_sf(data = worldmap) +
   theme_void() +
-  geom_point(data = windsolar_gipt_spat, aes(x = lon, y = lat, colour = type)) +
+  geom_point(data = windsolar_gipt_spat, aes(x = lon, y = lat, colour = type), alpha = 0.4, size = 0.5) +
   labs(colour = "Facility type") +
   scale_colour_discrete(type = my_colours$windsolar)
 ggsave("figures/global_map_windsolar_gipt.pdf", width = 6, height = 4)
@@ -131,14 +131,14 @@ solar_gipt_spat <- windsolar_gipt_spat %>%
 ggplot() +
   geom_sf(data = worldmap) +
   theme_void() +
-  geom_point(data = wind_gipt_spat, aes(x = lon, y = lat), colour = "#377EB8")
+  geom_point(data = wind_gipt_spat, aes(x = lon, y = lat), colour = "#377EB8", size = 0.5, alpha = 0.5)
 ggsave("figures/global_map_wind_gipt.pdf", width = 6, height = 4)
 
 # solar power map
 ggplot() +
   geom_sf(data = worldmap) +
   theme_void() +
-  geom_point(data = solar_gipt_spat, aes(x = lon, y = lat), colour = "#FACB0F")
+  geom_point(data = solar_gipt_spat, aes(x = lon, y = lat), colour = "#FACB0F", size = 0.5, alpha = 0.5)
 ggsave("figures/global_map_solar_gipt.pdf", width = 6, height = 4)
 
 rm(solar_gipt_spat, wind_gipt_spat, windsolar_gipt, windsolar_gipt_spat, worldmap)
