@@ -45,7 +45,7 @@ windsolar_biomesummary
 # 9 Tropical and Subtropical Grasslands, Savannas and Shrublands wind       6    1556 
 # 10 Tropical and Subtropical Moist Broadleaf Forests            wind       2     169 
 
-# now display in stacked bar chart
+# wind/solar number facilities by biome stacked barchart
 windsolar_biomesummary %>%
   dplyr::arrange(-number) %>%
   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
@@ -61,7 +61,7 @@ ggsave("figures/aus_facilities_by_biome.pdf", width = 9, height = 7)
 # given deserts is our biggest biome by land area
 # bias of population centres, also concentrated in temp forest biome
 
-# now display in stacked bar chart
+# stacked barchart wind/solar max capacity by biome
 windsolar_biomesummary %>%
   dplyr::arrange(-sumcapmw) %>%
   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
@@ -120,7 +120,7 @@ mvg_windsolarsummary %>%
 ggsave("figures/aus_facilities_by_mvg.pdf", width = 9, height = 7)
 
 # now display capacity in stacked bar chart
-mvg_windsolarsummary %>%
+plotmvgcap <- mvg_windsolarsummary %>%
   dplyr::arrange(-sumcapmw) %>%
   dplyr::mutate(mvg_simplified = forcats::fct_inorder(mvg_simplified)) %>%
   ggplot(aes(x = mvg_simplified, y = sumcapmw, fill = type)) +
@@ -129,7 +129,9 @@ mvg_windsolarsummary %>%
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group") +
   ylab("Total maximum capacity (MW)") +
-  coord_flip()
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 21750))
+plotmvgcap
 ggsave("figures/aus_capacity_by_mvg.pdf", width = 9, height = 7)
 # looking at it by capacity changes the order of vegetation groups affected
 # though all are still dwarfed by the cleared category
@@ -172,7 +174,7 @@ mvg_windsolarsummary %>%
 ggsave("figures/aus_facilities_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # and stacked bar chart by total capacity
-mvg_windsolarsummary %>%
+plotpre1750cap <- mvg_windsolarsummary %>%
   dplyr::arrange(-sumcapmw) %>%
   dplyr::mutate(mvgpre1750_simplified = forcats::fct_inorder(mvgpre1750_simplified)) %>%
   ggplot(aes(x = mvgpre1750_simplified, y = sumcapmw, fill = type)) +
@@ -181,14 +183,23 @@ mvg_windsolarsummary %>%
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group (pre-1750)") +
   ylab("Total maximum capacity (MW)") +
-  coord_flip()
+  coord_flip() +
+    scale_y_continuous(limits = c(0, 21750))
+plotpre1750cap
 ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # again using capacity increases the dominance of wind (implying that there are
 # fewer but larger capacity wind farms vs solar farms)
-# shifts ranking of smaller cateogries but eucalypt woodlands still predominate
+# shifts ranking of smaller categories but eucalypt woodlands still predominate
 
-rm(mvg_windsolarsummary)
+# patchwork together mvg capacity plots
+# combine vertically with patchwork
+combined <- plotpre1750cap / plotmvgcap + 
+  patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
+combined
+ggsave("figures/auscapbymvg_combined.pdf", combined, width = 7, height = 9)
+rm(plotpre1750cap, plotmvgcap,  combined, mvg_windsolarsummary)
+
 
 ## sankey graph ----
 # showing pre1750 to today change in veg for solar and wind locations
