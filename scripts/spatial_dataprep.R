@@ -132,9 +132,10 @@ rm(biomes)
 
 # NVIS vegetation ----
 
-## present day ----
+## present day 2024 ----
 
 # load geotiff raster version of national veg mapping, NVIS, in Albers equal projection
+# NVIS is version 7 released 2024
 # raster is 3+GB so file is in data_cache
 nvis_extant <- terra::rast("data_cache/NVIS_MVG_07_tif/nvis-mvg.tif")
 # too big to plot but can use this to extract useful data I hope

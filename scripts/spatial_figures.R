@@ -114,7 +114,7 @@ mvg_windsolarsummary %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Major Vegetation Group") +
+  xlab("Major Vegetation Group - 2024") +
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_mvg.pdf", width = 9, height = 7)
@@ -127,10 +127,11 @@ plotmvgcap <- mvg_windsolarsummary %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Major Vegetation Group") +
+  xlab("Major Vegetation Group - 2024") +
   ylab("Total maximum capacity (MW)") +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 21750))
+  scale_y_continuous(limits = c(0, 21750)) +
+  scale_x_discrete(labels = scales::label_wrap(width = 25))
 plotmvgcap
 ggsave("figures/aus_capacity_by_mvg.pdf", width = 9, height = 7)
 # looking at it by capacity changes the order of vegetation groups affected
@@ -168,7 +169,7 @@ mvg_windsolarsummary %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Major Vegetation Group (pre-1750)") +
+  xlab("Major Vegetation Group - pre-1750") +
   ylab("Number of facilities") +
   coord_flip()
 ggsave("figures/aus_facilities_by_mvgpre1750.pdf", width = 9, height = 7)
@@ -181,10 +182,11 @@ plotpre1750cap <- mvg_windsolarsummary %>%
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Major Vegetation Group (pre-1750)") +
+  xlab("Major Vegetation Group - pre-1750") +
   ylab("Total maximum capacity (MW)") +
   coord_flip() +
-    scale_y_continuous(limits = c(0, 21750))
+  scale_y_continuous(limits = c(0, 21750)) +
+  scale_x_discrete(labels = scales::label_wrap(width = 25))
 plotpre1750cap
 ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 
@@ -197,9 +199,8 @@ ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 combined <- plotpre1750cap / plotmvgcap + 
   patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
 combined
-ggsave("figures/auscapbymvg_combined.pdf", combined, width = 7, height = 9)
+ggsave("figures/auscapbymvg_combined.pdf", combined, width = 7, height = 7)
 rm(plotpre1750cap, plotmvgcap,  combined, mvg_windsolarsummary)
-
 
 ## sankey graph ----
 # showing pre1750 to today change in veg for solar and wind locations

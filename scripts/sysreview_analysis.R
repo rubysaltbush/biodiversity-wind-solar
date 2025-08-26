@@ -62,7 +62,7 @@ sysrevdata %>%
   dplyr::ungroup() %>%
   ggplot(aes(x = year, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
-  ggpubr::theme_pubr(legend = "right") +
+  ggpubr::theme_pubr(legend = c(0.3,0.8)) +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Year of publication") +
   ylab("Number of studies") +
