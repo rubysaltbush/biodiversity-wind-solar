@@ -196,11 +196,10 @@ ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # patchwork together mvg capacity plots
 # combine vertically with patchwork
-combined <- plotpre1750cap / plotmvgcap + 
+plotpre1750cap / plotmvgcap + 
   patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
-combined
-ggsave("figures/auscapbymvg_combined.pdf", combined, width = 7, height = 7)
-rm(plotpre1750cap, plotmvgcap,  combined, mvg_windsolarsummary)
+ggsave("figures/auscapbymvg_combined.pdf", combined, width = 5, height = 7)
+rm(plotpre1750cap, plotmvgcap, mvg_windsolarsummary)
 
 ## sankey graph ----
 # showing pre1750 to today change in veg for solar and wind locations
@@ -439,8 +438,8 @@ rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
   ggpubr::theme_pubr(legend = "none")
 
 # use patchwork package to stitch plots together, and export
-temp_plot + rain_plot
-ggsave("figures/temp_precip_density_plots.pdf", width = 9, height = 4.5)
+temp_plot / rain_plot + patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
+ggsave("figures/temp_precip_density_plots.pdf", width = 5, height = 8)
 # plots slow to draw because 10million+ points in density graph
 rm(rain_plot, rain_all, temp_plot, temp_all)
 
@@ -448,13 +447,14 @@ rm(rain_plot, rain_all, temp_plot, temp_all)
 
 # what was tree cover at locations in 2000?
 # violin plot with boxplot
-ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
+hansencoverplot <- ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
   geom_violin(width = 1.4) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
   ylab("Tree cover in surrounding area in year 2000 (%)") +
   xlab("Facility type")
+hansencoverplot
 ggsave("figures/fraction_treecover2000.pdf", width = 5, height = 6)   
 # so wind facilities have more tree cover than solar in surrounding area
 # to start with
@@ -485,13 +485,14 @@ t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
 windsolar$percent_cleared <- (1 - windsolar$frac_uncleared)*100
 
 # draw boxplot/violin plot of fraction cleared (in 1km radius of point, 3.14km2)
-ggplot(windsolar, aes(x = type, y = percent_cleared, fill = type)) +
+hansenclearedplot <- ggplot(windsolar, aes(x = type, y = percent_cleared, fill = type)) +
   geom_violin(width = 1.4) +
   geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
   ylab("Tree cover loss in surrounding area 2000-2023 (%)") +
   xlab("Facility type")
+hansenclearedplot
 ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
 # so, doesn't look like solar or wind farms are associated with significant clearing
 # of tree cover in surrounding area
@@ -511,4 +512,11 @@ t.test(windsolar$frac_cleared[windsolar$type == "wind"],
 # t = -0.12453, df = 260, p-value = 0.901, differences not significant
 # mean of x  mean of y 
 # 0.01395721 0.01455504 
+
+# combine violin plots (ugly but more informative) using patchwork
+hansencoverplot / hansenclearedplot + 
+  patchwork::plot_layout(guides = "collect")
+ggsave("figures/hansen_tree_cover_combined.pdf", width = 6, height = 8)
+
+rm(hansenclearedplot, hansencoverplot, windsolar)
 

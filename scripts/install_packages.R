@@ -5,6 +5,7 @@ install.packages("ggpubr")
 install.packages("sf")
 install.packages("terra")
 install.packages("rnaturalearth")
+install.packages("rnaturalearthdata")
 install.packages("jsonlite") # reading json data
 install.packages("networkD3") # Sankey diagram
 install.packages("htmlwidgets") # saving Sankey diagram

@@ -373,16 +373,23 @@ mitigation_cat
 # 10 technological modifications solar          7    47     0.149 
 # 11 technological modifications wind          35   244     0.143 
 
-# now a bar chart showing mitigations suggested, and mitigation heirarchy
-mitigation_cat %>%
-  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = wind_solar)) +
+# now a bar chart showing mitigations suggested, and mitigation category
+mitbarchart <- mitigation_cat %>%
+  dplyr::mutate(mitigation_category = factor(mitigation_category, levels = c("siting", 
+                                                                             "curtailment", 
+                                                                             "technological modifications", 
+                                                                             "management decisions", 
+                                                                             "on-site restoration", 
+                                                                             "offsetting"))) %>%
+  ggplot(aes(x = mitigation_category, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Mitigation category") +
+  xlab("Suggested mitigation category") +
   labs(fill = "Facility type") +
   scale_fill_discrete(type = my_colours$windsolar) +
   ylab("Number of studies") +
   coord_flip()
+mitbarchart
 ggsave("figures/mitigation_cat_barplot_proportion.pdf", width = 7, height = 5)
 rm(mitigation_cat)
 
@@ -409,7 +416,7 @@ sysrevdata %>%
 # 7    47
 
 # MAKE GRAPH OF ABOVE, SPLIT BY MITIGATION CATEGORY
-sysrevdata %>%
+mittestedchart <- sysrevdata %>%
   dplyr::filter(mitigation_tested == "TRUE") %>%
   dplyr::select(title, mitigation_category, mitigation_supported_by_explicit_test) %>%
   dplyr::distinct() %>%
@@ -419,15 +426,24 @@ sysrevdata %>%
   # Count occurrences of each category
   dplyr::group_by(mitigation_category, mitigation_supported_by_explicit_test) %>%
   dplyr::summarise(count = n()) %>%
-  dplyr::mutate(mitigation_supported_by_explicit_test = factor(mitigation_supported_by_explicit_test, levels = c("TRUE", "FALSE"))) %>%
-  ggplot(aes(x = reorder(mitigation_category, -count), y = count, fill = mitigation_supported_by_explicit_test)) +
+  dplyr::mutate(mitigation_category = factor(mitigation_category, levels = c("siting", 
+                                                                               "curtailment", 
+                                                                               "technological modifications", 
+                                                                               "management decisions", 
+                                                                               "on-site restoration", 
+                                                                               "offsetting"))) %>%
+  ggplot(aes(x = mitigation_category, y = count, fill = mitigation_supported_by_explicit_test)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Mitigation category") +
+  xlab("Tested mitigation category") +
   labs(fill = "Mitigation supported") +
-  scale_fill_manual(values = c("#67a9cf", "#ef8a62")) +
+  scale_fill_manual(values = c("#ef8a62","#67a9cf")) +
   ylab("Number of studies") +
   coord_flip()
+mittestedchart
 ggsave("figures/mitigation_support_barchart.pdf", width = 7, height = 5)
 
+# combine mitigation graphs with patchwork
+mitbarchart | mittestedchart
+ggsave("figures/mitigation_combined.pdf", width = 12, height = 5)
 
