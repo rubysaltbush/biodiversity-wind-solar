@@ -384,7 +384,7 @@ mitbarchart <- mitigation_cat %>%
   ggplot(aes(x = mitigation_category, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Suggested mitigation category") +
+  xlab("Suggested mitigation") +
   labs(fill = "Facility type") +
   scale_fill_discrete(type = my_colours$windsolar) +
   ylab("Number of studies") +
@@ -435,7 +435,7 @@ mittestedchart <- sysrevdata %>%
   ggplot(aes(x = mitigation_category, y = count, fill = mitigation_supported_by_explicit_test)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr() +
-  xlab("Tested mitigation category") +
+  xlab("Tested mitigation") +
   labs(fill = "Mitigation supported") +
   scale_fill_manual(values = c("#ef8a62","#67a9cf")) +
   ylab("Number of studies") +
@@ -447,3 +447,4 @@ ggsave("figures/mitigation_support_barchart.pdf", width = 7, height = 5)
 mitbarchart | mittestedchart
 ggsave("figures/mitigation_combined.pdf", width = 12, height = 5)
 
+rm(mitbarchart, mittestedchart, sysrevdata)
