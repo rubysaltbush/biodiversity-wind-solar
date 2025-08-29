@@ -81,6 +81,29 @@ sysrevdata %>%
 # Africa       Asia         Europe       North America   Oceania   South America 
 # 8            21           137           152             6            7 
 
+# count country studies located
+sysrevdata %>%
+  dplyr::select(title, country) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(country, delim = ", ") %>%
+  dplyr::select(country) %>%
+  table()
+# country
+# Australia        Austria        Belgium         Brazil       Bulgaria         Canada 
+# 4              3              3              5              2             16 
+# Chile          China        Croatia Czech Republic        Denmark          Egypt 
+# 2             12              1              1              2              1 
+# Ethiopia        Finland         France        Germany         Greece        Hungary 
+# 1              3             12             18              1              4 
+# India        Ireland         Israel          Italy          Japan          Korea 
+# 1              2              2              7              2              1 
+# Mexico    Netherlands  New Caledonia    New Zealand         Norway         Poland 
+# 6              4              1              1             11              7 
+# Portugal    Puerto Rico        Romania       Slovakia   South Africa          Spain 
+# 2              1              3              1              6             25 
+# Sweden    Switzerland         Taiwan         Turkey United Kingdom  United States 
+# 11              1              2              1             18            130 
+
 # create table of country count data
 counts <- sysrevdata %>%
   dplyr::select(title, country, region, wind_solar) %>%
@@ -154,34 +177,29 @@ ggplot() +
 ggsave("figures/map_study_locations.pdf", width = 6, height = 4)
 rm(sysrevlatlong, worldmap, worldmapcount, counts)
 
+# try making table of study habitat (might be all over the place)
+sysrevdata %>%
+  dplyr::select(title, habitat) %>%
+  dplyr::distinct() %>%
+  dplyr::select(habitat) %>%
+  table()
+# too many categories to be useful, could manually reduce but 
+# might be easier to extract from lat/longs as below
+# TO DO - intersect lat/long with global biomes and Koppen climate zones
+
 # who/what ----
 # table of biodiversity categories
 sysrevdata %>%
   dplyr::select(title, biodiversity_category) %>%
   dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
   dplyr::select(biodiversity_category) %>% 
   table()
 # biodiversity_category
-# amphibians                                                 bats 
-# 2                                                          85 
-# bats, birds                                        bats, birds, insects 
-# 11                                                           1 
-# bats, insects                                             birds 
-# 1                                                         155 
-# birds, bats                            birds, fish, other invertebrates 
-# 1                                                           1 
-# birds, other mammals                                   birds, reptiles 
-# 3                                                           1 
-# insects                                insects, other invertebrates 
-# 11                                                           4 
-# other invertebrates                                     other mammals 
-# 1                                                          22 
-# other mammals, amphibians                                plants 
-# 1                                                          19 
-# plants, insects                      plants, other mammals, birds, reptiles 
-# 2                                                           1 
-# plants, other mammals, birds, reptiles, other invertebrates      reptiles 
-# 1                                                                   11 
+# amphibians   bats      birds   fish  insects invertebrates other mammals 
+# 3            99        175     1     19             7            28 
+# plants      reptiles 
+# 23            14 
 
 # make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
 # coloured by wind or solar, arranged by # studies
