@@ -175,7 +175,7 @@ ggplot() +
   scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
   labs(fill = "No. studies (log)")
 ggsave("figures/map_study_locations.pdf", width = 6, height = 4)
-rm(sysrevlatlong, worldmap, worldmapcount, counts)
+rm(worldmap, worldmapcount, counts)
 
 # try making table of study habitat (might be all over the place)
 sysrevdata %>%
@@ -185,7 +185,57 @@ sysrevdata %>%
   table()
 # too many categories to be useful, could manually reduce but 
 # might be easier to extract from lat/longs as below
-# TO DO - intersect lat/long with global biomes and Koppen climate zones
+
+# read in global biome data from Dinerstein et al. (2017)
+# rather large (150MB) shapefile in data cache
+biomes <- sf::st_read("data_cache/Ecoregions2017/Ecoregions2017.shp")
+# plot to check data out (takes a while to render)
+ggplot() +
+  geom_sf(data = biomes, aes(fill = BIOME_NAME), lwd = 0.02) +
+  theme_void()
+# extract biome for each sys review study location
+# first make sysrevlatlong an sf object
+sysrevlatlong <- sf::st_as_sf(sysrevlatlong, coords = c("longitude","latitude"), 
+                              remove = FALSE, crs = 4326)
+# try making biomes shpaefile valid to remove bugs
+biomes <- sf::st_make_valid(biomes)
+
+# and extract data from biomes for each study location
+extract <- sf::st_join(sysrevlatlong, biomes)
+# check it out
+table(extract$BIOME_NAME)
+table(extract$ECO_NAME)
+# it worked! now join back to sys rev data by title, latitude and longitude
+extract <- extract %>%
+  dplyr::select(title, latitude, longitude, eco_name = ECO_NAME, biome = BIOME_NAME) %>%
+  sf::st_drop_geometry() %>%
+  dplyr::distinct()
+sysrevdata <- sysrevdata %>%
+  dplyr::left_join(extract, by = c("title", "latitude", "longitude"))
+# some NAs but this will do for broad picture
+rm(biomes, extract)
+
+sysrevdata %>%
+  dplyr::select(title, biome) %>%
+  dplyr::distinct() %>%
+  dplyr::select(biome) %>%
+  table()
+# biome
+# Boreal Forests/Taiga                               Deserts & Xeric Shrublands 
+# 14                                                       52 
+# Mangroves                 Mediterranean Forests, Woodlands & Scrub 
+# 1                                                       53 
+# Montane Grasslands & Shrublands                      Temperate Broadleaf & Mixed Forests 
+# 3                                                       99 
+# Temperate Conifer Forests              Temperate Grasslands, Savannas & Shrublands 
+# 16                                                       70 
+# Tropical & Subtropical Dry Broadleaf Forests Tropical & Subtropical Grasslands, Savannas & Shrublands 
+# 7                                                        4 
+# Tropical & Subtropical Moist Broadleaf Forests          Tundra 
+# 6                                                        3 
+
+# now, make a figure to summarise this
+
 
 # who/what ----
 # table of biodiversity categories
