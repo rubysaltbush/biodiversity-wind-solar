@@ -235,7 +235,24 @@ sysrevdata %>%
 # 6                                                        3 
 
 # now, make a figure to summarise this
-
+sysrevdata %>%
+  dplyr::select(title, biome, wind_solar) %>%
+  dplyr::filter(!(is.na(biome))) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(biome, wind_solar) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(-count) %>%
+  dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
+  ggplot(aes(x = biome, y = count, fill = wind_solar)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr() +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  xlab("Biome") +
+  coord_flip() +
+  ylab("Number of studies") +
+  labs(fill = "Facility type")
+ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
 
 # who/what ----
 # table of biodiversity categories
