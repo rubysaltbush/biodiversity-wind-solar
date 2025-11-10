@@ -184,12 +184,12 @@ sysrevdata %>%
   dplyr::select(habitat) %>%
   table()
 # too many categories to be useful, could manually reduce but 
-# might be easier to extract from lat/longs as below
+# might be easier to extract biomes from lat/longs
 
 # read in global biome data from Dinerstein et al. (2017)
 # rather large (150MB) shapefile in data cache
 biomes <- sf::st_read("data_cache/Ecoregions2017/Ecoregions2017.shp")
-# plot to check data out (takes a while to render)
+# plot to check data out (large shapefile, takes a while to render)
 ggplot() +
   geom_sf(data = biomes, aes(fill = BIOME_NAME), lwd = 0.02) +
   theme_void()
@@ -199,6 +199,15 @@ sysrevlatlong <- sf::st_as_sf(sysrevlatlong, coords = c("longitude","latitude"),
                               remove = FALSE, crs = 4326)
 # try making biomes shpaefile valid to remove bugs
 biomes <- sf::st_make_valid(biomes)
+
+# calculate total size of each biome type, using pre-calculated area
+# which is in square degrees but will do for proportion of different biomes globally
+biome_areas <- biomes %>%
+  sf::st_drop_geometry() %>%
+  dplyr::group_by(BIOME_NAME) %>%
+  dplyr::summarise(total_area = sum(SHAPE_AREA)) %>%
+  dplyr::filter(BIOME_NAME != "N/A") %>%
+  dplyr::mutate(proportion = total_area/sum(total_area))
 
 # and extract data from biomes for each study location
 extract <- sf::st_join(sysrevlatlong, biomes)
@@ -215,6 +224,7 @@ sysrevdata <- sysrevdata %>%
 # some NAs but this will do for broad picture
 rm(biomes, extract)
 
+# table
 sysrevdata %>%
   dplyr::select(title, biome) %>%
   dplyr::distinct() %>%
@@ -234,7 +244,7 @@ sysrevdata %>%
 # Tropical & Subtropical Moist Broadleaf Forests          Tundra 
 # 6                                                        3 
 
-# now, make a figure to summarise this
+# plot systematic review study biomes, sorted by global proportion of each biome 
 sysrevdata %>%
   dplyr::select(title, biome, wind_solar) %>%
   dplyr::filter(!(is.na(biome))) %>%
@@ -242,7 +252,8 @@ sysrevdata %>%
   dplyr::group_by(biome, wind_solar) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::ungroup() %>%
-  dplyr::arrange(-count) %>%
+  dplyr::left_join(biome_areas, by = c("biome" = "BIOME_NAME")) %>%
+  dplyr::arrange(-proportion) %>%
   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
   ggplot(aes(x = biome, y = count, fill = wind_solar)) +
   geom_bar(stat = "identity") +
@@ -253,6 +264,8 @@ sysrevdata %>%
   ylab("Number of studies") +
   labs(fill = "Facility type")
 ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
+
+# BUT WAIT! surely proportion would be better? i.e. how many studies relative to the global area of that biome
 
 # who/what ----
 # table of biodiversity categories
