@@ -222,7 +222,7 @@ extract <- extract %>%
 sysrevdata <- sysrevdata %>%
   dplyr::left_join(extract, by = c("title", "latitude", "longitude"))
 # some NAs but this will do for broad picture
-rm(biomes, extract)
+rm(biomes, extract, sysrevlatlong)
 
 # table
 sysrevdata %>%
@@ -265,7 +265,7 @@ sysrevdata %>%
   labs(fill = "Facility type")
 ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
 
-# BUT WAIT! surely proportion would be better? i.e. how many studies relative to the global area of that biome
+rm(biome_areas)
 
 # who/what ----
 # table of biodiversity categories
