@@ -150,6 +150,19 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::filter(!is.na(latitude)) %>%
   dplyr::distinct()
 
+# briefly, count how many studies in north hemisphere
+sysrevlatlong %>%
+  dplyr::group_by(title) %>%
+  dplyr::summarise(meanlat = mean(latitude)) %>%
+  dplyr::filter(meanlat > 0) %>% 
+  nrow()
+# vs south hemisphere
+sysrevlatlong %>%
+  dplyr::group_by(title) %>%
+  dplyr::summarise(meanlat = mean(latitude)) %>%
+  dplyr::filter(meanlat < 0) %>% 
+  nrow()
+
 # checking my countries against "admin" column of world map, need to change:
 # United States -> United States of America
 counts$country <- gsub("United States", "United States of America", counts$country)
