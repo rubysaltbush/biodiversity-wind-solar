@@ -54,7 +54,7 @@ sysrevdata %>%
 
 # when ----
 # make histogram of year of publication, coloured by wind/solar
-sysrevdata %>%
+yearpub <- sysrevdata %>%
   dplyr::select(title, year, wind_solar) %>%
   dplyr::distinct() %>%
   dplyr::group_by(year, wind_solar) %>%
@@ -67,7 +67,29 @@ sysrevdata %>%
   xlab("Year of publication") +
   ylab("Number of studies") +
   labs(fill = "Facility type")
+yearpub
 ggsave("figures/year_pub_histogram.pdf", width = 5, height = 4)
+
+# add in no. wind and solar developments globally from GIPT data for some context
+source("scripts/gipt_data.R")
+
+yeardev <- windsolar_gipt %>%
+  dplyr::select(project_name, start_year, type) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(start_year, type) %>%
+  dplyr::summarise(count = n()) %>%
+  dplyr::ungroup() %>%
+  ggplot(aes(x = start_year, y = count, fill = type)) +
+  geom_bar(stat = "identity") +
+  ggpubr::theme_pubr(legend = c(0.3,0.8)) +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  xlab("First year of operation") +
+  ylab("Number of facilities") +
+  labs(fill = "Facility type")
+yeardev
+ggsave("figures/gipt_yeardev_histogram.pdf", width = 5, height = 4)
+
+yearpub + yeardev
 
 # where ----
 
