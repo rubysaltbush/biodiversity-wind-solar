@@ -76,6 +76,7 @@ source("scripts/gipt_data.R")
 yeardev <- windsolar_gipt %>%
   dplyr::select(project_name, start_year, type) %>%
   dplyr::distinct() %>%
+  dplyr::filter(start_year <= 2024) %>% # filter to date range of publications studied (1970-2024) 
   dplyr::group_by(start_year, type) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::ungroup() %>%
@@ -89,7 +90,8 @@ yeardev <- windsolar_gipt %>%
 yeardev
 ggsave("figures/gipt_yeardev_histogram.pdf", width = 5, height = 4)
 
-yearpub + yeardev
+yearpub + yeardev + plot_annotation(tag_levels = "a")
+ggsave("figures/yearpub_yeardev_hist_combined.pdf", width = 10, height = 4)
 
 # where ----
 
