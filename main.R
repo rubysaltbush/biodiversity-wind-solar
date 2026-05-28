@@ -22,17 +22,20 @@ source("scripts/my_colours.R")
 # analysis scripts ----
 
 ## systematic review ----
-# first, preprocess systematic review data
-source("scripts/sysreview_dataprep.R")
-# then analyse data from full manual systematic review
-# TO DO update figures for final versions (once these sketched out)
+
+# script below for preprocessing systematic review data, do not need to re-run
+#source("scripts/sysreview_dataprep.R")
+
+# using data from full manual systematic review, prepare figures and summaries
 source("scripts/sysreview_analysis.R")
 
 ## spatial analysis ----
+
 # mapping wind and solar facilities against ecosystems and biodiversity across Aus
+# prepare data on locations of wind and solar facilities across Australia
 source("scripts/spatial_dataprep.R")
+
+# then intersect spatial locations with different rasters of environmental data
+# prepare figures and run analyses from these data
 source("scripts/spatial_figures.R")
 
-# TO DO - extract mean population in area around wind and solar farms??
-#       - tried to create density plot for land capability but raster so large
-#         it crashes R every time I try to as.data.frame it, won't work for now
