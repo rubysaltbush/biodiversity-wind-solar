@@ -54,3 +54,4 @@ rsconnect/
 
 # data cache folder for local caching of data files
 /data_cache
+.positai
