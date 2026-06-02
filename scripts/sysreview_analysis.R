@@ -1,7 +1,7 @@
 # final review data ----
 
 # get data
-sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20250821.csv")
+sysrevdata <- readr::read_csv("data_input/wind_solar_biodiversity_sysreview_v8_20260602.csv")
 
 # how many papers included currently?
 length(unique(sysrevdata$title))
@@ -92,10 +92,11 @@ ggsave("figures/gipt_yeardev_histogram.pdf", width = 5, height = 4)
 
 yearpub + yeardev + plot_annotation(tag_levels = "a")
 ggsave("figures/yearpub_yeardev_hist_combined.pdf", width = 10, height = 4)
+rm(yearpub, yeardev, windsolar_gipt)
 
 # where ----
 
-# count where studies located
+# count continent where studies located from sys review categorisation
 sysrevdata %>%
   dplyr::select(title, region) %>%
   dplyr::distinct() %>%
@@ -105,7 +106,7 @@ sysrevdata %>%
 # Africa       Asia         Europe       North America   Oceania   South America 
 # 8            21           137           152             6            7 
 
-# count country studies located
+# count country where studies located from sys review categorisation
 sysrevdata %>%
   dplyr::select(title, country) %>%
   dplyr::distinct() %>%
@@ -163,6 +164,7 @@ counts %>%
   coord_flip()
 ggsave("figures/countries_by_region_histogram_windsolar.pdf", width = 8, height = 7)
 
+## map ----
 # make map of locations of study
 # first get world map data without Antarctica (not included)
 worldmap <- rnaturalearth::ne_countries() %>% 
@@ -173,19 +175,6 @@ sysrevlatlong <- sysrevdata %>%
   dplyr::select(title, wind_solar, latitude, longitude) %>%
   dplyr::filter(!is.na(latitude)) %>%
   dplyr::distinct()
-
-# briefly, count how many studies in north hemisphere
-sysrevlatlong %>%
-  dplyr::group_by(title) %>%
-  dplyr::summarise(meanlat = mean(latitude)) %>%
-  dplyr::filter(meanlat > 0) %>% 
-  nrow()
-# vs south hemisphere
-sysrevlatlong %>%
-  dplyr::group_by(title) %>%
-  dplyr::summarise(meanlat = mean(latitude)) %>%
-  dplyr::filter(meanlat < 0) %>% 
-  nrow()
 
 # checking my countries against "admin" column of world map, need to change:
 # United States -> United States of America
@@ -212,7 +201,168 @@ ggplot() +
   scale_fill_distiller(palette = "YlGnBu", direction = 1, na.value = "#F0F0F0") +
   labs(fill = "No. studies (log)")
 ggsave("figures/map_study_locations.pdf", width = 6, height = 4)
-rm(worldmap, worldmapcount, counts)
+rm(worldmapcount, counts)
+
+# source script to create world map of facilities from GIPT for comparison
+source("scripts/global_windsolar_map.R")
+
+## GIPT vs studies ----
+### hemisphere ----
+# count how many studies in north hemisphere
+sysrevlatlong %>%
+  dplyr::group_by(title) %>%
+  dplyr::summarise(meanlat = mean(latitude)) %>%
+  dplyr::filter(meanlat > 0) %>% 
+  nrow()
+# 309
+
+# vs south hemisphere
+sysrevlatlong %>%
+  dplyr::group_by(title) %>%
+  dplyr::summarise(meanlat = mean(latitude)) %>%
+  dplyr::filter(meanlat < 0) %>% 
+  nrow()
+# 19
+
+# how many wind and solar facilities in northern hemisphere 
+# (numbers a bit wrong but hopefully proportion similar)
+windsolar_gipt_spat %>%
+  dplyr::filter(lat >0) %>%
+  nrow()
+# 38920
+
+# vs southern hemisphere for facilities
+windsolar_gipt_spat %>%
+  dplyr::filter(lat <0) %>%
+  nrow()
+# 3045
+
+# % studies in northern hemisphere
+309/(309+19)*100
+# 94.2%
+
+# % facilities in northern hemisphere
+38920/(38920+3045)*100
+# 92.7
+
+# huh actually pretty proportional for hemispheres, checks out
+
+### continent ----
+# to get continent - need to intersect with worldmap
+# first make sysrevlatlong an sf object
+sysrevlatlong <- sf::st_as_sf(sysrevlatlong, coords = c("longitude","latitude"), 
+                              remove = FALSE, crs = 4326)
+# and make windsolar_gipt_spat an sf object
+windsolar_gipt_spat <- sf::st_as_sf(windsolar_gipt_spat, coords = c("lon","lat"), 
+                              remove = FALSE, crs = 4326)
+
+# then intersect both with worldmap to get country and continent
+# first simplify worldmap down a bit
+worldmap <- worldmap %>%
+  dplyr::select(continent, admin, geounit, geometry)
+
+# worldmap has invalid geometry but can't fix with simple methods
+# turning strict s2 spherical geometry off as not important here
+# Disable s2 spherical geometry
+sf::sf_use_s2(FALSE)
+
+# then extract continent and country name for each study location
+extract1 <- sf::st_join(sysrevlatlong, worldmap)
+table(extract1$continent)
+# Africa          Asia        Europe North America       Oceania South America 
+# 6            17           139           161             2             8
+
+# a bit different from our manual categorisation, some because some studies lack lat/longs
+# but also looks like a lot of NAs in extraction, which mostly look close to the coast
+
+# match NA values to nearest feature
+# first index where NA values are
+na_idx <- which(is.na(extract1$continent))
+
+# then extract nearest feature and patch back into main data
+if (length(na_idx) > 0) {
+  nearest_idx <- sf::st_nearest_feature(sysrevlatlong[na_idx, ], worldmap)
+  extract1[na_idx, c("continent", "admin", "geounit")] <-
+    sf::st_drop_geometry(worldmap)[nearest_idx, c("continent", "admin", "geounit")]
+}
+rm(na_idx, nearest_idx)
+
+table(extract1$continent)
+# Africa          Asia        Europe North America       Oceania South America 
+# 8            23           149           161             8             8 
+
+#hmm interesting still quite different to manual categorisation, look at conflicts?
+region <- sysrevdata %>%
+  dplyr::select(title, latitude, longitude, region, country) %>%
+  dplyr::distinct()
+extract1 <- extract1 %>%
+  dplyr::left_join(region, by = c("title", "latitude", "longitude"))
+  
+# filter to country conflicts
+conflicts <- extract1 %>%
+  dplyr::filter(admin != country)
+table(conflicts$admin)
+# have manually checked these conflicts, most are just typographic differences
+# only one (serbia vs romania) appears to be a small error in projection for a 
+# wind farm right on the border
+rm(conflicts, region)
+
+# and for each GIPT facility location
+extract2 <- sf::st_join(windsolar_gipt_spat, worldmap)
+
+# match NA values to nearest feature
+# first index where NA values are
+na_idx <- which(is.na(extract2$continent))
+
+# then extract nearest feature and patch back into main data
+if (length(na_idx) > 0) {
+  nearest_idx <- sf::st_nearest_feature(sysrevlatlong[na_idx, ], worldmap)
+  extract2[na_idx, c("continent", "admin", "geounit")] <-
+    sf::st_drop_geometry(worldmap)[nearest_idx, c("continent", "admin", "geounit")]
+}
+rm(na_idx, nearest_idx)
+
+sum(is.na(extract2$continent))
+# matched only 16 points, others must be real odd will leave
+
+table(extract2$continent)
+# Africa          Asia        Europe North America       Oceania South America 
+# 485         17117         14694          5608           437          2353 
+
+# compare proportions
+continent_prop <- extract1 %>%
+  dplyr::group_by(continent) %>%
+  st_drop_geometry() %>%
+  summarise(sysreview = n()) %>%
+  dplyr::mutate(sysrev_prop = sysreview / sum(sysreview, na.rm = TRUE))
+
+temp <- extract2 %>%
+  dplyr::group_by(continent) %>%
+  st_drop_geometry() %>%
+  summarise(gipt = n()) %>%
+  dplyr::mutate(gipt_prop = gipt / sum(gipt, na.rm = TRUE))
+rm(extract1, extract2)
+
+continent_prop <- continent_prop %>%
+  dplyr::full_join(temp, by = "continent") 
+rm(temp)
+
+continent_prop
+# continent       sysreview   sysrev_prop  gipt gipt_prop
+# <chr>             <int>       <dbl> <int>     <dbl>
+# 1 Africa                8      0.0224   485    0.0116
+# 2 Asia                 23      0.0644 17117    0.408 
+# 3 Europe              149      0.417  14694    0.350 
+# 4 North America       161      0.451   5608    0.134 
+# 5 Oceania               8      0.0224   437    0.0104
+# 6 South America         8      0.0224  2353    0.0561
+# 7 NA                   NA     NA       1271    0.0303
+
+# so north america way overrepresented, Asia way underrepresented in studies 
+# by rough # facilities at least
+rm(continent_prop)
+
+### biomes ----
 
 # try making table of study habitat (might be all over the place)
 sysrevdata %>%
@@ -230,11 +380,8 @@ biomes <- sf::st_read("data_cache/Ecoregions2017/Ecoregions2017.shp")
 ggplot() +
   geom_sf(data = biomes, aes(fill = BIOME_NAME), lwd = 0.02) +
   theme_void()
-# extract biome for each sys review study location
-# first make sysrevlatlong an sf object
-sysrevlatlong <- sf::st_as_sf(sysrevlatlong, coords = c("longitude","latitude"), 
-                              remove = FALSE, crs = 4326)
-# try making biomes shpaefile valid to remove bugs
+
+# try making biomes shapefile valid to remove bugs
 biomes <- sf::st_make_valid(biomes)
 
 # calculate total size of each biome type, using pre-calculated area
@@ -246,63 +393,140 @@ biome_areas <- biomes %>%
   dplyr::filter(BIOME_NAME != "N/A") %>%
   dplyr::mutate(proportion = total_area/sum(total_area))
 
-# and extract data from biomes for each study location
-extract <- sf::st_join(sysrevlatlong, biomes)
-# check it out
-table(extract$BIOME_NAME)
-table(extract$ECO_NAME)
-# it worked! now join back to sys rev data by title, latitude and longitude
-extract <- extract %>%
-  dplyr::select(title, latitude, longitude, eco_name = ECO_NAME, biome = BIOME_NAME) %>%
-  sf::st_drop_geometry() %>%
-  dplyr::distinct()
-sysrevdata <- sysrevdata %>%
-  dplyr::left_join(extract, by = c("title", "latitude", "longitude"))
-# some NAs but this will do for broad picture
-rm(biomes, extract, sysrevlatlong)
+# extract data from biomes for each study location
+extract_sysrev <- sf::st_join(sysrevlatlong, biomes)
+# and for each facility location
+extract_gipt <- sf::st_join(windsolar_gipt_spat, biomes)
 
-# table
-sysrevdata %>%
-  dplyr::select(title, biome) %>%
-  dplyr::distinct() %>%
-  dplyr::select(biome) %>%
-  table()
-# biome
+# check it out
+table(extract_sysrev$BIOME_NAME)
 # Boreal Forests/Taiga                               Deserts & Xeric Shrublands 
 # 14                                                       52 
 # Mangroves                 Mediterranean Forests, Woodlands & Scrub 
-# 1                                                       53 
+# 1                                                       56 
 # Montane Grasslands & Shrublands                      Temperate Broadleaf & Mixed Forests 
-# 3                                                       99 
+# 3                                                      107 
 # Temperate Conifer Forests              Temperate Grasslands, Savannas & Shrublands 
-# 16                                                       70 
+# 16                                                       79 
 # Tropical & Subtropical Dry Broadleaf Forests Tropical & Subtropical Grasslands, Savannas & Shrublands 
 # 7                                                        4 
-# Tropical & Subtropical Moist Broadleaf Forests          Tundra 
+# Tropical & Subtropical Moist Broadleaf Forests            Tundra 
 # 6                                                        3 
 
-# plot systematic review study biomes, sorted by global proportion of each biome 
-sysrevdata %>%
-  dplyr::select(title, biome, wind_solar) %>%
-  dplyr::filter(!(is.na(biome))) %>%
-  dplyr::distinct() %>%
-  dplyr::group_by(biome, wind_solar) %>%
-  dplyr::summarise(count = n()) %>%
-  dplyr::ungroup() %>%
-  dplyr::left_join(biome_areas, by = c("biome" = "BIOME_NAME")) %>%
-  dplyr::arrange(-proportion) %>%
-  dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
-  ggplot(aes(x = biome, y = count, fill = wind_solar)) +
-  geom_bar(stat = "identity") +
-  ggpubr::theme_pubr() +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  xlab("Biome") +
-  coord_flip() +
-  ylab("Number of studies") +
-  labs(fill = "Facility type")
-ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
+table(extract_gipt$BIOME_NAME)
+# Boreal Forests/Taiga                               Deserts & Xeric Shrublands 
+# 334                                                     4166 
+# Flooded Grasslands & Savannas                                                Mangroves 
+# 285                                                       93 
+# Mediterranean Forests, Woodlands & Scrub                          Montane Grasslands & Shrublands 
+# 4243                                                     1137 
+# Temperate Broadleaf & Mixed Forests                                Temperate Conifer Forests 
+# 19241                                                      597 
+# Temperate Grasslands, Savannas & Shrublands                Tropical & Subtropical Coniferous Forests 
+# 3831                                                       56 
+# Tropical & Subtropical Dry Broadleaf Forests Tropical & Subtropical Grasslands, Savannas & Shrublands 
+# 2863                                                      677 
+# Tropical & Subtropical Moist Broadleaf Forests                                                   Tundra 
+# 3883                                                       19 
 
-rm(biome_areas)
+# add onto proportional area of each biome to make mega table of proportions
+biomes <- extract_sysrev %>%
+  dplyr::group_by(BIOME_NAME) %>%
+  st_drop_geometry() %>%
+  summarise(sysreview = n()) %>%
+  dplyr::mutate(sysrev_prop = sysreview / sum(sysreview, na.rm = TRUE))
+
+biomes_gipt <- extract_gipt %>%
+  dplyr::group_by(BIOME_NAME) %>%
+  st_drop_geometry() %>%
+  summarise(gipt = n()) %>%
+  dplyr::mutate(gipt_prop = gipt / sum(gipt, na.rm = TRUE))
+
+biomes <- biomes_gipt %>%
+  dplyr::left_join(biomes, by = "BIOME_NAME") %>%
+  dplyr::left_join(biome_areas, by = "BIOME_NAME")
+rm(biome_areas, biomes_gipt)
+biomes
+# BIOME_NAME                                                gipt gipt_prop sysreview sysrev_prop total_area proportion
+# <chr>                                                    <int>     <dbl>     <int>       <dbl>      <dbl>      <dbl>
+# 1 Boreal Forests/Taiga                                       334  0.00796         14     0.0392      2523.     0.170  
+# 2 Deserts & Xeric Shrublands                                4166  0.0993          52     0.146       2489.     0.168  
+# 3 Flooded Grasslands & Savannas                              285  0.00679         NA    NA            106.     0.00711
+# 4 Mangroves                                                   93  0.00222          1     0.00280       27.7    0.00186
+# 5 Mediterranean Forests, Woodlands & Scrub                  4243  0.101           56     0.157        329.     0.0222 
+# 6 Montane Grasslands & Shrublands                           1137  0.0271           3     0.00840      471.     0.0318 
+# 7 Temperate Broadleaf & Mixed Forests                      19241  0.459          107     0.300       1445.     0.0973 
+# 8 Temperate Conifer Forests                                  597  0.0142          16     0.0448       445.     0.0300 
+# 9 Temperate Grasslands, Savannas & Shrublands               3831  0.0913          79     0.221       1198.     0.0807 
+# 10 Tropical & Subtropical Coniferous Forests                   56  0.00133         NA    NA             60.2    0.00406
+# 11 Tropical & Subtropical Dry Broadleaf Forests              2863  0.0682           7     0.0196       327.     0.0220 
+# 12 Tropical & Subtropical Grasslands, Savannas & Shrublands   677  0.0161           4     0.0112      1796.     0.121  
+# 13 Tropical & Subtropical Moist Broadleaf Forests            3883  0.0925           6     0.0168      1632.     0.110  
+# 14 Tundra                                                      19  0.000453         3     0.00840     1993.     0.134  
+# 15 NA                                                         540  0.0129           9     0.0252        NA     NA      
+
+# so broadly, most studies and most facilities in temperate forests, 
+# Temperate Grasslands somewhat overrepresented for studies vs how many facilities they have
+# Tropical forests somewhat underrepresented for studies vs how many facilities they have
+
+# TO DO BELOW ####
+
+# calculate more wind/solar specific proportions (for hemisphere, continent, biomes)
+# try to make figure or table summarising, are studies in systematic review
+# proportional to the number of facilities in dif hemisphere, continent, biome?
+
+# # it worked! now join back to sys rev data by title, latitude and longitude
+# extract <- extract %>%
+#   dplyr::select(title, latitude, longitude, eco_name = ECO_NAME, biome = BIOME_NAME) %>%
+#   sf::st_drop_geometry() %>%
+#   dplyr::distinct()
+# sysrevdata <- sysrevdata %>%
+#   dplyr::left_join(extract, by = c("title", "latitude", "longitude"))
+# # some NAs but this will do for broad picture
+# rm(biomes, extract, sysrevlatlong)
+# 
+# # table
+# sysrevdata %>%
+#   dplyr::select(title, biome) %>%
+#   dplyr::distinct() %>%
+#   dplyr::select(biome) %>%
+#   table()
+# # biome
+# # Boreal Forests/Taiga                               Deserts & Xeric Shrublands 
+# # 14                                                       52 
+# # Mangroves                 Mediterranean Forests, Woodlands & Scrub 
+# # 1                                                       53 
+# # Montane Grasslands & Shrublands                      Temperate Broadleaf & Mixed Forests 
+# # 3                                                       99 
+# # Temperate Conifer Forests              Temperate Grasslands, Savannas & Shrublands 
+# # 16                                                       70 
+# # Tropical & Subtropical Dry Broadleaf Forests Tropical & Subtropical Grasslands, Savannas & Shrublands 
+# # 7                                                        4 
+# # Tropical & Subtropical Moist Broadleaf Forests          Tundra 
+# # 6                                                        3 
+# 
+# # plot systematic review study biomes, sorted by global proportion of each biome 
+# sysrevdata %>%
+#   dplyr::select(title, biome, wind_solar) %>%
+#   dplyr::filter(!(is.na(biome))) %>%
+#   dplyr::distinct() %>%
+#   dplyr::group_by(biome, wind_solar) %>%
+#   dplyr::summarise(count = n()) %>%
+#   dplyr::ungroup() %>%
+#   dplyr::left_join(biome_areas, by = c("biome" = "BIOME_NAME")) %>%
+#   dplyr::arrange(-proportion) %>%
+#   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
+#   ggplot(aes(x = biome, y = count, fill = wind_solar)) +
+#   geom_bar(stat = "identity") +
+#   ggpubr::theme_pubr() +
+#   scale_fill_discrete(type = my_colours$windsolar) +
+#   xlab("Biome") +
+#   coord_flip() +
+#   ylab("Number of studies") +
+#   labs(fill = "Facility type")
+# ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
+# 
+# rm(biome_areas)
 
 # who/what ----
 # table of biodiversity categories

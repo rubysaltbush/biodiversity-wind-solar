@@ -2,6 +2,10 @@
 # wind and solar farms
 
 # get data ----
+
+# sources August 2025 data from the Global Integrated Power Tracker 
+# filtered to projects >3 MW capacity that are onshore, and either operating, 
+# in construction or retired (given systematic review studies go back decades)
 source("scripts/gipt_data.R")
 
 # map ----
@@ -13,29 +17,20 @@ table(windsolar_gipt$region)
 
 table(windsolar_gipt$country_area)
 
-# Australia 435?
+# 435 wind and solar facilities for Australia - much more than my carefully curated data set
 
 # make map of locations of study
 # first get world map data without Antarctica (not included)
 worldmap <- rnaturalearth::ne_countries() %>% 
   filter(sovereignt != "Antarctica")
 
-# then get spatial version of sys review data where lat/long available
+# then get spatial version of GIPT data where lat/long available
 windsolar_gipt_spat <- windsolar_gipt %>%
   dplyr::select(country_area, type, lat, lon) %>%
   dplyr::filter(!is.na(lat)) %>%
   dplyr::distinct() # get rid of duplicate points on same spot
 
-# then plot background world map and points coloured by wind or solar
-ggplot() +
-  geom_sf(data = worldmap) +
-  theme_void() +
-  geom_point(data = windsolar_gipt_spat, aes(x = lon, y = lat, colour = type), alpha = 0.4, size = 0.5) +
-  labs(colour = "Facility type") +
-  scale_colour_discrete(type = my_colours$windsolar)
-ggsave("figures/global_map_windsolar_gipt.pdf", width = 6, height = 4)
-
-# very overlapping, two separate maps might be better
+# split data to prepare separate maps for wind and solar facilities
 wind_gipt_spat <- windsolar_gipt_spat %>%
   dplyr::filter(type == "wind")
 
@@ -56,4 +51,4 @@ ggplot() +
   geom_point(data = solar_gipt_spat, aes(x = lon, y = lat), colour = "#FACB0F", size = 0.5, alpha = 0.5)
 ggsave("figures/global_map_solar_gipt.pdf", width = 6, height = 4)
 
-rm(solar_gipt_spat, wind_gipt_spat, windsolar_gipt, windsolar_gipt_spat, worldmap)
+rm(solar_gipt_spat, wind_gipt_spat)
