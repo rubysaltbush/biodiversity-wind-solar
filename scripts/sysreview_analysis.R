@@ -208,46 +208,107 @@ source("scripts/global_windsolar_map.R")
 
 ## GIPT vs studies ----
 ### hemisphere ----
-# count how many studies in north hemisphere
-sysrevlatlong %>%
-  dplyr::group_by(title) %>%
-  dplyr::summarise(meanlat = mean(latitude)) %>%
-  dplyr::filter(meanlat > 0) %>% 
-  nrow()
-# 309
+# count how many studies in north vs south hemisphere, by wind/solar with proportions
+proportions <- sysrevlatlong %>%
+  sf::st_drop_geometry() %>%
+  dplyr::mutate(hemisphere = if_else(latitude > 0, "North", "South")) %>%
+  dplyr::distinct(title, wind_solar, hemisphere, .keep_all = TRUE) %>%
+  dplyr::count(wind_solar, hemisphere) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
+  ) %>%
+  dplyr::rename(n_studies = n) %>%
+  ungroup()
 
-# vs south hemisphere
-sysrevlatlong %>%
-  dplyr::group_by(title) %>%
-  dplyr::summarise(meanlat = mean(latitude)) %>%
-  dplyr::filter(meanlat < 0) %>% 
-  nrow()
-# 19
-
-# how many wind and solar facilities in northern hemisphere 
+# count how many wind and solar facilities in north vs south hemisphere 
 # (numbers a bit wrong but hopefully proportion similar)
-windsolar_gipt_spat %>%
-  dplyr::filter(lat >0) %>%
-  nrow()
-# 38920
+fac_prop <- windsolar_gipt_spat %>%
+  sf::st_drop_geometry() %>%
+  dplyr::rename(wind_solar = type) %>%
+  dplyr::mutate(hemisphere = if_else(lat > 0, "North", "South")) %>%
+  dplyr::distinct() %>%
+  dplyr::count(wind_solar, hemisphere) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
+  ) %>%
+  dplyr::rename(n_facilities = n) %>%
+  ungroup()
 
-# vs southern hemisphere for facilities
-windsolar_gipt_spat %>%
-  dplyr::filter(lat <0) %>%
-  nrow()
-# 3045
+# join together to compare studies vs facilities
+proportions <- proportions %>%
+  dplyr::left_join(fac_prop, by = c("wind_solar", "hemisphere")) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities)
+proportions
 
-# % studies in northern hemisphere
-309/(309+19)*100
-# 94.2%
+# wind_solar hemisphere n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# <chr>      <chr>          <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
+# 1 solar      North             46            49       0.939         24131            25670          0.940  0.999
+# 2 solar      South              3            49       0.0612         1539            25670          0.0600 1.02 
+# 3 wind       North            264           280       0.943         14789            16295          0.908  1.04 
+# 4 wind       South             16           280       0.0571         1506            16295          0.0924 0.618
 
-# % facilities in northern hemisphere
-38920/(38920+3045)*100
-# 92.7
+# huh actually pretty proportional for hemispheres for solar, though wind
+# appears understudied in southern hemisphere compared to the number of facilities
+rm(fac_prop, proportions)
 
-# huh actually pretty proportional for hemispheres, checks out
+### latitude ----
+# count how many studies in north vs south hemisphere, by wind/solar with proportions
+proportions <- sysrevlatlong %>%
+  sf::st_drop_geometry() %>%
+  dplyr::mutate(lat_band = dplyr::case_when(
+    abs(latitude) < 23.5  ~ "Tropical",
+    abs(latitude) < 66.5  ~ "Temperate",
+    TRUE                  ~ "Polar"
+  )) %>%
+  dplyr::distinct(title, wind_solar, lat_band, .keep_all = TRUE) %>%
+  dplyr::count(wind_solar, lat_band) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
+  ) %>%
+  dplyr::rename(n_studies = n) %>%
+  ungroup()
 
-### continent ----
+# count how many wind and solar facilities in north vs south hemisphere 
+# (numbers a bit wrong but hopefully proportion similar)
+fac_prop <- windsolar_gipt_spat %>%
+  sf::st_drop_geometry() %>%
+  dplyr::rename(wind_solar = type) %>%
+  dplyr::mutate(lat_band = dplyr::case_when(
+    abs(lat) < 23.5  ~ "Tropical",
+    abs(lat) < 66.5  ~ "Temperate",
+    TRUE                  ~ "Polar"
+  )) %>%
+  dplyr::distinct() %>%
+  dplyr::count(wind_solar, lat_band) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
+  ) %>%
+  dplyr::rename(n_facilities = n) %>%
+  ungroup()
+
+# join together to compare studies vs facilities
+proportions <- proportions %>%
+  dplyr::left_join(fac_prop, by = c("wind_solar", "lat_band")) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities)
+proportions
+# wind_solar lat_band  n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# <chr>      <chr>         <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
+# 1 solar      Temperate        49            50       0.98          21417            25670         0.834   1.17 
+# 2 solar      Tropical          1            50       0.02           4253            25670         0.166   0.121
+# 3 wind       Polar             3           280       0.0107           19            16295         0.00117 9.19 
+# 4 wind       Temperate       264           280       0.943         14506            16295         0.890   1.06 
+# 5 wind       Tropical         13           280       0.0464         1770            16295         0.109   0.427
+
+### region ----
+#### extract study regions ----
 # to get continent - need to intersect with worldmap
 # first make sysrevlatlong an sf object
 sysrevlatlong <- sf::st_as_sf(sysrevlatlong, coords = c("longitude","latitude"), 
@@ -307,6 +368,10 @@ table(conflicts$admin)
 # wind farm right on the border
 rm(conflicts, region)
 
+# so all good to use this now
+
+#### extract facility regions ----
+
 # and for each GIPT facility location
 extract2 <- sf::st_join(windsolar_gipt_spat, worldmap)
 
@@ -329,38 +394,65 @@ table(extract2$continent)
 # Africa          Asia        Europe North America       Oceania South America 
 # 485         17117         14694          5608           437          2353 
 
+#### continent ----
+
 # compare proportions
 continent_prop <- extract1 %>%
-  dplyr::group_by(continent) %>%
-  st_drop_geometry() %>%
-  summarise(sysreview = n()) %>%
-  dplyr::mutate(sysrev_prop = sysreview / sum(sysreview, na.rm = TRUE))
+  sf::st_drop_geometry() %>%
+  dplyr::distinct(title, wind_solar, continent, .keep_all = TRUE) %>%
+  dplyr::count(wind_solar, continent) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
+  ) %>%
+  dplyr::rename(n_studies = n) %>%
+  ungroup()
 
 temp <- extract2 %>%
-  dplyr::group_by(continent) %>%
-  st_drop_geometry() %>%
-  summarise(gipt = n()) %>%
-  dplyr::mutate(gipt_prop = gipt / sum(gipt, na.rm = TRUE))
-rm(extract1, extract2)
+  sf::st_drop_geometry() %>%
+  dplyr::rename(wind_solar = type) %>%
+  dplyr::count(wind_solar, continent) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
+  ) %>%
+  dplyr::rename(n_facilities = n) %>%
+  ungroup()
 
 continent_prop <- continent_prop %>%
-  dplyr::full_join(temp, by = "continent") 
-rm(temp)
+  dplyr::full_join(temp, by = c("wind_solar","continent")) %>%
+  tidyr::replace_na(list(n_studies = 0, total_studies = 280, prop_studies = 0)) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
+  dplyr::arrange(continent)
 
 continent_prop
-# continent       sysreview   sysrev_prop  gipt gipt_prop
-# <chr>             <int>       <dbl> <int>     <dbl>
-# 1 Africa                8      0.0224   485    0.0116
-# 2 Asia                 23      0.0644 17117    0.408 
-# 3 Europe              149      0.417  14694    0.350 
-# 4 North America       161      0.451   5608    0.134 
-# 5 Oceania               8      0.0224   437    0.0104
-# 6 South America         8      0.0224  2353    0.0561
-# 7 NA                   NA     NA       1271    0.0303
+# wind_solar continent     n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# <chr>      <chr>             <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
+# 1 solar      Africa                2            49       0.0408          404            25670         0.0157  2.59 
+# 2 wind       Africa                6           280       0.0214           81            16295         0.00497 4.31 
+# 3 solar      Asia                  5            49       0.102         11463            25670         0.447   0.229
+# 4 wind       Asia                 16           280       0.0571         5654            16295         0.347   0.165
+# 5 solar      Europe               16            49       0.327          7775            25670         0.303   1.08 
+# 6 wind       Europe              121           280       0.432          6919            16295         0.425   1.02 
+# 7 solar      North America        25            49       0.510          3983            25670         0.155   3.29 
+# 8 wind       North America       125           280       0.446          1625            16295         0.0997  4.48 
+# 9 wind       Oceania               6           280       0.0214          130            16295         0.00798 2.69 
+# 10 solar      Oceania               0           280       0               307            25670         0.0120  0    
+# 11 solar      South America         1            49       0.0204         1138            25670         0.0443  0.460
+# 12 wind       South America         6           280       0.0214         1215            16295         0.0746  0.287
 
 # so north america way overrepresented, Asia way underrepresented in studies 
-# by rough # facilities at least
-rm(continent_prop)
+# south america also underrepresented
+# by rough # facilities at least, for wind and solar
+# africa "overrepresented", must be due to low # facilities there
+# europe roughly proportional
+# oceania understudied for solar, overstudied for wind?
+
+# is this a genuine bias in studies or a bias of our English-language review?
+# hard to know, not convinced this is the best way to look at this
+rm(continent_prop, temp, extract1, extract2)
 
 ### biomes ----
 
@@ -376,10 +468,10 @@ sysrevdata %>%
 # read in global biome data from Dinerstein et al. (2017)
 # rather large (150MB) shapefile in data cache
 biomes <- sf::st_read("data_cache/Ecoregions2017/Ecoregions2017.shp")
-# plot to check data out (large shapefile, takes a while to render)
-ggplot() +
-  geom_sf(data = biomes, aes(fill = BIOME_NAME), lwd = 0.02) +
-  theme_void()
+# plot to check data out (large shapefile takes a while to render, uncomment to run)
+# ggplot() +
+#   geom_sf(data = biomes, aes(fill = BIOME_NAME), lwd = 0.02) +
+#   theme_void()
 
 # try making biomes shapefile valid to remove bugs
 biomes <- sf::st_make_valid(biomes)
@@ -430,48 +522,103 @@ table(extract_gipt$BIOME_NAME)
 # 3883                                                       19 
 
 # add onto proportional area of each biome to make mega table of proportions
+# split by wind and solar
 biomes <- extract_sysrev %>%
-  dplyr::group_by(BIOME_NAME) %>%
-  st_drop_geometry() %>%
-  summarise(sysreview = n()) %>%
-  dplyr::mutate(sysrev_prop = sysreview / sum(sysreview, na.rm = TRUE))
+  sf::st_drop_geometry() %>%
+  dplyr::distinct(title, wind_solar, BIOME_NAME, .keep_all = TRUE) %>%
+  dplyr::count(wind_solar, BIOME_NAME) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
+  ) %>%
+  dplyr::rename(n_studies = n) %>%
+  ungroup()
 
 biomes_gipt <- extract_gipt %>%
-  dplyr::group_by(BIOME_NAME) %>%
-  st_drop_geometry() %>%
-  summarise(gipt = n()) %>%
-  dplyr::mutate(gipt_prop = gipt / sum(gipt, na.rm = TRUE))
+  sf::st_drop_geometry() %>%
+  dplyr::rename(wind_solar = type) %>%
+  dplyr::count(wind_solar, BIOME_NAME) %>%
+  dplyr::group_by(wind_solar) %>%
+  dplyr::mutate(
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
+  ) %>%
+  dplyr::rename(n_facilities = n) %>%
+  ungroup()
 
-biomes <- biomes_gipt %>%
-  dplyr::left_join(biomes, by = "BIOME_NAME") %>%
-  dplyr::left_join(biome_areas, by = "BIOME_NAME")
-rm(biome_areas, biomes_gipt)
-biomes
-# BIOME_NAME                                                gipt gipt_prop sysreview sysrev_prop total_area proportion
-# <chr>                                                    <int>     <dbl>     <int>       <dbl>      <dbl>      <dbl>
-# 1 Boreal Forests/Taiga                                       334  0.00796         14     0.0392      2523.     0.170  
-# 2 Deserts & Xeric Shrublands                                4166  0.0993          52     0.146       2489.     0.168  
-# 3 Flooded Grasslands & Savannas                              285  0.00679         NA    NA            106.     0.00711
-# 4 Mangroves                                                   93  0.00222          1     0.00280       27.7    0.00186
-# 5 Mediterranean Forests, Woodlands & Scrub                  4243  0.101           56     0.157        329.     0.0222 
-# 6 Montane Grasslands & Shrublands                           1137  0.0271           3     0.00840      471.     0.0318 
-# 7 Temperate Broadleaf & Mixed Forests                      19241  0.459          107     0.300       1445.     0.0973 
-# 8 Temperate Conifer Forests                                  597  0.0142          16     0.0448       445.     0.0300 
-# 9 Temperate Grasslands, Savannas & Shrublands               3831  0.0913          79     0.221       1198.     0.0807 
-# 10 Tropical & Subtropical Coniferous Forests                   56  0.00133         NA    NA             60.2    0.00406
-# 11 Tropical & Subtropical Dry Broadleaf Forests              2863  0.0682           7     0.0196       327.     0.0220 
-# 12 Tropical & Subtropical Grasslands, Savannas & Shrublands   677  0.0161           4     0.0112      1796.     0.121  
-# 13 Tropical & Subtropical Moist Broadleaf Forests            3883  0.0925           6     0.0168      1632.     0.110  
-# 14 Tundra                                                      19  0.000453         3     0.00840     1993.     0.134  
-# 15 NA                                                         540  0.0129           9     0.0252        NA     NA      
+biomes <- biomes %>%
+  dplyr::full_join(biomes_gipt, by = c("wind_solar","BIOME_NAME")) %>%
+  dplyr::left_join(biome_areas, by = "BIOME_NAME") %>%
+  tidyr::replace_na(list(n_studies = 0, prop_studies = 0)) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
+  dplyr::arrange(BIOME_NAME, wind_solar)
+rm(biome_areas, biomes_gipt, extract_gipt, extract_sysrev)
+print(biomes, n = 30)
+# wind_solar BIOME_NAME               n_studies total_studies prop_studies n_facilities total_facilities prop_facilities total_area proportion ratio
+# <chr>      <chr>                        <int>         <int>        <dbl>        <int>            <int>           <dbl>      <dbl>      <dbl> <dbl>
+# 1 solar      Boreal Forests/Taiga             0            NA      0                 28            25670       0.00109       2523.     0.170   0    
+# 2 wind       Boreal Forests/Taiga            14           286      0.0490           306            16295       0.0188        2523.     0.170   2.61 
+# 3 solar      Deserts & Xeric Shrubla…        21            51      0.412           3096            25670       0.121         2489.     0.168   3.41 
+# 4 wind       Deserts & Xeric Shrubla…        30           286      0.105           1070            16295       0.0657        2489.     0.168   1.60 
+# 5 solar      Flooded Grasslands & Sa…         0            NA      0                126            25670       0.00491        106.     0.00711 0    
+# 6 wind       Flooded Grasslands & Sa…         0            NA      0                159            16295       0.00976        106.     0.00711 0    
+# 7 solar      Mangroves                        0            NA      0                 63            25670       0.00245         27.7    0.00186 0    
+# 8 wind       Mangroves                        1           286      0.00350           30            16295       0.00184         27.7    0.00186 1.90 
+# 9 solar      Mediterranean Forests, …        10            51      0.196           2383            25670       0.0928         329.     0.0222  2.11 
+# 10 wind       Mediterranean Forests, …        43           286      0.150           1860            16295       0.114          329.     0.0222  1.32 
+# 11 solar      Montane Grasslands & Sh…         2            51      0.0392           649            25670       0.0253         471.     0.0318  1.55 
+# 12 wind       Montane Grasslands & Sh…         1           286      0.00350          488            16295       0.0299         471.     0.0318  0.117
+# 13 solar      Temperate Broadleaf & M…        13            51      0.255          11646            25670       0.454         1445.     0.0973  0.562
+# 14 wind       Temperate Broadleaf & M…        86           286      0.301           7595            16295       0.466         1445.     0.0973  0.645
+# 15 solar      Temperate Conifer Fores…         1            51      0.0196           368            25670       0.0143         445.     0.0300  1.37 
+# 16 wind       Temperate Conifer Fores…        15           286      0.0524           229            16295       0.0141         445.     0.0300  3.73 
+# 17 solar      Temperate Grasslands, S…         4            51      0.0784          2043            25670       0.0796        1198.     0.0807  0.985
+# 18 wind       Temperate Grasslands, S…        67           286      0.234           1788            16295       0.110         1198.     0.0807  2.13 
+# 19 solar      Tropical & Subtropical …         0            NA      0                 46            25670       0.00179         60.2    0.00406 0    
+# 20 wind       Tropical & Subtropical …         0            NA      0                 10            16295       0.000614        60.2    0.00406 0    
+# 21 solar      Tropical & Subtropical …         0            NA      0               1685            25670       0.0656         327.     0.0220  0    
+# 22 wind       Tropical & Subtropical …         7           286      0.0245          1178            16295       0.0723         327.     0.0220  0.339
+# 23 solar      Tropical & Subtropical …         0            NA      0                527            25670       0.0205        1796.     0.121   0    
+# 24 wind       Tropical & Subtropical …         4           286      0.0140           150            16295       0.00921       1796.     0.121   1.52 
+# 25 solar      Tropical & Subtropical …         0            NA      0               2689            25670       0.105         1632.     0.110   0    
+# 26 wind       Tropical & Subtropical …         6           286      0.0210          1194            16295       0.0733        1632.     0.110   0.286
+# 27 solar      Tundra                           0            NA      0                  1            25670       0.0000390     1993.     0.134   0    
+# 28 wind       Tundra                           3           286      0.0105            18            16295       0.00110       1993.     0.134   9.50 
+# 29 solar      NA                               0            NA      0                320            25670       0.0125          NA     NA       0    
+# 30 wind       NA                               9           286      0.0315           220            16295       0.0135          NA     NA       2.33 
 
 # so broadly, most studies and most facilities in temperate forests, 
 # Temperate Grasslands somewhat overrepresented for studies vs how many facilities they have
 # Tropical forests somewhat underrepresented for studies vs how many facilities they have
 
+# for wind, tundra, temperate conifer forests, boreal forests and temperate grasslands all appear overstudied relative to facility #s
+# for solar deserts and xeric shrublands appear overstudied relative to facility #s
+
+# tropical forests fairly understudied
+
+#### biomes figure ----
+
+biomes %>%
+  dplyr::filter(!is.na(BIOME_NAME), n_studies > 0 | n_facilities > 50) %>%
+  dplyr::mutate(
+    reliable = n_studies >= 5,  # flag low-n ratios
+    short_name = str_remove(BIOME_NAME, " & Shrublands") # shorten labels
+  ) %>%
+  ggplot(aes(x = ratio, y = fct_reorder(short_name, ratio), 
+             alpha = reliable, colour = wind_solar)) +
+  geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
+  geom_point(size = 3) +
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0.35),
+                     guide = "none") +
+  facet_wrap(~wind_solar) +
+  labs(x = "Ratio (prop. studies / prop. facilities)",
+       y = NULL,
+       caption = "Faded points: fewer than 5 studies") +
+  ggpubr::theme_pubr(legend = "none")
+
 # TO DO BELOW ####
 
-# calculate more wind/solar specific proportions (for hemisphere, continent, biomes)
 # try to make figure or table summarising, are studies in systematic review
 # proportional to the number of facilities in dif hemisphere, continent, biome?
 

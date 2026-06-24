@@ -23,7 +23,7 @@ source("scripts/my_colours.R")
 
 ## systematic review ----
 
-# script below for preprocessing systematic review data, do not need to re-run
+# script below for pre-processing systematic review data, do not need to re-run
 #source("scripts/sysreview_dataprep.R")
 
 # using data from full manual systematic review, prepare figures and summaries
