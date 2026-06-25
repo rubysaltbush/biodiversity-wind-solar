@@ -307,6 +307,8 @@ proportions
 # 4 wind       Temperate       264           280       0.943         14506            16295         0.890   1.06 
 # 5 wind       Tropical         13           280       0.0464         1770            16295         0.109   0.427
 
+rm(fac_prop, proportions)
+
 ### region ----
 #### extract study regions ----
 # to get continent - need to intersect with worldmap
@@ -385,7 +387,7 @@ if (length(na_idx) > 0) {
   extract2[na_idx, c("continent", "admin", "geounit")] <-
     sf::st_drop_geometry(worldmap)[nearest_idx, c("continent", "admin", "geounit")]
 }
-rm(na_idx, nearest_idx)
+rm(na_idx, nearest_idx, worldmap)
 
 sum(is.na(extract2$continent))
 # matched only 16 points, others must be real odd will leave
@@ -599,81 +601,61 @@ print(biomes, n = 30)
 
 #### biomes figure ----
 
-biomes %>%
-  dplyr::filter(!is.na(BIOME_NAME), n_studies > 0 | n_facilities > 50) %>%
+# recompute proportions out of the combined wind+solar total so the two types
+# are directly comparable within each panel (each panel's bars sum to 1 overall)
+biome_plot_data <- biomes |>
+  dplyr::filter(!is.na(BIOME_NAME)) |>
   dplyr::mutate(
-    reliable = n_studies >= 5,  # flag low-n ratios
-    short_name = str_remove(BIOME_NAME, " & Shrublands") # shorten labels
-  ) %>%
-  ggplot(aes(x = ratio, y = fct_reorder(short_name, ratio), 
-             alpha = reliable, colour = wind_solar)) +
-  geom_vline(xintercept = 1, linetype = "dashed", colour = "grey50") +
-  geom_point(size = 3) +
-  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0.35),
-                     guide = "none") +
-  facet_wrap(~wind_solar) +
-  labs(x = "Ratio (prop. studies / prop. facilities)",
-       y = NULL,
-       caption = "Faded points: fewer than 5 studies") +
-  ggpubr::theme_pubr(legend = "none")
+    n_studies    = tidyr::replace_na(n_studies, 0L),
+    n_facilities = tidyr::replace_na(n_facilities, 0L),
+    prop_s       = n_studies    / sum(n_studies),
+    prop_f       = n_facilities / sum(n_facilities),
+     short_name   = str_remove(BIOME_NAME, " & Shrublands"),
+    # # order by global land area: high proportion = top of chart
+    short_name   = forcats::fct_reorder(short_name, prop_f)
+  )
 
-# TO DO BELOW ####
+# a) study locations — bars extend rightward
+p_studies <- ggplot(biome_plot_data,
+                    aes(y = short_name, x = prop_s, fill = wind_solar)) +
+  geom_col() +
+  scale_x_continuous(
+    labels = scales::percent_format(accuracy = 1),
+    expand = expansion(mult = c(0, 0.05)),
+    limits = c(0, 0.5)
+  ) +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  labs(x = "Proportion of studies", y = NULL,
+       title = "a)", fill = NULL) +
+  ggpubr::theme_pubr() +
+  theme(legend.position = "none")
 
-# try to make figure or table summarising, are studies in systematic review
-# proportional to the number of facilities in dif hemisphere, continent, biome?
+# b) GIPT facilities — x reversed so bars extend leftward, mirroring panel a
+p_facilities <- ggplot(biome_plot_data,
+                       aes(y = short_name, x = prop_f, fill = wind_solar)) +
+  geom_col() +
+  scale_x_reverse(
+    labels = scales::percent_format(accuracy = 1),
+    expand = expansion(mult = c(0.05, 0)),
+    limits = c(0, 0.5)
+  ) +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  labs(x = "Proportion of facilities", y = NULL,
+       title = "b)", fill = NULL) +
+  ggpubr::theme_pubr() +
+  theme(
+    axis.text.y  = element_blank(),
+    axis.ticks.y = element_blank()
+  )
 
-# # it worked! now join back to sys rev data by title, latitude and longitude
-# extract <- extract %>%
-#   dplyr::select(title, latitude, longitude, eco_name = ECO_NAME, biome = BIOME_NAME) %>%
-#   sf::st_drop_geometry() %>%
-#   dplyr::distinct()
-# sysrevdata <- sysrevdata %>%
-#   dplyr::left_join(extract, by = c("title", "latitude", "longitude"))
-# # some NAs but this will do for broad picture
-# rm(biomes, extract, sysrevlatlong)
-# 
-# # table
-# sysrevdata %>%
-#   dplyr::select(title, biome) %>%
-#   dplyr::distinct() %>%
-#   dplyr::select(biome) %>%
-#   table()
-# # biome
-# # Boreal Forests/Taiga                               Deserts & Xeric Shrublands 
-# # 14                                                       52 
-# # Mangroves                 Mediterranean Forests, Woodlands & Scrub 
-# # 1                                                       53 
-# # Montane Grasslands & Shrublands                      Temperate Broadleaf & Mixed Forests 
-# # 3                                                       99 
-# # Temperate Conifer Forests              Temperate Grasslands, Savannas & Shrublands 
-# # 16                                                       70 
-# # Tropical & Subtropical Dry Broadleaf Forests Tropical & Subtropical Grasslands, Savannas & Shrublands 
-# # 7                                                        4 
-# # Tropical & Subtropical Moist Broadleaf Forests          Tundra 
-# # 6                                                        3 
-# 
-# # plot systematic review study biomes, sorted by global proportion of each biome 
-# sysrevdata %>%
-#   dplyr::select(title, biome, wind_solar) %>%
-#   dplyr::filter(!(is.na(biome))) %>%
-#   dplyr::distinct() %>%
-#   dplyr::group_by(biome, wind_solar) %>%
-#   dplyr::summarise(count = n()) %>%
-#   dplyr::ungroup() %>%
-#   dplyr::left_join(biome_areas, by = c("biome" = "BIOME_NAME")) %>%
-#   dplyr::arrange(-proportion) %>%
-#   dplyr::mutate(biome = forcats::fct_inorder(biome)) %>%
-#   ggplot(aes(x = biome, y = count, fill = wind_solar)) +
-#   geom_bar(stat = "identity") +
-#   ggpubr::theme_pubr() +
-#   scale_fill_discrete(type = my_colours$windsolar) +
-#   xlab("Biome") +
-#   coord_flip() +
-#   ylab("Number of studies") +
-#   labs(fill = "Facility type")
-# ggsave("figures/biome_histogram.pdf", width = 8, height = 5)
-# 
-# rm(biome_areas)
+p_studies + p_facilities +
+  patchwork::plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+
+ggsave("figures/biome_prop_studiesvGIPT.pdf", width = 9, height = 5)
+
+rm(biome_plot_data, p_studies, p_facilities, biomes, sysrevlatlong, 
+   windsolar_gipt, windsolar_gipt_spat)
 
 # who/what ----
 # table of biodiversity categories
