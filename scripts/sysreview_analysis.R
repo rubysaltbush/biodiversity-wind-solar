@@ -456,40 +456,51 @@ continent_prop
 cont_all_prop <- extract1 %>%
   sf::st_drop_geometry() %>%
   dplyr::distinct(title, continent, .keep_all = TRUE) %>%
-  dplyr::count(continent) %>%
+  dplyr::mutate(wind_solar = "all") %>%
+  dplyr::count(continent, wind_solar) %>%
   dplyr::mutate(
-    tot_stud_all = sum(n),
-    prop_stud_all  = n / tot_stud_all
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
   ) %>%
-  dplyr::rename(n_stud_all = n) %>%
+  dplyr::rename(n_studies = n) %>%
   ungroup()
 
 temp <- extract2 %>%
   sf::st_drop_geometry() %>%
-  dplyr::count(continent) %>%
+  dplyr::mutate(wind_solar = "all") %>%
+  dplyr::count(continent, wind_solar) %>%
   dplyr::mutate(
-    tot_fac_all = sum(n),
-    prop_fac_all  = n / tot_fac_all
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
   ) %>%
-  dplyr::rename(n_fac_all = n) %>%
+  dplyr::rename(n_facilities = n) %>%
   ungroup()
 
 cont_all_prop <- cont_all_prop %>%
-  dplyr::full_join(temp, by = c("continent")) %>%
-  dplyr::mutate(ratio = prop_stud_all / prop_fac_all) %>%
+  dplyr::full_join(temp, by = c("continent", "wind_solar")) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
   dplyr::arrange(continent)
 cont_all_prop
-# continent     n_stud_all tot_stud_all prop_stud_all n_fac_all tot_fac_all prop_fac_all  ratio
-# <chr>              <int>        <int>         <dbl>     <int>       <int>        <dbl>  <dbl>
-# 1 Africa                 8          328        0.0244       485       41965       0.0116  2.11 
-# 2 Asia                  21          328        0.0640     17117       41965       0.408   0.157
-# 3 Europe               137          328        0.418      14694       41965       0.350   1.19 
-# 4 North America        149          328        0.454       5608       41965       0.134   3.40 
-# 5 Oceania                6          328        0.0183       437       41965       0.0104  1.76 
-# 6 South America          7          328        0.0213      2353       41965       0.0561  0.381
+# continent     n_studies total_studies prop_studies n_facilities total_facilities prop_facilities  ratio
+# <chr>             <int>         <int>        <dbl>        <int>            <int>           <dbl>  <dbl>
+# 1 Africa                8           328       0.0244          485            41965          0.0116  2.11 
+# 2 Asia                 21           328       0.0640        17117            41965          0.408   0.157
+# 3 Europe              137           328       0.418         14694            41965          0.350   1.19 
+# 4 North America       149           328       0.454          5608            41965          0.134   3.40 
+# 5 Oceania               6           328       0.0183          437            41965          0.0104  1.76 
+# 6 South America         7           328       0.0213         2353            41965          0.0561  0.381
 
+# Asia and South America both strongly underrepresented
 # is this a genuine bias in studies or a bias of our English-language review?
 # hard to know, not convinced this is the best way to look at this
+
+# compile into one table
+cont_all_prop <- cont_all_prop %>%
+  dplyr::bind_rows(continent_prop) %>%
+  dplyr::arrange(continent)
+rm(continent_prop)
+#  write output to make table for main text
+readr::write_csv(cont_all_prop, "data_output/studies_vs_facilities_by_continent.csv")
 
 # how well is Australia represented specifically?
 # compare proportions, split by wind and solar
@@ -530,7 +541,7 @@ dplyr::filter(admin_prop, admin == "Australia")
 # BUT none of these #s account for PLANNED facilities which in the pipeline now
 # so still fair to say we need more studies to guide development
 
-rm(continent_prop, cont_all_prop, temp, extract1, extract2)
+rm(cont_all_prop, temp, extract1, extract2)
 
 ### biomes ----
 

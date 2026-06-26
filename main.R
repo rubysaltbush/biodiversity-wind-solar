@@ -26,7 +26,7 @@ source("scripts/my_colours.R")
 # script below for pre-processing systematic review data, do not need to re-run
 #source("scripts/sysreview_dataprep.R")
 
-# using data from full manual systematic review, prepare figures and summaries
+# using data from full manual systematic review, prepare figures and tables
 source("scripts/sysreview_analysis.R")
 
 ## spatial analysis ----
@@ -39,3 +39,7 @@ source("scripts/spatial_dataprep.R")
 # prepare figures and run analyses from these data
 source("scripts/spatial_figures.R")
 
+# scripts in the folder scripts/supplementary_analyses were used to assess and validate
+# some of the data choices made in the main scripts, e.g. the use of GIPT data,
+# the restriction of GIPT data to facilities already constructed or under construction
+# no need to re-run but provided to support these choices
