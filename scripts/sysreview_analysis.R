@@ -398,7 +398,7 @@ table(extract2$continent)
 
 #### continent ----
 
-# compare proportions
+# compare proportions, split by wind and solar
 continent_prop <- extract1 %>%
   sf::st_drop_geometry() %>%
   dplyr::distinct(title, wind_solar, continent, .keep_all = TRUE) %>%
@@ -452,9 +452,85 @@ continent_prop
 # europe roughly proportional
 # oceania understudied for solar, overstudied for wind?
 
+# what do total wind+solar numbers look like?
+cont_all_prop <- extract1 %>%
+  sf::st_drop_geometry() %>%
+  dplyr::distinct(title, continent, .keep_all = TRUE) %>%
+  dplyr::count(continent) %>%
+  dplyr::mutate(
+    tot_stud_all = sum(n),
+    prop_stud_all  = n / tot_stud_all
+  ) %>%
+  dplyr::rename(n_stud_all = n) %>%
+  ungroup()
+
+temp <- extract2 %>%
+  sf::st_drop_geometry() %>%
+  dplyr::count(continent) %>%
+  dplyr::mutate(
+    tot_fac_all = sum(n),
+    prop_fac_all  = n / tot_fac_all
+  ) %>%
+  dplyr::rename(n_fac_all = n) %>%
+  ungroup()
+
+cont_all_prop <- cont_all_prop %>%
+  dplyr::full_join(temp, by = c("continent")) %>%
+  dplyr::mutate(ratio = prop_stud_all / prop_fac_all) %>%
+  dplyr::arrange(continent)
+cont_all_prop
+# continent     n_stud_all tot_stud_all prop_stud_all n_fac_all tot_fac_all prop_fac_all  ratio
+# <chr>              <int>        <int>         <dbl>     <int>       <int>        <dbl>  <dbl>
+# 1 Africa                 8          328        0.0244       485       41965       0.0116  2.11 
+# 2 Asia                  21          328        0.0640     17117       41965       0.408   0.157
+# 3 Europe               137          328        0.418      14694       41965       0.350   1.19 
+# 4 North America        149          328        0.454       5608       41965       0.134   3.40 
+# 5 Oceania                6          328        0.0183       437       41965       0.0104  1.76 
+# 6 South America          7          328        0.0213      2353       41965       0.0561  0.381
+
 # is this a genuine bias in studies or a bias of our English-language review?
 # hard to know, not convinced this is the best way to look at this
-rm(continent_prop, temp, extract1, extract2)
+
+# how well is Australia represented specifically?
+# compare proportions, split by wind and solar
+admin_prop <- extract1 %>%
+  sf::st_drop_geometry() %>%
+  dplyr::distinct(title, admin, wind_solar, .keep_all = TRUE) %>%
+  dplyr::count(wind_solar, admin) %>%
+  dplyr::mutate(
+    total_studies = sum(n),
+    prop_studies  = n / total_studies
+  ) %>%
+  dplyr::rename(n_studies = n) %>%
+  ungroup()
+
+temp <- extract2 %>%
+  sf::st_drop_geometry() %>%
+  dplyr::rename(wind_solar = type) %>%
+  dplyr::count(wind_solar, admin) %>%
+  dplyr::mutate(
+    total_facilities = sum(n),
+    prop_facilities  = n / total_facilities
+  ) %>%
+  dplyr::rename(n_facilities = n) %>%
+  ungroup()
+
+admin_prop <- admin_prop %>%
+  dplyr::full_join(temp, by = c("wind_solar","admin")) %>%
+  tidyr::replace_na(list(n_studies = 0, prop_studies = 0)) %>%
+  dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
+  dplyr::arrange(admin)
+dplyr::filter(admin_prop, admin == "Australia")
+# wind_solar admin   n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# <chr>      <chr>       <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
+# 1 wind      Austra…         4           285       0.0140          111            16295         0.00681  2.06
+# 2 solar     Austra…        0            NA        0               284            25670         0.0111   0   
+
+# so Australia understudied for solar by # facilities, overstudied for wind
+# BUT none of these #s account for PLANNED facilities which in the pipeline now
+# so still fair to say we need more studies to guide development
+
+rm(continent_prop, cont_all_prop, temp, extract1, extract2)
 
 ### biomes ----
 
