@@ -1,5 +1,5 @@
-# script to read in and compare data fro wind and solar facility locations and size
-# from multiple data sources
+# script to read in and compare data for wind and solar facility locations and size
+# from multiple data sources across Australia
 
 # first, the NEM (only southeast Aus but government data)
 #### NEM data for southeast (less complete) ----
