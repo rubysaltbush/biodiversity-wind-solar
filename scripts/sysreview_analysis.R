@@ -758,6 +758,31 @@ sysrevdata %>%
 # plants      reptiles 
 # 23            14 
 
+# table of biodiversity categories, split by wind/solar, with percent share of all studies
+sysrevdata %>%
+  dplyr::select(title, biodiversity_category, wind_solar) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
+  dplyr::group_by(biodiversity_category, wind_solar) %>%
+  dplyr::summarise(count = n(), percent = n()/(length(unique(sysrevdata$title)))*100)
+# biodiversity_category wind_solar count percent
+# 1 amphibians            wind           3   0.906
+# 2 bats                  solar          5   1.51 
+# 3 bats                  wind          94  28.4  
+# 4 birds                 solar         10   3.02 
+# 5 birds                 wind         166  50.2  
+# 6 fish                  wind           1   0.302
+# 7 insects               solar         14   4.23 
+# 8 insects               wind           5   1.51 
+# 9 other invertebrates   solar          4   1.21 
+# 10 other invertebrates   wind           3   0.906
+# 11 other mammals         solar          3   0.906
+# 12 other mammals         wind          25   7.55 
+# 13 plants                solar         19   5.74 
+# 14 plants                wind           4   1.21 
+# 15 reptiles              solar          4   1.21 
+# 16 reptiles              wind          10   3.02 
+
 # make histogram of biodiversity category, counting some pubs with multiple taxa in multiple bars
 # coloured by wind or solar, arranged by # studies
 plotcat <- sysrevdata %>%
@@ -787,27 +812,26 @@ sysrevdata %>%
   dplyr::distinct() %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
   dplyr::group_by(biodiversity_metric, wind_solar) %>%
-  dplyr::summarise(count = n())
-# biodiversity_metric wind_solar count
-# <chr>               <chr>      <int>
-# 1 abundance           solar          4
-# 2 abundance           wind          19
-# 3 behaviour           solar          6
-# 4 behaviour           wind          63
-# 5 distribution        solar          4
-# 6 distribution        wind          44
-# 7 diversity           solar         24
-# 8 diversity           wind          18
-# 9 genetics            solar          1
-# 10 health              solar          2
-# 11 health              wind           7
-# 12 mortality           solar          6
-# 13 mortality           wind         127
-# 14 native cover        solar          2
-# 15 predation           wind           2
-# 16 reproduction        wind          21
-# 17 survival            solar          5
-# 18 survival            wind           7
+  dplyr::summarise(count = n(), percent = n()/(length(unique(sysrevdata$title)))*100)
+# biodiversity_metric wind_solar count percent
+# 1 abundance           solar          4   1.21 
+# 2 abundance           wind          19   5.74 
+# 3 behaviour           solar          6   1.81 
+# 4 behaviour           wind          63  19.0  
+# 5 distribution        solar          4   1.21 
+# 6 distribution        wind          44  13.3  
+# 7 diversity           solar         24   7.25 
+# 8 diversity           wind          18   5.44 
+# 9 genetics            solar          1   0.302
+# 10 health              solar          2   0.604
+# 11 health              wind           7   2.11 
+# 12 mortality           solar          6   1.81 
+# 13 mortality           wind         127  38.4  
+# 14 native cover        solar          2   0.604
+# 15 predation           wind           2   0.604
+# 16 reproduction        wind          21   6.34 
+# 17 survival            solar          5   1.51 
+# 18 survival            wind           7   2.11 
 
 # make histogram of biodiversity measure, counting some pubs with multiple cats in multiple bars
 plotmeas <- sysrevdata %>%
