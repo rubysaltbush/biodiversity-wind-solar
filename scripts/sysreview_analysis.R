@@ -806,7 +806,7 @@ plotcat <- sysrevdata %>%
 plotcat
 ggsave("figures/biodiversity_cat_histogram.pdf", width = 5, height = 5)
 
-# table of biodiversity measure
+# table of biodiversity measure, split by wind/solar, with percent share of all studies
 sysrevdata %>%
   dplyr::select(title, biodiversity_metric, wind_solar) %>%
   dplyr::distinct() %>%
@@ -860,6 +860,16 @@ combined
 ggsave("figures/biodiversity_catmeas_combined.pdf", combined, width = 6, height = 9)
 rm(combined)
 # keep two other plots to try combining with effect figure
+
+# table of biodiversity category and measure, split by wind/solar, with percent share of all studies
+table <- sysrevdata %>%
+  dplyr::select(title, biodiversity_category, biodiversity_metric, wind_solar) %>%
+  dplyr::distinct() %>%
+  tidyr::separate_longer_delim(biodiversity_category, delim = ", ") %>%
+  tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
+  dplyr::group_by(biodiversity_metric, biodiversity_category, wind_solar) %>%
+  dplyr::summarise(count = n(), percent = n()/(length(unique(sysrevdata$title)))*100)
+rm(table)
 
 # outcome ----
 
