@@ -4,7 +4,8 @@
 # first read in data from GIPT and filter
 
 #* wind ----
-# data downloaded from Global Integrated Power Tracker August 2025
+# February 2025 releases of the Global Wind Power Tracker and Global Solar Power
+# Tracker (Global Energy Monitor), downloaded August 2025
 # read in two tabs of spreadsheet, 2nd sheet has all >=10MW projects
 wind_gipt1 <- readxl::read_xlsx("data_input/Global-Wind-Power-Tracker-February-2025.xlsx",
                                 sheet = 2)

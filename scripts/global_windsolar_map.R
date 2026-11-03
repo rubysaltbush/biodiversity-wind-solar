@@ -3,7 +3,7 @@
 
 # get data ----
 
-# sources August 2025 data from the Global Integrated Power Tracker 
+# sources February 2025 Global Wind and Solar Power Tracker data (downloaded August 2025)
 # filtered to projects >3 MW capacity that are onshore, and either operating, 
 # in construction or retired (given systematic review studies go back decades)
 source("scripts/gipt_data.R")
