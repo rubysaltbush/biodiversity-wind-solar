@@ -15,7 +15,8 @@ windsolar <- cache_csv("data_output/windsolar_environments.csv", function(){
 # compiling single data source
 windsolar <- cache_csv("data_output/windsolar_gipt_aus.csv", function(){
   
-  # data downloaded from Global Integrated Power Tracker January 2025
+  # June 2024 releases of the Global Wind Power Tracker and Global Solar Power
+  # Tracker (Global Energy Monitor), downloaded January 2025
   # read in two tabs of spreadsheet, 2nd sheet has all >=10MW projects
   wind_gipt1 <- readxl::read_xlsx("data_input/Global-Wind-Power-Tracker-June-2024.xlsx",
                                   sheet = 2)
@@ -315,8 +316,11 @@ lossyear <- terra::rast("data_cache/Hansen_GFC_lossyear_aus.tif")
 
 # now create buffer of points
 windsolarV <- sf::st_as_sf(windsolar, coords = c("lon", "lat"), remove = FALSE, crs = "EPSG:4326")
-# buffer points by 1km
-windsolarVbuff <- sf::st_buffer(windsolarV, dist = 1000)
+# buffer points by 1km, in Australian Albers (EPSG:3577) so distance is in metres
+# whatever the s2 setting (exactextractr reprojects buffers to the raster CRS)
+windsolarVbuff <- windsolarV %>%
+  sf::st_transform(3577) %>%
+  sf::st_buffer(dist = 1000)
 
 # now extract fraction of 0 (no clearing) and 00-23 (year cleared) values per 
 # buffer area from tree cover loss data

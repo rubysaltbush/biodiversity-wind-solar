@@ -196,10 +196,10 @@ ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # patchwork together mvg capacity plots
 # combine vertically with patchwork
-plotpre1750cap / plotmvgcap + 
+combined <- plotpre1750cap / plotmvgcap + 
   patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
 ggsave("figures/auscapbymvg_combined.pdf", combined, width = 5, height = 7)
-rm(plotpre1750cap, plotmvgcap, mvg_windsolarsummary)
+rm(plotpre1750cap, plotmvgcap, mvg_windsolarsummary, combined)
 
 ## sankey graph ----
 # showing pre1750 to today change in veg for solar and wind locations
@@ -253,9 +253,8 @@ require(htmlwidgets)
 htmlwidgets::saveWidget(p, file = "figures/sankey_solar.html")
 
 require(webshot)
-# replace below URL with your unique file path for above html!
-# also need to install phantomJS for webshot to work, so complicated
-webshot::webshot(url = "file:///Users/rubysaltbush/Desktop/R/biodiversity-wind-solar/figures/sankey_solar.html", 
+# need to install phantomJS for webshot to work (webshot::install_phantomjs())
+webshot::webshot(url = paste0("file://", normalizePath("figures/sankey_solar.html")), 
                  file = "figures/sankey_solar.pdf")
 # okay can edit text size/font from this pdf but colours more difficult
 
@@ -307,8 +306,7 @@ p
 # takes wrangling to save as pdf
 htmlwidgets::saveWidget(p, file = "figures/sankey_wind.html", selfcontained = TRUE)
 
-# replace below URL with your unique file path for above html!
-webshot::webshot(url = "file:///Users/rubysaltbush/Desktop/R/biodiversity-wind-solar/figures/sankey_wind.html", 
+webshot::webshot(url = paste0("file://", normalizePath("figures/sankey_wind.html")), 
                  file = "figures/sankey_wind.pdf")
 
 # looks much better with simplified veg categories!
@@ -507,8 +505,9 @@ ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
   ylab("Facility type")
 ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
 
-t.test(windsolar$frac_cleared[windsolar$type == "wind"],
-       windsolar$frac_cleared[windsolar$type == "solar"])
+# NB column was frac_cleared (doesn't exist); temporary fix, test replaced in step A6
+t.test(windsolar$percent_cleared[windsolar$type == "wind"],
+       windsolar$percent_cleared[windsolar$type == "solar"])
 # t = -0.12453, df = 260, p-value = 0.901, differences not significant
 # mean of x  mean of y 
 # 0.01395721 0.01455504 

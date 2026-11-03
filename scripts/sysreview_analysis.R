@@ -541,7 +541,7 @@ dplyr::filter(admin_prop, admin == "Australia")
 # BUT none of these #s account for PLANNED facilities which in the pipeline now
 # so still fair to say we need more studies to guide development
 
-rm(cont_all_prop, temp, extract1, extract2)
+rm(cont_all_prop, admin_prop, temp, extract1, extract2)
 
 ### biomes ----
 
@@ -743,6 +743,10 @@ ggsave("figures/biome_prop_studiesvGIPT.pdf", width = 9, height = 5)
 
 rm(biome_plot_data, p_studies, p_facilities, biomes, sysrevlatlong, 
    windsolar_gipt, windsolar_gipt_spat)
+
+# turn s2 spherical geometry back on (sf default), switched off above for the
+# continent and biome joins; later spatial scripts rely on it for buffering
+sf::sf_use_s2(TRUE)
 
 # who/what ----
 # table of biodiversity categories
