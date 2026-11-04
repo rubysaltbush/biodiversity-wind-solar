@@ -1,6 +1,5 @@
 # script to prepare and cache data for spatial analysis, of locations of Australian
-# wind and solar farms with environmental data including climate, vegetation
-# and leaf area index
+# wind and solar farms with environmental data including climate and vegetation
 
 # cache csv so it can be loaded without rerunning all extractions, especially 
 # given large spatial files too big to share on github
@@ -356,7 +355,158 @@ windsolar$meantreecover2000_pt <- meantreecoverpt$`Hansen_GFC-2023-v1.11_treecov
 
 rm(meantreecoverpt, meantreecoverbuff, treecover, windsolarV, windsolarVbuff)
 
+# footprints ----
+# match wind and solar locations to footprints from Global Renewables Watch
+# (Robinson et al., 2025): solar array polygons and individual wind turbines
+
+windsolar <- dplyr::ungroup(windsolar)
+windsolar$fac_id <- seq_len(nrow(windsolar))
+
+# facility locations in Australian Albers (metres)
+facilities <- windsolar %>%
+  dplyr::select(fac_id, type, lat, lon) %>%
+  sf::st_as_sf(coords = c("lon", "lat"), crs = "EPSG:4326") %>%
+  sf::st_transform(3577)
+
+# read Global Renewables Watch footprints for Australia
+grw_solar <- sf::st_read("data_cache/solar_all_2024q2_v1.gpkg",
+                         query = "SELECT * FROM solar_all_2024q2 WHERE COUNTRY = 'Australia'") %>%
+  sf::st_transform(3577)
+grw_wind <- sf::st_read("data_cache/wind_all_2024q2_v1.gpkg",
+                        query = "SELECT * FROM wind_all_2024q2 WHERE COUNTRY = 'Australia'") %>%
+  sf::st_transform(3577)
+# 434 solar polygons, 4038 turbines
+
+# assign each footprint feature to the nearest facility, keeping those within
+# a maximum distance (m)
+match_footprints <- function(grw, fac, max_dist) {
+  nearest <- sf::st_nearest_feature(grw, fac)
+  grw %>%
+    dplyr::mutate(fac_id = fac$fac_id[nearest],
+                  match_dist_m = as.numeric(sf::st_distance(grw, fac[nearest, ],
+                                                            by_element = TRUE))) %>%
+    dplyr::filter(match_dist_m <= max_dist) %>%
+    dplyr::select(fac_id, match_dist_m)
+}
+
+# solar polygons within 2 km of a solar farm, and a 50 m radius (turbine pad
+# and surrounds) around turbines within 15 km of a wind farm
+footprints <- rbind(
+  match_footprints(grw_solar, dplyr::filter(facilities, type == "solar"), 2000),
+  sf::st_buffer(match_footprints(grw_wind, dplyr::filter(facilities, type == "wind"), 15000), 50)
+)
+rm(grw_solar, grw_wind, match_footprints)
+
+# number of footprint features and furthest match distance per facility
+windsolar <- footprints %>%
+  sf::st_drop_geometry() %>%
+  dplyr::group_by(fac_id) %>%
+  dplyr::summarise(n_footprint_features = dplyr::n(),
+                   max_match_dist_m = max(match_dist_m)) %>%
+  dplyr::right_join(windsolar, by = "fac_id") %>%
+  dplyr::arrange(fac_id) %>%
+  dplyr::mutate(footprint_source = dplyr::if_else(is.na(n_footprint_features), "point", "GRW"))
+
+# how many points from my error-checked locations are matched by footprints in GRW data?
+table(windsolar$type, windsolar$footprint_source)
+#        GRW point
+# solar  132    17
+# wind   100    13
+
+# the 30 facilities with points but no GRW footprint are a mix of recently
+# constructed facilities (so possibly not visible in mid-2024 when GRW data from)
+# or projects that GRW's machine learning must have missed for whatever reason -
+# still better to have proper footprints for most facilities, and will use a
+# buffer around the point for these 30 facilities where no footprint easily available
+
+# impact area of each facility: GRW footprints, or a 1 km radius around the
+# point location for facilities without a GRW footprint
+footprint_areas <- rbind(
+  footprints %>% dplyr::select(fac_id),
+  facilities %>%
+    dplyr::filter(!fac_id %in% footprints$fac_id) %>%
+    sf::st_buffer(1000) %>%
+    dplyr::select(fac_id) %>%
+    sf::st_set_geometry("geom")
+) %>%
+  dplyr::group_by(fac_id) %>%
+  dplyr::summarise() %>%
+  dplyr::mutate(footprint_ha = as.numeric(sf::st_area(.)) / 10000)
+rm(footprints, facilities)
+
+# fraction of each footprint in each class of present-day and pre-1750 vegetation
+# (NVIS Major Vegetation Groups) and agricultural land capability
+categorical <- list(
+  mvg = terra::rast("data_cache/NVIS_MVG_07_tif/nvis-mvg.tif")[[1]],
+  mvgpre1750 = terra::rast("data_cache/NVIS_V7_0_AUST_RASTERS_PRE_ALL_GEOTIFF/nvis7_0_aust_pre_mvg_alb.tif")[[1]],
+  land_capability = terra::rast("data_cache/RD-LANDCAPAUS-02/land_capability.tif")
+)
+
+footprint_classes <- purrr::imap_dfr(categorical, function(r, layer) {
+  exactextractr::exact_extract(r, footprint_areas, "frac", append_cols = "fac_id") %>%
+    tidyr::pivot_longer(-fac_id, names_to = "class", names_prefix = "frac_",
+                        values_to = "fraction") %>%
+    dplyr::filter(fraction > 0) %>%
+    dplyr::mutate(layer = layer, class = as.numeric(class))
+})
+rm(categorical)
+
+# mean tree cover in 2000, and fraction of footprint area with tree cover loss
+# 2000-2023 (Hansen et al., 2013)
+footprint_areas$treecover2000_fp <- exactextractr::exact_extract(
+  terra::rast("data_cache/Hansen_GFC_treecover2000_aus.tif"), footprint_areas, "mean")
+footprint_areas$frac_treeloss_fp <- exactextractr::exact_extract(
+  terra::rast("data_cache/Hansen_GFC_lossyear_aus.tif"), footprint_areas,
+  function(values, coverage_fraction) sum(coverage_fraction[values > 0]) / sum(coverage_fraction))
+
+# majority class of each layer per footprint, with simplified vegetation names
+mvgcodes <- readr::read_csv("data_input/mvg_codes_names.csv")
+
+footprint_majority <- footprint_classes %>%
+  dplyr::group_by(fac_id, layer) %>%
+  dplyr::slice_max(fraction, n = 1, with_ties = FALSE) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(fac_id, layer, class) %>%
+  tidyr::pivot_wider(names_from = layer, values_from = class, names_glue = "{layer}_fp") %>%
+  dplyr::left_join(dplyr::select(mvgcodes, mvg_fp = mvg_code, mvg_fp_simplified = mvg_simplified),
+                   by = "mvg_fp") %>%
+  dplyr::left_join(dplyr::select(mvgcodes, mvgpre1750_fp = mvg_code,
+                                 mvgpre1750_fp_simplified = mvg_simplified),
+                   by = "mvgpre1750_fp")
+
+# fraction of each footprint on cleared land (NVIS MVG 25)
+footprint_cleared <- footprint_classes %>%
+  dplyr::filter(layer == "mvg", class == 25) %>%
+  dplyr::select(fac_id, frac_cleared_fp = fraction)
+# BUT looking at these there seems to be a decent error rate in NVIS cleared land category
+# so maybe won't use frac_cleared_fp
+
+# join footprint environments to wind and solar data
+windsolar <- windsolar %>%
+  dplyr::left_join(sf::st_drop_geometry(footprint_areas), by = "fac_id") %>%
+  dplyr::left_join(footprint_majority, by = "fac_id") %>%
+  dplyr::left_join(footprint_cleared, by = "fac_id") %>%
+  dplyr::mutate(frac_cleared_fp = tidyr::replace_na(frac_cleared_fp, 0))
+rm(footprint_areas, footprint_majority, footprint_cleared)
+
+# add facility type, footprint source, simplified vegetation names and area (ha)
+# to footprint classes, and save
+footprint_classes <- footprint_classes %>%
+  dplyr::left_join(dplyr::select(windsolar, fac_id, type, footprint_source, footprint_ha),
+                   by = "fac_id") %>%
+  dplyr::left_join(dplyr::select(mvgcodes, class = mvg_code, mvg_simplified), by = "class") %>%
+  dplyr::mutate(class_name = dplyr::if_else(layer == "land_capability",
+                                            as.character(class), mvg_simplified),
+                area_ha = fraction * footprint_ha) %>%
+  dplyr::select(fac_id, type, footprint_source, layer, class, class_name, fraction, area_ha)
+readr::write_csv(footprint_classes, "data_output/footprint_classes.csv")
+rm(footprint_classes, mvgcodes)
+
 # write data output for now
 readr::write_csv(windsolar, "data_output/windsolar_environments.csv")
 
 })
+
+# fraction and area of each facility footprint in each class of present-day and
+# pre-1750 vegetation and land capability (several rows per facility)
+footprint_classes <- readr::read_csv("data_output/footprint_classes.csv")

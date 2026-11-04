@@ -7,9 +7,5 @@ install.packages("terra")
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
 install.packages("jsonlite") # reading json data
-install.packages("networkD3") # Sankey diagram
-install.packages("htmlwidgets") # saving Sankey diagram
-install.packages("webshot") # converting Sankey html to pdf
-webshot::install_phantomjs() # needed for above package to work
 install.packages("exactextractr") # fast extraction of raster values for buffered points
 install.packages("ggridges") # make nice ridgeline plots

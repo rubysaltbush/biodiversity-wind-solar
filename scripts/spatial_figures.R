@@ -74,43 +74,69 @@ windsolar_biomesummary %>%
   coord_flip()
 ggsave("figures/aus_capacitymw_by_biome.pdf", width = 9, height = 7)
 # overall wind power has bigger share when measured by maximum capacity rather 
-# than just number of facilities
+# than just number of facilities, but wind has a smaller footprint per MW than
+# solar so capacity isn't entirely useful when thinking about area affected
 
 # enough of biomes, let's use better veg mapping
 # clean up df not needed anymore
 rm(windsolar_biomesummary, biomes)
+
+# footprint area ----
+
+# number, total area and median area per MW of GRW footprints by facility type
+windsolar %>%
+  dplyr::filter(footprint_source == "GRW") %>%
+  dplyr::group_by(type) %>%
+  dplyr::summarise(number = n(), total_area_ha = sum(footprint_ha),
+                   median_ha_per_mw = median(footprint_ha / totalcapacity_mw))
+# type  number total_area_ha median_ha_per_mw
+# solar    132        14763.            1.77 
+# wind     100         3105.            0.263
+# so yes, solar uses more land area per MW than wind
 
 # NVIS vegetation ----
 
 ## present day ----
 # rasters too large to produce map without difficulty, maybe not needed?
 
-# simplify to a df of MVG with #s of wind and solar facilities in them
+# simplify to a df of MVG with #s and capacity of wind and solar facilities by
+# majority MVG in each footprint, and total area of GRW footprints in each MVG
 mvg_windsolarsummary <- windsolar %>%
-  dplyr::select(mvg_simplified, type, totalcapacity_mw) %>%
-  dplyr::group_by(mvg_simplified, type) %>%
+  dplyr::select(mvg_fp_simplified, type, totalcapacity_mw) %>%
+  dplyr::group_by(mvg_fp_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
+  dplyr::ungroup() %>%
+  dplyr::full_join(footprint_classes %>%
+                     dplyr::filter(layer == "mvg", footprint_source == "GRW") %>%
+                     dplyr::group_by(mvg_fp_simplified = class_name, type) %>%
+                     dplyr::summarise(area_ha = sum(area_ha)) %>%
+                     dplyr::ungroup(),
+                   by = c("mvg_fp_simplified", "type")) %>%
+  tidyr::replace_na(list(number = 0, sumcapmw = 0, area_ha = 0))
 mvg_windsolarsummary
-# mvg_simplified                            type  number sumcapmw
-# <chr>                                     <chr>  <int>    <dbl>
-#   1 Cleared, non-native vegetation, buildings solar    126    9706.
-# 2 Cleared, non-native vegetation, buildings wind      91   12034.
-# 3 Eucalypt forests and woodlands            solar      5     228.
-# 4 Eucalypt forests and woodlands            wind      12    1913 
-# 5 Grasslands                                solar      7     560.
-# 6 Grasslands                                wind       1     113 
-# 7 Non-eucalypt forests and woodlands        solar      4     179.
-# 8 Other                                     solar      1      60 
-# 9 Other                                     wind       3     328 
-# 10 Shrublands                                solar      6     460 
-# 11 Shrublands                                wind       6     514.
+# mvg_fp_simplified                              type  number sumcapmw    area_ha
+# 1 Bare ground, modified native vegetation, other solar      1      60    127.    
+# 2 Bare ground, modified native vegetation, other wind       1     118     40.7   
+# 3 Cleared, non-native vegetation, buildings      solar    127    9710  13238.    
+# 4 Cleared, non-native vegetation, buildings      wind      93   12566.  2400.    
+# 5 Eucalypt forests and woodlands                 solar      4     224.   223.    
+# 6 Eucalypt forests and woodlands                 wind      10    1381    393.    
+# 7 Grasslands                                     solar      7     560.   455.    
+# 8 Grasslands                                     wind       2     257     77.4   
+# 9 Non-eucalypt forests and woodlands             solar      4     179.   242.    
+# 10 Non-eucalypt forests and woodlands             wind       1      66    27.6   
+# 11 Shrublands                                     solar      6     460   478.    
+# 12 Shrublands                                     wind       6     514.  166.    
+# 13 Aquatic vegetation and salt lakes              wind       0       0     0.0851
+# 14 Rainforests and Vine Thickets                  wind       0       0     1.01  
+# 15 NA                                             wind       0       0     0.0292
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  dplyr::mutate(mvg_simplified = forcats::fct_inorder(mvg_simplified)) %>%
-  ggplot(aes(x = mvg_simplified, y = number, fill = type)) +
+  dplyr::filter(number >0) %>%
+  dplyr::mutate(mvg_fp_simplified = forcats::fct_inorder(mvg_fp_simplified)) %>%
+  ggplot(aes(x = mvg_fp_simplified, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
@@ -119,53 +145,67 @@ mvg_windsolarsummary %>%
   coord_flip()
 ggsave("figures/aus_facilities_by_mvg.pdf", width = 9, height = 7)
 
-# now display capacity in stacked bar chart
-plotmvgcap <- mvg_windsolarsummary %>%
-  dplyr::arrange(-sumcapmw) %>%
-  dplyr::mutate(mvg_simplified = forcats::fct_inorder(mvg_simplified)) %>%
-  ggplot(aes(x = mvg_simplified, y = sumcapmw, fill = type)) +
+# total footprint area by present-day vegetation
+plotmvgarea <- mvg_windsolarsummary %>%
+  dplyr::filter(number >0) %>%
+  dplyr::mutate(mvg_fp_simplified = forcats::fct_reorder(mvg_fp_simplified, 
+                                                         area_ha, .fun = sum,
+                                                         .desc = TRUE)) %>%
+  ggplot(aes(x = mvg_fp_simplified, y = area_ha, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group - 2024") +
-  ylab("Total maximum capacity (MW)") +
+  ylab("Total footprint area (ha)") +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 21750)) +
   scale_x_discrete(labels = scales::label_wrap(width = 25))
-plotmvgcap
-ggsave("figures/aus_capacity_by_mvg.pdf", width = 9, height = 7)
-# looking at it by capacity changes the order of vegetation groups affected
-# though all are still dwarfed by the cleared category
+plotmvgarea
+ggsave("figures/aus_area_by_mvg.pdf", width = 9, height = 7)
 
 ## pre-1750 ----
 # try same with pre-1750 mapping
 
-# simplify to a df of MVG with #s of wind and solar facilities in them
+# simplify to a df of MVG with #s and capacity of wind and solar facilities by
+# majority MVG in each footprint, and total area of GRW footprints in each MVG
 mvg_windsolarsummary <- windsolar %>%
-  dplyr::select(mvgpre1750_simplified, type, totalcapacity_mw) %>%
-  dplyr::group_by(mvgpre1750_simplified, type) %>%
+  dplyr::select(mvgpre1750_fp_simplified, type, totalcapacity_mw) %>%
+  dplyr::group_by(mvgpre1750_fp_simplified, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
+  dplyr::ungroup() %>%
+  dplyr::full_join(footprint_classes %>%
+                     dplyr::filter(layer == "mvgpre1750", footprint_source == "GRW") %>%
+                     dplyr::group_by(mvgpre1750_fp_simplified = class_name, type) %>%
+                     dplyr::summarise(area_ha = sum(area_ha)) %>%
+                     dplyr::ungroup(),
+                   by = c("mvgpre1750_fp_simplified", "type")) %>%
+  tidyr::replace_na(list(number = 0, sumcapmw = 0, area_ha = 0))
 mvg_windsolarsummary
-# mvgpre1750_simplified                          type  number sumcapmw
-# <chr>                                          <chr>  <int>    <dbl>
-# 1 Bare ground, modified native vegetation, other wind       2     173 
-# 2 Eucalypt forests and woodlands                 solar    110    8931.
-# 3 Eucalypt forests and woodlands                 wind      68    9118.
-# 4 Grasslands                                     solar     15     806.
-# 5 Grasslands                                     wind      21    3467 
-# 6 Non-eucalypt forests and woodlands             solar     13     847.
-# 7 Non-eucalypt forests and woodlands             wind       2      96 
-# 8 Rainforests and Vine Thickets                  solar      1      40 
-# 9 Rainforests and Vine Thickets                  wind       3     376 
-# 10 Shrublands                                     solar     10     570.
-# 11 Shrublands                                     wind      17    1672.
+# mvgpre1750_fp_simplified                       type  number sumcapmw    area_ha
+# 1 Bare ground, modified native vegetation, other wind       1     107     25.0   
+# 2 Eucalypt forests and woodlands                 solar    110    8253. 11267.    
+# 3 Eucalypt forests and woodlands                 wind      69    9336.  1701.    
+# 4 Grasslands                                     solar     14     800.  1005.    
+# 5 Grasslands                                     wind      17    2814    592.    
+# 6 Non-eucalypt forests and woodlands             solar     13    1182.  1520.    
+# 7 Non-eucalypt forests and woodlands             wind       4     531     98.4   
+# 8 Rainforests and Vine Thickets                  solar      1      40      0     
+# 9 Rainforests and Vine Thickets                  wind       2     124     63.4   
+# 10 Shrublands                                     solar     11     918.   964.    
+# 11 Shrublands                                     wind      20    1990.   600.    
+# 12 Aquatic vegetation and salt lakes              solar      0       0      6.59  
+# 13 Aquatic vegetation and salt lakes              wind       0       0     24.0   
+# 14 NA                                             solar      0       0      0.101 
+# 15 NA                                             wind       0       0      0.0292
+
+# 1 solar facility (Kingaroy solar farm) in rainforest and vine thicket but 0 area_ha
+# because no footprint for it in GRW, built in 2024
 
 # now display in stacked bar chart
 mvg_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  dplyr::mutate(mvgpre1750_simplified = forcats::fct_inorder(mvgpre1750_simplified)) %>%
-  ggplot(aes(x = mvgpre1750_simplified, y = number, fill = type)) +
+  dplyr::mutate(mvgpre1750_fp_simplified = forcats::fct_inorder(mvgpre1750_fp_simplified)) %>%
+  dplyr::filter(number >0) %>% # remove area where no. facilities = 0
+  ggplot(aes(x = mvgpre1750_fp_simplified, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
@@ -174,148 +214,30 @@ mvg_windsolarsummary %>%
   coord_flip()
 ggsave("figures/aus_facilities_by_mvgpre1750.pdf", width = 9, height = 7)
 
-# and stacked bar chart by total capacity
-plotpre1750cap <- mvg_windsolarsummary %>%
-  dplyr::arrange(-sumcapmw) %>%
-  dplyr::mutate(mvgpre1750_simplified = forcats::fct_inorder(mvgpre1750_simplified)) %>%
-  ggplot(aes(x = mvgpre1750_simplified, y = sumcapmw, fill = type)) +
+
+# total footprint area by pre-1750 vegetation
+plotpre1750area <- mvg_windsolarsummary %>%
+  dplyr::mutate(mvgpre1750_fp_simplified = forcats::fct_reorder(mvgpre1750_fp_simplified,
+                                                                area_ha, .fun = sum,
+                                                                .desc = TRUE)) %>%
+  dplyr::filter(number >0) %>% # remove area where no. facilities = 0
+  ggplot(aes(x = mvgpre1750_fp_simplified, y = area_ha, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Major Vegetation Group - pre-1750") +
-  ylab("Total maximum capacity (MW)") +
+  ylab("Total footprint area (ha)") +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 21750)) +
   scale_x_discrete(labels = scales::label_wrap(width = 25))
-plotpre1750cap
-ggsave("figures/aus_capacity_by_mvgpre1750.pdf", width = 9, height = 7)
+plotpre1750area
+ggsave("figures/aus_area_by_mvgpre1750.pdf", width = 9, height = 7)
 
-# again using capacity increases the dominance of wind (implying that there are
-# fewer but larger capacity wind farms vs solar farms)
-# shifts ranking of smaller categories but eucalypt woodlands still predominate
-
-# patchwork together mvg capacity plots
-# combine vertically with patchwork
-combined <- plotpre1750cap / plotmvgcap + 
+# combine pre-1750 and present-day vegetation area plots
+combined <- plotpre1750area / plotmvgarea + 
   patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
-ggsave("figures/auscapbymvg_combined.pdf", combined, width = 5, height = 7)
-rm(plotpre1750cap, plotmvgcap, mvg_windsolarsummary, combined)
-
-## sankey graph ----
-# showing pre1750 to today change in veg for solar and wind locations
-
-### solar ----
-# need to work out source (pre-1750 veg), target (extant veg), value (MW)
-sankeylinks <- windsolar %>%
-  dplyr::filter(type == "solar") %>%
-  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
-  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>%
-  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
-
-# add dummy spaces in one column so sankey diagram won't lump categories
-sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", 
-                                          sankeylinks$mvgpre1750_simplified)
-
-# add group for colouring
-# create nodes df for sankey
-sankeynodes <- data.frame(
-  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
-           as.character(sankeylinks$mvg_simplified)) %>% unique()
-)
-
-# for colouring plot
-# add a 'group' column to the nodes and links data frame
-sankeylinks$group <- as.factor("a")
-sankeynodes$group <- as.factor("a")
-
-# prepare colour scale for groups
-sankey_col <- 'd3.scaleOrdinal() .domain(["a"]) .range(["#FACB0F"])'
-
-# reformat name to id for networkD3 connection
-sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name) - 1
-sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name) - 1
-
-# # prepare colour scale: rename below with categories and hex codes once ready to make final graph
-# # i.e. once have lumped all vegetation categories
-# sankey_col <- 'd3.scaleOrdinal() .domain([" Eucalypt forests and woodlands", "Eucalypt forests and woodlands", " Grasslands", "Grasslands", " Non-eucalypt forests and woodlands", "Non-eucalypt forests and woodlands", " Rainforests and Vine Thickets", " Shrublands", "Shrublands", "Bare ground, modified native vegetation, other", "Cleared, non-native vegetation, buildings"]) .range(["#7fc97f", "#7fc97f", "#fdc086" , "#fdc086", "#386cb0", "#386cb0", "#f0027f", "#beaed4", "#beaed4", "#ffff99", "#bf5b17"])'
-
-# Make the Network
-p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
-                              Source = "IDsource", Target = "IDtarget",
-                              Value = "sumcapmw", NodeID = "name", 
-                              colourScale = sankey_col,
-                              LinkGroup="group", NodeGroup="group",
-                              sinksRight = FALSE)
-
-# takes wrangling to save as pdf
-require(htmlwidgets)
-htmlwidgets::saveWidget(p, file = "figures/sankey_solar.html")
-
-require(webshot)
-# need to install phantomJS for webshot to work (webshot::install_phantomjs())
-webshot::webshot(url = paste0("file://", normalizePath("figures/sankey_solar.html")), 
-                 file = "figures/sankey_solar.pdf")
-# okay can edit text size/font from this pdf but colours more difficult
-
-### wind ----
-# need to work out source (pre-1750 veg), target (extant veg), value (MW)
-sankeylinks <- windsolar %>%
-  dplyr::filter(type == "wind") %>%
-  dplyr::select(mvgpre1750_simplified, mvg_simplified, type, totalcapacity_mw) %>% 
-  dplyr::group_by(mvgpre1750_simplified, mvg_simplified) %>%
-  dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
-
-# add dummy spaces in one column so sankey diagram won't lump categories
-sankeylinks$mvgpre1750_simplified <- gsub("(^[A-Z][a-z]*[ ,\\/]?)", " \\1", 
-                                          sankeylinks$mvgpre1750_simplified)
-
-# add group for colouring
-# create nodes df for sankey
-sankeynodes <- data.frame(
-  name = c(as.character(sankeylinks$mvgpre1750_simplified), 
-           as.character(sankeylinks$mvg_simplified)) %>% unique()
-)
-
-# for colouring plot
-# add a 'group' column to the nodes and links data frame
-sankeylinks$group <- as.factor("a")
-sankeynodes$group <- as.factor("a")
-
-# prepare colour scale for groups
-sankey_col <- 'd3.scaleOrdinal() .domain(["a"]) .range(["#377EB8"])'
-
-# reformat name to id for networkD3 connection
-sankeylinks$IDsource <- match(sankeylinks$mvgpre1750_simplified, sankeynodes$name) - 1
-sankeylinks$IDtarget <- match(sankeylinks$mvg_simplified, sankeynodes$name) - 1
-
-# # prepare colour scale: rename below with categories and hex codes once ready to make final graph
-# # i.e. once have lumped all vegetation categories
-# sankey_col <- 'd3.scaleOrdinal() .domain([" Eucalypt forests and woodlands", "Eucalypt forests and woodlands", " Grasslands", "Grasslands", " Non-eucalypt forests and woodlands", "Non-eucalypt forests and woodlands", " Rainforests and Vine Thickets", " Shrublands", "Shrublands", "Bare ground, modified native vegetation, other", "Cleared, non-native vegetation, buildings"]) .range(["#7fc97f", "#7fc97f", "#fdc086" , "#fdc086", "#386cb0", "#386cb0", "#f0027f", "#beaed4", "#beaed4", "#ffff99", "#bf5b17"])'
-
-# Make the Network
-p <- networkD3::sankeyNetwork(Links = sankeylinks, Nodes = sankeynodes,
-                              Source = "IDsource", Target = "IDtarget",
-                              Value = "sumcapmw", NodeID = "name", 
-                              colourScale = sankey_col,
-                              LinkGroup="group", NodeGroup="group",
-                              sinksRight = FALSE)
-p
-
-# takes wrangling to save as pdf
-htmlwidgets::saveWidget(p, file = "figures/sankey_wind.html", selfcontained = TRUE)
-
-webshot::webshot(url = paste0("file://", normalizePath("figures/sankey_wind.html")), 
-                 file = "figures/sankey_wind.pdf")
-
-# looks much better with simplified veg categories!
-# comparing wind and solar, looks like greater number of wind farms still found
-# in extant eucalypt forests and woodlands, while a greater chunk of solar farms
-# are now cleared euc forests and woodlands...
-# can edit text font/size etc in Illustrator from pdf
-
-rm(p, sankeylinks, sankeynodes, sankey_col)
+combined
+ggsave("figures/aus_area_by_mvg_combined.pdf", combined, width = 5, height = 7)
+rm(plotpre1750area, plotmvgarea, mvg_windsolarsummary, combined)
 
 # land capability mapping (Adams & Engert 2023) ----
 
@@ -323,15 +245,42 @@ rm(p, sankeylinks, sankeynodes, sankey_col)
 
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
-  dplyr::select(land_capability, type, totalcapacity_mw) %>%
-  dplyr::group_by(land_capability, type) %>%
+  dplyr::select(land_capability_fp, type, totalcapacity_mw) %>%
+  dplyr::group_by(land_capability_fp, type) %>%
   dplyr::summarise(number = n(), sumcapmw = sum(totalcapacity_mw)) %>%
-  dplyr::ungroup()
+  dplyr::ungroup() %>%
+  dplyr::full_join(footprint_classes %>%
+                     dplyr::filter(layer == "land_capability", footprint_source == "GRW") %>%
+                     dplyr::group_by(land_capability_fp = class, type) %>%
+                     dplyr::summarise(area_ha = sum(area_ha)) %>%
+                     dplyr::ungroup(),
+                   by = c("land_capability_fp", "type")) %>%
+  tidyr::replace_na(list(number = 0, sumcapmw = 0, area_ha = 0))
+landcap_windsolarsummary
+#   land_capability_fp type  number sumcapmw area_ha
+#                   1 solar      3     370   504.  
+#                   1 wind      10     927   314.  
+#                   2 solar     33    1826. 2933.  
+#                   2 wind      25    3496   592.  
+#                   3 solar     32    2552. 3007.  
+#                   3 wind      18    2129.  471.  
+#                   4 solar     21    1613. 2084.  
+#                   4 wind      24    2976.  736.  
+#                   5 solar     25    2356. 2397.  
+#                   5 wind      13    1341   292.  
+#                   6 solar     23    1788. 3025.  
+#                   6 wind      17    2897.  565.  
+#                   7 solar      9     573.  665.  
+#                   7 wind       4     827.   86.6 
+#                   8 solar      3     115.  147.  
+#                   8 wind       1     197    14.9 
+#                   9 wind       1     112    33.3 
+#                   9 solar      0       0     3.22
 
 # now display in stacked bar chart
 landcap_windsolarsummary %>%
   dplyr::arrange(-number) %>%
-  ggplot(aes(x = land_capability, y = number, fill = type)) +
+  ggplot(aes(x = land_capability_fp, y = number, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
@@ -341,27 +290,17 @@ landcap_windsolarsummary %>%
   coord_flip()
 ggsave("figures/aus_facilities_by_landcapability.pdf", width = 9, height = 7)
 
-# now display in stacked bar chart, with capacity instead
+# total footprint area by land capability class
 landcap_windsolarsummary %>%
-  dplyr::arrange(-sumcapmw) %>%
-  ggplot(aes(x = land_capability, y = sumcapmw, fill = type)) +
+  ggplot(aes(x = land_capability_fp, y = area_ha, fill = type)) +
   geom_bar(stat = "identity") +
   ggpubr::theme_pubr(legend = "right") +
   scale_fill_discrete(type = my_colours$windsolar) +
   xlab("Agricultural land capability") +
-  ylab("Total maximum capacity (MW)") +
+  ylab("Total footprint area (ha)") +
   scale_x_continuous(breaks = c(1:9)) +
   coord_flip()
-ggsave("figures/aus_capacity_by_landcapability.pdf", width = 9, height = 7)
-# again increases proportion of wind, interesting that on the best 
-# agricultural land it is mostly wind farms not solar, which is probably more
-# compatible with continuing agriculture
-
-t.test(windsolar$land_capability[windsolar$type == "wind"],
-       windsolar$land_capability[windsolar$type == "solar"])
-# t = -0.98105, df = 230.83, p-value = 0.3276
-# mean 3.743363 standard error 0.1718029 for wind
-# no difference in mean bw wind and solar
+ggsave("figures/aus_area_by_landcapability.pdf", width = 9, height = 7)
 
 rm(landcap_windsolarsummary)
 
@@ -443,57 +382,37 @@ rm(rain_plot, rain_all, temp_plot, temp_all)
 
 # hansen tree cover ----
 
-# what was tree cover at locations in 2000?
-# violin plot with boxplot
-hansencoverplot <- ggplot(windsolar, aes(x = type, y = meantreecover2000_buff, fill = type)) +
-  geom_violin(width = 1.4) +
-  geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::theme_pubr(legend = "none") +
-  ylab("Tree cover in surrounding area in year 2000 (%)") +
-  xlab("Facility type")
-hansencoverplot
-ggsave("figures/fraction_treecover2000.pdf", width = 5, height = 6)   
-# so wind facilities have more tree cover than solar in surrounding area
-# to start with
+# mean tree cover in 2000 and tree cover loss 2000-2023 within footprints of
+# facilities first operating from 2001
+windsolar %>%
+  dplyr::filter(earliest_start >= 2001) %>%
+  dplyr::group_by(type) %>%
+  dplyr::summarise(number = n(),
+                   mean_treecover2000 = mean(treecover2000_fp),
+                   mean_pct_treeloss = 100 * mean(frac_treeloss_fp),
+                   total_treeloss_ha = sum(frac_treeloss_fp * footprint_ha),
+                   n_with_treeloss = sum(frac_treeloss_fp > 0))
+#    type  number mean_treecover2000 mean_pct_treeloss total_treeloss_ha n_with_treeloss
+# 1 solar    149               1.29              1.79              359.              42
+# 2 wind     111               4.41              4.24              186.              67
+# solar tends to have been built more on areas with less tree cover in yr 2000
+# therefore less tree loss for solar than for wind to date
 
+# what was tree cover at locations in 2000?
 # ridgeline plot
-ggplot(windsolar, aes(x = meantreecover2000_buff, y = type, fill = type)) +
+ggplot(windsolar, aes(x = treecover2000_fp, y = type, fill = type)) +
   ggridges::geom_density_ridges() +
   ggridges::theme_ridges() + 
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  xlab("Tree cover in surrounding area in year 2000 (%)") +
+  xlab("Tree cover within footprint in year 2000 (%)") +
   ylab("Facility type")
-ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)   
-
-t.test(windsolar$meantreecover2000_buff[windsolar$type == "wind"],
-       windsolar$meantreecover2000_buff[windsolar$type == "solar"])
-# difference significant by t-test, t = 3.477, df = 129.35, p-value = 0.000691
-# alternative hypothesis: true difference in means is not equal to 0
-# 95 percent confidence interval:
-#   1.707693 6.216979
-# sample estimates:
-#   mean of x mean of y 
-# 5.631321  1.668985
-# sem wind 1.098055
-# sem solar 0.3048482
+ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)
+# so wind facilities have more tree cover than solar in surrounding area
+# to start with
 
 # prepare fraction cleared column
-windsolar$percent_cleared <- (1 - windsolar$frac_uncleared)*100
-
-# draw boxplot/violin plot of fraction cleared (in 1km radius of point, 3.14km2)
-hansenclearedplot <- ggplot(windsolar, aes(x = type, y = percent_cleared, fill = type)) +
-  geom_violin(width = 1.4) +
-  geom_boxplot(width = 0.1, color = "grey", alpha = 0.2) +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::theme_pubr(legend = "none") +
-  ylab("Tree cover loss in surrounding area 2000-2023 (%)") +
-  xlab("Facility type")
-hansenclearedplot
-ggsave("figures/fraction_cleared.pdf", width = 5, height = 6)         
-# so, doesn't look like solar or wind farms are associated with significant clearing
-# of tree cover in surrounding area
+windsolar$percent_cleared <- windsolar$frac_treeloss_fp*100
 
 # ridgeline plot
 ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
@@ -501,21 +420,11 @@ ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
   ggridges::theme_ridges() + 
   scale_fill_discrete(type = my_colours$windsolar) +
   ggpubr::theme_pubr(legend = "none") +
-  xlab("Tree cover loss in surrounding area 2000-2023 (%)") +
+  xlab("Tree cover loss within footprint 2000-2023 (%)") +
   ylab("Facility type")
 ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
+# so, doesn't look like solar or wind farms are associated with significant clearing
+# of tree cover in surrounding area
 
-# NB column was frac_cleared (doesn't exist); temporary fix, test replaced in step A6
-t.test(windsolar$percent_cleared[windsolar$type == "wind"],
-       windsolar$percent_cleared[windsolar$type == "solar"])
-# t = -0.12453, df = 260, p-value = 0.901, differences not significant
-# mean of x  mean of y 
-# 0.01395721 0.01455504 
-
-# combine violin plots (ugly but more informative) using patchwork
-hansencoverplot / hansenclearedplot + 
-  patchwork::plot_layout(guides = "collect")
-ggsave("figures/hansen_tree_cover_combined.pdf", width = 6, height = 8)
-
-rm(hansenclearedplot, hansencoverplot, windsolar)
+rm(windsolar, footprint_classes)
 

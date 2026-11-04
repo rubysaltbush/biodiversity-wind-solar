@@ -7,9 +7,6 @@ library(rnaturalearth)
 library(ggpubr)
 library(patchwork)
 library(jsonlite)
-library(networkD3)
-library(htmlwidgets)
-library(webshot)
 library(exactextractr)
 library(ggridges)
 
@@ -34,9 +31,6 @@ source("scripts/sysreview_analysis.R")
 # mapping wind and solar facilities against ecosystems and biodiversity across Aus
 # prepare data on locations of wind and solar facilities across Australia
 source("scripts/spatial_dataprep.R")
-
-# match facility locations to Global Renewables Watch footprints
-source("scripts/spatial_footprints.R")
 
 # then intersect spatial locations with different rasters of environmental data
 # prepare figures and run analyses from these data
