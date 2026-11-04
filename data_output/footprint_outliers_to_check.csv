@@ -1,0 +1,46 @@
+fac_id,project_name,type,status,totalcapacity_mw,earliest_start,lat,lon,n_features,area_ha,max_match_dist_m,footprint_source,ha_per_mw,mw_per_turbine,check_reason
+6,Avonlie Solar,solar,construction,245,2023,-34.9173,146.594,2,102.35382959029003,715.4496011409743,GRW,0.41777073302159196,NA,ha per MW outside 0.5-5
+15,Baroota solar project,solar,operating,8.9,2019,-32.9643,138.0399,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+18,Berri solar project,solar,operating,4.6,2023,-34.258,140.601,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+22,Blayney wind farm,wind,operating,10,2001,-33.6199,149.1889,16,NA,2087.1328189902692,GRW,NA,0.625,MW per turbine outside 1-7
+24,Bluff Point wind farm,wind,operating,10,2002,-40.7391,144.6906,11,NA,875.4052643385818,GRW,NA,0.9090909090909091,MW per turbine outside 1-7
+30,Bomen solar farm,solar,operating,50,2020,-35.0391,147.4448,1,1.2103928491674587,420.2469890756201,GRW,0.024207856983349173,NA,ha per MW outside 0.5-5
+31,Brisbane BNE solar project,solar,operating,6,2018,-27.3843,153.1178,1,1.0609239837821476,1639.1742456015,GRW,0.17682066396369125,NA,ha per MW outside 0.5-5
+35,Bungala solar farm,solar,operating,137,2019,-32.4078,137.8404,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+36,Canunda wind farm,wind,operating,46,2005,-37.7344,140.3941,71,NA,9417.657052664748,GRW,NA,0.647887323943662,MW per turbine outside 1-7
+41,Chepstowe wind farm,wind,operating,6,2015,-37.5959,143.4957,33,NA,10275.073227391527,GRW,NA,0.18181818181818182,MW per turbine outside 1-7
+45,Chillamurra (New South Wales) solar project,solar,operating,4.8,2017,-28.5457,150.2789,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+46,Chillamurra (Queensland) solar farm,solar,operating,3.6,2023,-28.5459,150.2817,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+62,Crookwell wind farm,wind,operating,4.8,1998,-34.5165,149.5425,17,NA,3176.313330216954,GRW,NA,0.2823529411764706,MW per turbine outside 1-7
+69,Daydream Solar,solar,operating,150,2018,-20.4846,147.7703,1,3.0902638615513096,737.2780257832972,GRW,0.02060175907700873,NA,ha per MW outside 0.5-5
+72,Dulacca wind farm,wind,operating,180,2023,-26.6116,149.8533,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+80,Esperance wind farm,wind,operating,9,2022,-33.7546,121.8401,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+98,Gullen Range wind farm,wind,operating,27,2014,-34.6329,149.456,42,NA,7979.901276033322,GRW,NA,0.6428571428571429,MW per turbine outside 1-7
+110,Hepburn wind farm,wind,operating,4,2011,-37.4267,144.121,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+119,Karakin wind farm,wind,operating,5,2013,-31.0074,115.466,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+132,Limondale solar farm,solar,operating,349,2020,-34.7755,143.508,1,87.8755372118659,1838.289121504617,GRW,0.2517923702345728,NA,ha per MW outside 0.5-5
+147,Mica Creek solar farm,solar,operating,88,2023,-20.8124,139.4918,1,18.998002672307482,0,GRW,0.2158863940034941,NA,ha per MW outside 0.5-5
+168,Murra Warra 2 wind farm,wind,operating,209,2022,-36.4326,142.3173,24,NA,4490.171124755327,GRW,NA,8.708333333333334,MW per turbine outside 1-7
+173,Nevertire Solar,solar,operating,132,2019,-31.8222,147.7038,1,63.09581116370439,0.01697558893632234,GRW,0.477998569422003,NA,ha per MW outside 0.5-5
+174,New England solar farm,solar,operating,400,2023,-30.6163,151.6015,6,122.35564902745875,1084.0388708527016,GRW,0.30588912256864687,NA,ha per MW outside 0.5-5
+177,Northern Goldfields Solar Project,solar,operating,27,2022,-27.2067,120.5626,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+180,Oakey solar farm,solar,operating,55,2019,-27.4079,151.6514,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+181,Oakey solar farm,solar,operating,25,2019,-27.4079,151.6514,1,182.44089542318974,0,GRW,7.29763581692759,NA,ha per MW outside 0.5-5
+193,Portland (PWEP) Wind Energy Project,wind,operating,30,2007,-38.318,142.0277,66,NA,11233.558697077167,GRW,NA,0.45454545454545453,MW per turbine outside 1-7
+197,Ross River solar farm,solar,operating,128,2018,-19.4253,146.7157,2,59.874175416258666,924.8928882175804,GRW,0.4677669954395208,NA,ha per MW outside 0.5-5
+200,Rye Park wind farm,wind,construction,384,2024,-34.6172,148.9783,50,NA,14805.546310780715,GRW,NA,7.68,MW per turbine outside 1-7
+205,Snowtown I wind farm,wind,operating,99,2008,-33.7317,138.1352,102,NA,10005.449414555906,GRW,NA,0.9705882352941176,MW per turbine outside 1-7
+206,Snowtown Ii wind farm,wind,operating,270,2014,-33.8456,138.1246,36,NA,6041.633378116848,GRW,NA,7.5,MW per turbine outside 1-7
+216,Swan Hill Solar Farm 2 Unit 1,solar,operating,7.2,2018,-35.3418,143.5173,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+219,Taralga wind farm,wind,operating,24,2015,-34.4289,149.8624,51,NA,5078.788113885448,GRW,NA,0.47058823529411764,MW per turbine outside 1-7
+220,Taralga wind farm,wind,operating,82,2015,-34.4289,149.8624,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+221,Timboon West wind farm,wind,operating,7,2018,-38.5284,142.9162,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+229,Wambo Wind Farm Project,wind,construction,252,2025,-26.6582,151.3346,32,NA,8124.264897865289,GRW,NA,7.875,MW per turbine outside 1-7
+233,Waterloo wind farm (Australia),wind,operating,20,2016,-34.0011,138.911,24,NA,7076.640111315847,GRW,NA,0.8333333333333334,MW per turbine outside 1-7
+238,Wellington North solar farm,solar,operating,425,2024,-32.4917,148.96,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+241,West Hills wind farm,wind,operating,5,2013,-30.8711,115.3919,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+249,Windy Hill wind farm (Australia),wind,operating,12,2000,-17.5892,145.5314,20,NA,1241.886451034444,GRW,NA,0.6,MW per turbine outside 1-7
+251,Wollar Solar,solar,construction,280,2025,-32.4165,149.9341,1,8.6678289526386,787.5004821250685,GRW,0.030956531973709282,NA,ha per MW outside 0.5-5
+255,Woolooga solar farm,solar,operating,59,2022,-26.0779,152.425,NA,NA,NA,point,NA,NA,"operating, no footprint matched"
+256,Woolooga solar farm,solar,operating,59,2022,-26.076,152.4432,2,308.90676990951636,446.8378376167925,GRW,5.235707964568074,NA,ha per MW outside 0.5-5
+258,Wyalong Solar,solar,operating,75,2023,-33.887,147.315,1,2.7317126074446243,691.762849124238,GRW,0.03642283476592832,NA,ha per MW outside 0.5-5
