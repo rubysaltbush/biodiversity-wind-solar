@@ -120,6 +120,7 @@ footprint_cleared <- footprint_classes %>%
   dplyr::select(fac_id, frac_cleared_fp = fraction)
 # BUT looking at these there seems to be a decent error rate in NVIS cleared land category
 # so maybe won't use frac_cleared_fp
+rm(footprint_classes)
 
 # mean tree cover in 2000, and fraction of footprint area with tree cover loss
 # 2000-2023 (Hansen et al., 2013)
@@ -168,6 +169,7 @@ type_summary
 # solar than for wind to date
 
 readr::write_csv(type_summary, "data_output/spatial_results_summary.csv")
+rm(type_summary)
 
 # number and capacity of facilities by majority footprint class of present-day
 # and pre-1750 simplified vegetation and land capability
@@ -231,4 +233,4 @@ print(class_summary, n = 50)
 # 40 wind  mvgpre1750      Bare ground, modified native vegetation, other     1        107          0.00885       0.00718
 
 readr::write_csv(class_summary, "data_output/spatial_results_classes.csv")
-rm(mvgcodes)
+rm(mvgcodes, class_summary)
