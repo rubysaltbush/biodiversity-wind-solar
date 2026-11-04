@@ -413,12 +413,6 @@ table(windsolar$type, windsolar$footprint_source)
 # solar  132    17
 # wind   100    13
 
-# the 30 facilities with points but no GRW footprint are a mix of recently
-# constructed facilities (so possibly not visible in mid-2024 when GRW data from)
-# or projects that GRW's machine learning must have missed for whatever reason -
-# still better to have proper footprints for most facilities, and will use a
-# buffer around the point for these 30 facilities where no footprint easily available
-
 # impact area of each facility: GRW footprints, or a 1 km radius around the
 # point location for facilities without a GRW footprint
 footprint_areas <- rbind(
@@ -488,6 +482,30 @@ windsolar <- windsolar %>%
   dplyr::left_join(footprint_cleared, by = "fac_id") %>%
   dplyr::mutate(frac_cleared_fp = tidyr::replace_na(frac_cleared_fp, 0))
 rm(footprint_areas, footprint_majority, footprint_cleared)
+
+# export facilities to check against satellite imagery: implausible footprint
+# area or number of turbines for their capacity, or operating with no footprint
+windsolar %>%
+  dplyr::mutate(ha_per_mw = footprint_ha / totalcapacity_mw,
+                mw_per_turbine = totalcapacity_mw / n_footprint_features,
+                check_reason = dplyr::case_when(
+                  footprint_source == "GRW" & type == "solar" &
+                    (ha_per_mw < 0.5 | ha_per_mw > 5) ~ "ha per MW outside 0.5-5",
+                  footprint_source == "GRW" & type == "wind" &
+                    (mw_per_turbine < 1 | mw_per_turbine > 7) ~ "MW per turbine outside 1-7",
+                  footprint_source == "point" & status == "operating" ~ "operating, no footprint matched")) %>%
+  dplyr::filter(!is.na(check_reason)) %>%
+  dplyr::select(fac_id, project_name, type, status, totalcapacity_mw, earliest_start,
+                lat, lon, n_footprint_features, footprint_ha, max_match_dist_m,
+                footprint_source, ha_per_mw, mw_per_turbine, check_reason) %>%
+  readr::write_csv("data_output/footprint_outliers_to_check.csv")
+
+# have exported possible mismatches between my point locations and GRW data - the 30
+# facilities with points but no GRW footprint are a mix of recently constructed 
+# facilities (so possibly not visible in mid-2024 when GRW data from) or projects
+# that GRW's machine learning must have missed for whatever reason - still better
+# to have proper footprints for most facilities, and will use a buffer around the 
+# point for these 30 facilities where no footprint easily available
 
 # add facility type, footprint source, simplified vegetation names and area (ha)
 # to footprint classes, and save
