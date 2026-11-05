@@ -310,26 +310,28 @@ ggsave("figures/aus_area_by_mvgpre1750.pdf", width = 9, height = 7)
 
 # combine pre-1750 and present-day vegetation area plots
 combined <- plotpre1750area / plotmvgarea + 
-  patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
+  patchwork::plot_layout(guides = "collect") +
+  patchwork::plot_annotation(tag_levels = "a") & theme(legend.position = "top")
 combined
 ggsave("figures/aus_area_by_mvg_combined.pdf", combined, width = 5, height = 7)
 rm(plotpre1750area, plotmvgarea, mvg_windsolarsummary, combined)
 
 # hansen tree cover ----
 
-# mean tree cover in 2000 and tree cover loss 2000-2023 within footprints of
-# facilities first operating from 2001
+# tree cover in 2000 and tree cover loss 2000-2023 across all GRW footprints of
+# facilities first operating from 2001, weighted by footprint area
 windsolar %>%
-  dplyr::filter(earliest_start >= 2001) %>%
+  dplyr::filter(earliest_start >= 2001, footprint_source == "GRW") %>%
   dplyr::group_by(type) %>%
   dplyr::summarise(number = n(),
-                   mean_treecover2000 = mean(treecover2000_fp),
-                   mean_pct_treeloss = 100 * mean(frac_treeloss_fp),
+                   total_footprint_ha = sum(footprint_ha),
+                   pct_treecover2000 = sum(treecover2000_fp * footprint_ha) / total_footprint_ha,
                    total_treeloss_ha = sum(frac_treeloss_fp * footprint_ha),
+                   pct_treeloss = 100 * total_treeloss_ha / total_footprint_ha,
                    n_with_treeloss = sum(frac_treeloss_fp > 0))
-#    type  number mean_treecover2000 mean_pct_treeloss total_treeloss_ha n_with_treeloss
-# 1 solar    149               1.29              1.79              359.              42
-# 2 wind     111               4.41              4.24              186.              67
+#    type  number total_footprint_ha pct_treecover2000 total_treeloss_ha pct_treeloss n_with_treeloss
+# 1 solar    132        14763.              0.50              219.         1.48              30
+# 2 wind      98         3076.              2.12               79.1        2.57              58
 # solar tends to have been built more on areas with less tree cover in yr 2000
 # therefore less tree loss for solar than for wind to date
 
