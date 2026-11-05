@@ -81,6 +81,82 @@ ggsave("figures/aus_capacitymw_by_biome.pdf", width = 9, height = 7)
 # clean up df not needed anymore
 rm(windsolar_biomesummary, biomes)
 
+# climate density graphs ----
+
+# below adapted from Will's code, took out of function so can retain
+# climate data with wind/solar data
+
+# load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
+temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
+rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
+
+# Load the region polygon
+region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = "Australia", returnclass = "sf")
+
+# convert region to SpatVector for terra operations
+region_polygon <- terra::vect(region_polygon)
+
+# crop rasters to the region extent
+temp_raster <- terra::crop(temp_raster, terra::ext(region_polygon))
+rain_raster <- terra::crop(rain_raster, terra::ext(region_polygon))
+
+# Mask the rasters with the region shape
+temp_raster <- terra::mask(temp_raster, region_polygon)
+rain_raster <- terra::mask(rain_raster, region_polygon)
+rm(region_polygon)
+
+# Convert the full rasters to a data frame
+temp_all <- terra::as.data.frame(temp_raster)
+rain_all <- terra::as.data.frame(rain_raster)
+rm(temp_raster, rain_raster)
+temp_all <- temp_all %>%
+  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`) %>%
+  dplyr::mutate(type = "All Australia")
+rain_all <- rain_all %>%
+  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`) %>%
+  dplyr::mutate(type = "All Australia")
+# append wind and solar data
+temp_all <- windsolar %>%
+  dplyr::select(type, MAT) %>%
+  dplyr::bind_rows(temp_all)
+rain_all <- windsolar %>%
+  dplyr::select(type, MAP) %>%
+  dplyr::bind_rows(rain_all)
+
+# now create density plots of these data
+# temperature first
+temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Mean annual temperature (ºC)",
+       y = "Density",
+       colour = "",
+       fill = "") +
+  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
+                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
+                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  ggpubr::theme_pubr(legend = "right")
+
+# then precipitation
+rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
+  geom_density(alpha = 0.5) +
+  labs(x = "Mean annual precipitation (mm)",
+       y = "Density",
+       colour = "",
+       fill = "") +
+  scale_x_log10() +
+  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
+                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
+                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
+  ggpubr::theme_pubr(legend = "none")
+
+# use patchwork package to stitch plots together, and export
+temp_plot / rain_plot + patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
+ggsave("figures/temp_precip_density_plots.pdf", width = 5, height = 8)
+# plots slow to draw because 10million+ points in density graph
+rm(rain_plot, rain_all, temp_plot, temp_all)
+
 # footprint area ----
 
 # number, total area and median area per MW of GRW footprints by facility type
@@ -239,9 +315,53 @@ combined
 ggsave("figures/aus_area_by_mvg_combined.pdf", combined, width = 5, height = 7)
 rm(plotpre1750area, plotmvgarea, mvg_windsolarsummary, combined)
 
-# land capability mapping (Adams & Engert 2023) ----
+# hansen tree cover ----
 
-## bar charts ----
+# mean tree cover in 2000 and tree cover loss 2000-2023 within footprints of
+# facilities first operating from 2001
+windsolar %>%
+  dplyr::filter(earliest_start >= 2001) %>%
+  dplyr::group_by(type) %>%
+  dplyr::summarise(number = n(),
+                   mean_treecover2000 = mean(treecover2000_fp),
+                   mean_pct_treeloss = 100 * mean(frac_treeloss_fp),
+                   total_treeloss_ha = sum(frac_treeloss_fp * footprint_ha),
+                   n_with_treeloss = sum(frac_treeloss_fp > 0))
+#    type  number mean_treecover2000 mean_pct_treeloss total_treeloss_ha n_with_treeloss
+# 1 solar    149               1.29              1.79              359.              42
+# 2 wind     111               4.41              4.24              186.              67
+# solar tends to have been built more on areas with less tree cover in yr 2000
+# therefore less tree loss for solar than for wind to date
+
+# what was tree cover at locations in 2000?
+# ridgeline plot
+ggplot(windsolar, aes(x = treecover2000_fp, y = type, fill = type)) +
+  ggridges::geom_density_ridges() +
+  ggridges::theme_ridges() + 
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Tree cover within footprint in year 2000 (%)") +
+  ylab("Facility type")
+ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)
+# so wind facilities have more tree cover than solar in surrounding area
+# to start with
+
+# prepare fraction cleared column
+windsolar$percent_cleared <- windsolar$frac_treeloss_fp*100
+
+# ridgeline plot
+ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
+  ggridges::geom_density_ridges() +
+  ggridges::theme_ridges() + 
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpubr::theme_pubr(legend = "none") +
+  xlab("Tree cover loss within footprint 2000-2023 (%)") +
+  ylab("Facility type")
+ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
+# so, doesn't look like solar or wind farms are associated with significant clearing
+# of tree cover in surrounding area
+
+# land capability mapping (Adams & Engert 2023) ----
 
 # simplify to a df of land capability with #s of wind and solar facilities in them
 landcap_windsolarsummary <- windsolar %>%
@@ -303,128 +423,6 @@ landcap_windsolarsummary %>%
 ggsave("figures/aus_area_by_landcapability.pdf", width = 9, height = 7)
 
 rm(landcap_windsolarsummary)
-
-# climate density graphs ----
-
-# below adapted from Will's code, took out of function so can retain
-# climate data with wind/solar data
-
-# load rasters of mean annual temperature and rainfall (crs WGS1984, same as windsolar df)
-temp_raster <- terra::rast("data_cache/CHELSA_bio1_1981-2010_V.2.1.tif")
-rain_raster <- terra::rast("data_cache/CHELSA_bio12_1981-2010_V.2.1.tif")
-
-# Load the region polygon
-region_polygon <- rnaturalearth::ne_countries(scale = "medium", country = "Australia", returnclass = "sf")
-
-# convert region to SpatVector for terra operations
-region_polygon <- terra::vect(region_polygon)
-
-# crop rasters to the region extent
-temp_raster <- terra::crop(temp_raster, terra::ext(region_polygon))
-rain_raster <- terra::crop(rain_raster, terra::ext(region_polygon))
-
-# Mask the rasters with the region shape
-temp_raster <- terra::mask(temp_raster, region_polygon)
-rain_raster <- terra::mask(rain_raster, region_polygon)
-rm(region_polygon)
-
-# Convert the full rasters to a data frame
-temp_all <- terra::as.data.frame(temp_raster)
-rain_all <- terra::as.data.frame(rain_raster)
-rm(temp_raster, rain_raster)
-temp_all <- temp_all %>%
-  dplyr::rename(MAT = `CHELSA_bio1_1981-2010_V.2.1`) %>%
-  dplyr::mutate(type = "All Australia")
-rain_all <- rain_all %>%
-  dplyr::rename(MAP = `CHELSA_bio12_1981-2010_V.2.1`) %>%
-  dplyr::mutate(type = "All Australia")
-# append wind and solar data
-temp_all <- windsolar %>%
-  dplyr::select(type, MAT) %>%
-  dplyr::bind_rows(temp_all)
-rain_all <- windsolar %>%
-  dplyr::select(type, MAP) %>%
-  dplyr::bind_rows(rain_all)
-
-# now create density plots of these data
-# temperature first
-temp_plot <- ggplot(temp_all, aes(x = MAT, colour = type, fill = type)) +
-  geom_density(alpha = 0.5) +
-  labs(x = "Mean annual temperature (ºC)",
-       y = "Density",
-       colour = "",
-       fill = "") +
-  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
-                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
-                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  ggpubr::theme_pubr(legend = "right")
-
-# then precipitation
-rain_plot <- ggplot(rain_all, aes(x = MAP, colour = type, fill = type)) +
-  geom_density(alpha = 0.5) +
-  labs(x = "Mean annual precipitation (mm)",
-       y = "Density",
-       colour = "",
-       fill = "") +
-  scale_x_log10() +
-  scale_fill_discrete(type = c("grey", "#FACB0F", "#377EB8"),
-                      labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  scale_colour_discrete(type = c("grey", "#FACB0F", "#377EB8"),
-                        labels = c('All Australia', 'Solar farms', 'Wind farms')) +
-  ggpubr::theme_pubr(legend = "none")
-
-# use patchwork package to stitch plots together, and export
-temp_plot / rain_plot + patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
-ggsave("figures/temp_precip_density_plots.pdf", width = 5, height = 8)
-# plots slow to draw because 10million+ points in density graph
-rm(rain_plot, rain_all, temp_plot, temp_all)
-
-# hansen tree cover ----
-
-# mean tree cover in 2000 and tree cover loss 2000-2023 within footprints of
-# facilities first operating from 2001
-windsolar %>%
-  dplyr::filter(earliest_start >= 2001) %>%
-  dplyr::group_by(type) %>%
-  dplyr::summarise(number = n(),
-                   mean_treecover2000 = mean(treecover2000_fp),
-                   mean_pct_treeloss = 100 * mean(frac_treeloss_fp),
-                   total_treeloss_ha = sum(frac_treeloss_fp * footprint_ha),
-                   n_with_treeloss = sum(frac_treeloss_fp > 0))
-#    type  number mean_treecover2000 mean_pct_treeloss total_treeloss_ha n_with_treeloss
-# 1 solar    149               1.29              1.79              359.              42
-# 2 wind     111               4.41              4.24              186.              67
-# solar tends to have been built more on areas with less tree cover in yr 2000
-# therefore less tree loss for solar than for wind to date
-
-# what was tree cover at locations in 2000?
-# ridgeline plot
-ggplot(windsolar, aes(x = treecover2000_fp, y = type, fill = type)) +
-  ggridges::geom_density_ridges() +
-  ggridges::theme_ridges() + 
-  scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::theme_pubr(legend = "none") +
-  xlab("Tree cover within footprint in year 2000 (%)") +
-  ylab("Facility type")
-ggsave("figures/fraction_treecover2000_ridgeline.pdf", width = 6, height = 5)
-# so wind facilities have more tree cover than solar in surrounding area
-# to start with
-
-# prepare fraction cleared column
-windsolar$percent_cleared <- windsolar$frac_treeloss_fp*100
-
-# ridgeline plot
-ggplot(windsolar, aes(x = percent_cleared, y = type, fill = type)) +
-  ggridges::geom_density_ridges() +
-  ggridges::theme_ridges() + 
-  scale_fill_discrete(type = my_colours$windsolar) +
-  ggpubr::theme_pubr(legend = "none") +
-  xlab("Tree cover loss within footprint 2000-2023 (%)") +
-  ylab("Facility type")
-ggsave("figures/fraction_cleared_ridgeline.pdf", width = 6, height = 5) 
-# so, doesn't look like solar or wind farms are associated with significant clearing
-# of tree cover in surrounding area
 
 rm(windsolar, footprint_classes)
 
