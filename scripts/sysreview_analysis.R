@@ -910,17 +910,19 @@ effect
 
 # how many wind studies focussed on mortality with negative effects had control site or before comparisons
 sysrevdata %>%
-  dplyr::filter(wind_solar == "wind", biodiversity_metric == "mortality",
+  dplyr::filter(wind_solar == "wind",
+                stringr::str_detect(biodiversity_metric, "mortality"),
                 effect_wind == "negative") %>%
   dplyr::select(title, study_design) %>%
   dplyr::distinct() %>%
+  dplyr::mutate(n_studies = dplyr::n_distinct(title)) %>%
   dplyr::group_by(study_design) %>%
-  dplyr::summarise(count = n(), prop = count/108)
-# study_design  count   prop
-# 1 BA            4     0.0370
-# 2 BACI          5     0.0463
-# 3 CI            15    0.139 
-# 4 I             84    0.778 
+  dplyr::summarise(count = n(), prop = count/dplyr::first(n_studies))
+# study_design count   prop
+# 1 BA               5 0.0427
+# 2 BACI             6 0.0513
+# 3 CI              16 0.137 
+# 4 I               90 0.769 
 
 #okay and, how many -ve wind farm studies focussed on mortality
 sysrevdata %>%
@@ -928,17 +930,18 @@ sysrevdata %>%
   dplyr::select(title, biodiversity_metric) %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
   dplyr::distinct() %>%
+  dplyr::mutate(n_studies = dplyr::n_distinct(title)) %>%
   dplyr::group_by(biodiversity_metric) %>%
-  dplyr::summarise(count = n(), prop = count/205)
-# biodiversity_metric   count    prop
-# 1 abundance             11    0.0537 
-# 2 behaviour             30    0.146  
-# 3 distribution          29    0.141  
-# 4 diversity             5     0.0244 
-# 5 health                2     0.00976
-# 6 mortality             117   0.571  
-# 7 reproduction          9     0.0439 
-# 8 survival              2     0.00976
+  dplyr::summarise(count = n(), prop = count/dplyr::first(n_studies))
+# biodiversity_metric count   prop
+# 1 abundance              11 0.0573
+# 2 behaviour              30 0.156 
+# 3 distribution           29 0.151 
+# 4 diversity               5 0.0260
+# 5 health                  2 0.0104
+# 6 mortality             117 0.609 
+# 7 reproduction            9 0.0469
+# 8 survival                2 0.0104
 
 # make histogram of effect of wind and solar by proportion publications
 effect %>%
