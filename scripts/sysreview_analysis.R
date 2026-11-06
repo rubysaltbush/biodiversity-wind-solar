@@ -256,7 +256,7 @@ proportions
 rm(fac_prop, proportions)
 
 ### latitude ----
-# count how many studies in north vs south hemisphere, by wind/solar with proportions
+# count how many studies in tropics vs temperate vs polar latitude, by wind/solar with proportions
 proportions <- sysrevlatlong %>%
   sf::st_drop_geometry() %>%
   dplyr::mutate(lat_band = dplyr::case_when(
@@ -274,7 +274,7 @@ proportions <- sysrevlatlong %>%
   dplyr::rename(n_studies = n) %>%
   ungroup()
 
-# count how many wind and solar facilities in north vs south hemisphere 
+# count how many wind and solar facilities in tropics vs temperate vs polar latitude 
 # (numbers a bit wrong but hopefully proportion similar)
 fac_prop <- windsolar_gipt_spat %>%
   sf::st_drop_geometry() %>%
@@ -306,6 +306,9 @@ proportions
 # 3 wind       Polar             3           280       0.0107           19            16295         0.00117 9.19 
 # 4 wind       Temperate       264           280       0.943         14506            16295         0.890   1.06 
 # 5 wind       Tropical         13           280       0.0464         1770            16295         0.109   0.427
+
+# okay so tropical regions definitely understudied, for solar and for wind
+# polar wind overstudied, but temperate regions actually close to proportional
 
 rm(fac_prop, proportions)
 
@@ -366,8 +369,8 @@ conflicts <- extract1 %>%
   dplyr::filter(admin != country)
 table(conflicts$admin)
 # have manually checked these conflicts, most are just typographic differences
-# only one (serbia vs romania) appears to be a small error in projection for a 
-# wind farm right on the border
+# only two (serbia vs romania, norway v sweden) appear to be small errors in 
+# projection for wind farms right on the border
 rm(conflicts, region)
 
 # so all good to use this now
@@ -383,18 +386,18 @@ na_idx <- which(is.na(extract2$continent))
 
 # then extract nearest feature and patch back into main data
 if (length(na_idx) > 0) {
-  nearest_idx <- sf::st_nearest_feature(sysrevlatlong[na_idx, ], worldmap)
+  nearest_idx <- sf::st_nearest_feature(windsolar_gipt_spat[na_idx, ], worldmap)
   extract2[na_idx, c("continent", "admin", "geounit")] <-
     sf::st_drop_geometry(worldmap)[nearest_idx, c("continent", "admin", "geounit")]
 }
 rm(na_idx, nearest_idx, worldmap)
 
 sum(is.na(extract2$continent))
-# matched only 16 points, others must be real odd will leave
+# matched all 1200+ points now that code fixed
 
 table(extract2$continent)
 # Africa          Asia        Europe North America       Oceania South America 
-# 485         17117         14694          5608           437          2353 
+# 578         17781         15028          5663           461          2454 
 
 #### continent ----
 
@@ -431,21 +434,20 @@ continent_prop <- continent_prop %>%
 
 continent_prop
 # wind_solar continent     n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
-# <chr>      <chr>             <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
-# 1 solar      Africa                2            49       0.0408          404            25670         0.0157  2.59 
-# 2 wind       Africa                6           280       0.0214           81            16295         0.00497 4.31 
-# 3 solar      Asia                  5            49       0.102         11463            25670         0.447   0.229
-# 4 wind       Asia                 16           280       0.0571         5654            16295         0.347   0.165
-# 5 solar      Europe               16            49       0.327          7775            25670         0.303   1.08 
-# 6 wind       Europe              121           280       0.432          6919            16295         0.425   1.02 
-# 7 solar      North America        25            49       0.510          3983            25670         0.155   3.29 
-# 8 wind       North America       125           280       0.446          1625            16295         0.0997  4.48 
-# 9 wind       Oceania               6           280       0.0214          130            16295         0.00798 2.69 
-# 10 solar      Oceania               0           280       0               307            25670         0.0120  0    
-# 11 solar      South America         1            49       0.0204         1138            25670         0.0443  0.460
-# 12 wind       South America         6           280       0.0214         1215            16295         0.0746  0.287
+# 1 solar      Africa                2            49       0.0408          454            25670         0.0177  2.31 
+# 2 wind       Africa                6           280       0.0214          124            16295         0.00761 2.82 
+# 3 solar      Asia                  5            49       0.102         11869            25670         0.462   0.221
+# 4 wind       Asia                 16           280       0.0571         5912            16295         0.363   0.158
+# 5 solar      Europe               16            49       0.327          7875            25670         0.307   1.06 
+# 6 wind       Europe              121           280       0.432          7153            16295         0.439   0.984
+# 7 solar      North America        25            49       0.510          4011            25670         0.156   3.27 
+# 8 wind       North America       125           280       0.446          1652            16295         0.101   4.40 
+# 9 wind       Oceania               6           280       0.0214          141            16295         0.00865 2.48 
+# 10 solar      Oceania               0           280       0               320            25670         0.0125  0    
+# 11 solar      South America         1            49       0.0204         1141            25670         0.0444  0.459
+# 12 wind       South America         6           280       0.0214         1313            16295         0.0806  0.266
 
-# so north america way overrepresented, Asia way underrepresented in studies 
+# so North America way overrepresented, Asia way underrepresented in studies 
 # south america also underrepresented
 # by rough # facilities at least, for wind and solar
 # africa "overrepresented", must be due to low # facilities there
@@ -481,18 +483,18 @@ cont_all_prop <- cont_all_prop %>%
   dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
   dplyr::arrange(continent)
 cont_all_prop
-# continent     n_studies total_studies prop_studies n_facilities total_facilities prop_facilities  ratio
-# <chr>             <int>         <int>        <dbl>        <int>            <int>           <dbl>  <dbl>
-# 1 Africa                8           328       0.0244          485            41965          0.0116  2.11 
-# 2 Asia                 21           328       0.0640        17117            41965          0.408   0.157
-# 3 Europe              137           328       0.418         14694            41965          0.350   1.19 
-# 4 North America       149           328       0.454          5608            41965          0.134   3.40 
-# 5 Oceania               6           328       0.0183          437            41965          0.0104  1.76 
-# 6 South America         7           328       0.0213         2353            41965          0.0561  0.381
+# continent     wind_solar n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# 1 Africa        all                8           328       0.0244          578            41965          0.0138 1.77 
+# 2 Asia          all               21           328       0.0640        17781            41965          0.424  0.151
+# 3 Europe        all              137           328       0.418         15028            41965          0.358  1.17 
+# 4 North America all              149           328       0.454          5663            41965          0.135  3.37 
+# 5 Oceania       all                6           328       0.0183          461            41965          0.0110 1.67 
+# 6 South America all                7           328       0.0213         2454            41965          0.0585 0.365
 
-# Asia and South America both strongly underrepresented
+# Asia and South America both strongly underrepresented in studies relative to development
+# and just low numbers of studies overall in Africa and Oceania though development also lagging there
 # is this a genuine bias in studies or a bias of our English-language review?
-# hard to know, not convinced this is the best way to look at this
+# hard to know
 
 # compile into one table
 cont_all_prop <- cont_all_prop %>%
@@ -532,10 +534,9 @@ admin_prop <- admin_prop %>%
   dplyr::mutate(ratio = prop_studies / prop_facilities) %>%
   dplyr::arrange(admin)
 dplyr::filter(admin_prop, admin == "Australia")
-# wind_solar admin   n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
-# <chr>      <chr>       <int>         <int>        <dbl>        <int>            <int>           <dbl> <dbl>
-# 1 wind      Austra…         4           285       0.0140          111            16295         0.00681  2.06
-# 2 solar     Austra…        0            NA        0               284            25670         0.0111   0   
+# wind_solar admin     n_studies total_studies prop_studies n_facilities total_facilities prop_facilities ratio
+# 1 wind       Australia         4           334       0.0120          120            41965         0.00286  4.19
+# 2 solar      Australia         0            NA       0               287            41965         0.00684  0   
 
 # so Australia understudied for solar by # facilities, overstudied for wind
 # BUT none of these #s account for PLANNED facilities which in the pipeline now
