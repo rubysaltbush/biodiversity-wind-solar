@@ -52,6 +52,10 @@ rsconnect/
 # macOS system file
 **/.DS_Store
 
-# data cache folder for local caching of data files
-/data_cache
+# data cache folder for local caching of data files (readme is kept)
+!/data_cache/
+/data_cache/*
+!/data_cache/data_cache_readme
+
+# whatever this is
 .positai
