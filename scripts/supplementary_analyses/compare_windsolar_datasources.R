@@ -19,55 +19,6 @@ solar_nem <- readr::read_csv("data_input/solar_nationalmap_20241203.csv") %>%
   dplyr::filter(`Max Cap (MW)` >= 3) # remove any facilities with maximum capacity less than 3 MW
 #dplyr::filter(!(is.na(lat))) # 7 missing coordinates, could patch but remove for now
 
-# then, RenewEconomy website
-#### RenewEconomy ----
-
-wind_re <- cache_csv("data_input/windfarms_aus_updated.csv", function(){
-  
-  # read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
-  windfarms <- jsonlite::fromJSON("data_input/tidy_reneweconomy_windfarms.json")
-  
-  # some messy columns, build into data I want
-  windfarms_tidy <- windfarms %>%
-    tidyr::unnest(cols = description) %>%
-    dplyr::select(title, address, lat, long = lng, 
-                  size_mw = `Size:`,
-                  yr_operational = `Operational:`, 
-                  technology = `Technology:`,
-                  owner = `Owner:`,
-                  comments = `Comments:`)
-  
-  # export these as csv to fill in few missing fields
-  readr::write_csv(windfarms_tidy, "data_output/windfarms_aus_fromjson.csv")
-  
-  # and read back in (error checking not finished yet but will try mapping for now)
-  windfarms <- readr::read_csv("data_input/windfarms_aus_updated.csv")
-})
-# smallest Max Capacity is 12MW, isn't including smaller facilities
-
-solar_re <- cache_csv("data_input/solarfarms_aus_updated.csv", function(){
-  
-  # read in data on wind and solar farms from maps on Renew Economy website, converting from JSON format
-  solarfarms <- jsonlite::fromJSON("data_input/tidy_reneweconomy_solarfarms.json")
-  
-  # some messy columns, build into data I want
-  solarfarms_tidy <- solarfarms %>%
-    tidyr::unnest(cols = description) %>%
-    dplyr::select(title, address, lat, long = lng, 
-                  size_mw = `Size:`,
-                  yr_operational = `Operational:`, 
-                  technology = `Technology:`,
-                  owner = `Owner:`,
-                  comments = `Comments:`)
-  
-  # export these as csv to fill in few missing fields
-  readr::write_csv(solarfarms_tidy, "data_output/solarfarms_aus_fromjson.csv")
-  
-  # and read back in (error checking not finished yet but will try mapping for now)
-  solarfarms <- readr::read_csv("data_input/solarfarms_aus_updated.csv")
-})
-# smallest Max Capacity is 10MW, isn't including smaller facilities
-
 # now, globalenergymonitor.org
 #### Global Integrated Power Tracker ----
 
@@ -113,25 +64,16 @@ sum(wind_nem$max_cap_mw)
 sum(solar_nem$`Max Cap (MW)`)
 # [1] 7204.26
 
-# Renew Economy data
-wind_re %>% dplyr::filter(!(is.na(size_mw))) %>% dplyr::select(size_mw) %>% sum(.)
-# [1] 16318.3
-# unless filtered gives NA because of Ryan Corner, which looks like it's in 
-# construction at least according to website but is not included in other data sets
-sum(solar_re$size_mw)
-# [1] 12142.16
 
 # Global Integrated Power Tracker data
 sum(wind_gipt$`Capacity (MW)`)
 # [1] 15318.2
-# curiously almost exactly 1000 MW fewer than Renew Economy data
 sum(solar_gipt$`Capacity (MW)`)
 # [1] 11547.3
-# again smaller than the Renew Economy data, but hopefully with fewer spurious/erroneous records?
 
 
 # for now the GIPT data seems most reliable and doesn't seem to be missing too much
 # if we decide we want a more complete data set I could update these all but that
 # is probably unnecessary for our purposes for now
 
-rm(solar_gipt, solar_nem, solar_re, wind_gipt, wind_re, wind_nem)
+rm(solar_gipt, solar_nem, wind_gipt, wind_nem)

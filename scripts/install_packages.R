@@ -6,6 +6,5 @@ install.packages("sf")
 install.packages("terra")
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
-install.packages("jsonlite") # reading json data
 install.packages("exactextractr") # fast extraction of raster values for buffered points
 install.packages("ggridges") # make nice ridgeline plots

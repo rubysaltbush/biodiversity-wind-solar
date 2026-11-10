@@ -6,7 +6,6 @@ library(terra)
 library(rnaturalearth)
 library(ggpubr)
 library(patchwork)
-library(jsonlite)
 library(exactextractr)
 library(ggridges)
 
