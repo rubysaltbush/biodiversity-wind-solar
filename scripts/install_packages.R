@@ -2,6 +2,7 @@
 
 install.packages("tidyverse")
 install.packages("ggpubr")
+install.packages("patchwork") # combine plots into multi-panel figures
 install.packages("sf")
 install.packages("terra")
 install.packages("rnaturalearth")
