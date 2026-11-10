@@ -863,8 +863,7 @@ combined <- plotcat / plotmeas + patchwork::plot_layout(guides = "collect") & th
 combined
 
 ggsave("figures/biodiversity_catmeas_combined.pdf", combined, width = 6, height = 9)
-rm(combined)
-# keep two other plots to try combining with effect figure
+rm(combined, plotcat, plotmeas)
 
 # table of biodiversity category and measure, split by wind/solar, with percent share of all studies
 table <- sysrevdata %>%
@@ -874,6 +873,7 @@ table <- sysrevdata %>%
   tidyr::separate_longer_delim(biodiversity_metric, delim = ", ") %>%
   dplyr::group_by(biodiversity_metric, biodiversity_category, wind_solar) %>%
   dplyr::summarise(count = n(), percent = n()/(length(unique(sysrevdata$title)))*100)
+table
 rm(table)
 
 # outcome ----
@@ -952,28 +952,8 @@ effect %>%
   ylab("Proportion of studies") +
   scale_fill_discrete(name = "Facility", type = my_colours$windsolar)
 ggsave("figures/effect_development_barchart_proportion.pdf", width = 5, height = 4)
-
-# histogram of number of studies to match above flipped coordinate histograms
-ploteffect <- effect %>%
-  ggplot(aes(x = effect, y = count, fill = wind_solar)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  ggpubr::theme_pubr() +
-  xlab("Impact on biodiversity") +
-  ylab("Number of studies") +
-  scale_fill_discrete(type = my_colours$windsolar) +
-  labs(fill = "Facility type") +
-  coord_flip() +
-  scale_y_continuous(limits = c(0, 192))
-ploteffect
-ggsave("figures/effect_development_histogram.pdf", width = 5, height = 5)  
   
-# combine vertically with patchwork
-combined <- plotcat / plotmeas / ploteffect + 
-  patchwork::plot_layout(guides = "collect") & theme(legend.position = "top")
-combined
-
-ggsave("figures/biodiversity_catmeaseffect_combined.pdf", combined, width = 6, height = 13)
-rm(plotcat, plotmeas, ploteffect, combined, effect)
+rm(effect)
 
 # mitigation ----
 
