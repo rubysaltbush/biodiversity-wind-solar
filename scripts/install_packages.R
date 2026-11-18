@@ -9,3 +9,4 @@ install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
 install.packages("exactextractr") # fast extraction of raster values for buffered points
 install.packages("ggridges") # make nice ridgeline plots
+install.packages("ggpattern") # hatched bar charts

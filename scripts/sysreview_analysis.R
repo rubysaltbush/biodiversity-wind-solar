@@ -1046,26 +1046,31 @@ sysrevdata %>%
 # MAKE GRAPH OF ABOVE, SPLIT BY MITIGATION CATEGORY
 mittestedchart <- sysrevdata %>%
   dplyr::filter(mitigation_tested == "TRUE") %>%
-  dplyr::select(title, mitigation_category, mitigation_supported_by_explicit_test) %>%
+  dplyr::select(title, wind_solar, mitigation_category, mitigation_supported_by_explicit_test) %>%
   dplyr::distinct() %>%
   # Split the categories and unnest them
   dplyr::mutate(mitigation_category = stringr::str_split(mitigation_category, ", ")) %>%
   tidyr::unnest(mitigation_category) %>%
-  # Count occurrences of each category
-  dplyr::group_by(mitigation_category, mitigation_supported_by_explicit_test) %>%
+  # Count occurrences of each category, by wind/solar and whether mitigation supported
+  dplyr::mutate(supported = dplyr::if_else(mitigation_supported_by_explicit_test, "yes", "no")) %>%
+  dplyr::group_by(mitigation_category, wind_solar, supported) %>%
   dplyr::summarise(count = n()) %>%
   dplyr::mutate(mitigation_category = factor(mitigation_category, levels = c("siting", 
-                                                                               "curtailment", 
-                                                                               "technological modifications", 
-                                                                               "management decisions", 
-                                                                               "on-site restoration", 
-                                                                               "offsetting"))) %>%
-  ggplot(aes(x = mitigation_category, y = count, fill = mitigation_supported_by_explicit_test)) +
-  geom_bar(stat = "identity") +
+                                                                             "curtailment", 
+                                                                             "technological modifications", 
+                                                                             "management decisions", 
+                                                                             "on-site restoration", 
+                                                                             "offsetting"))) %>%
+  ggplot(aes(x = mitigation_category, y = count, fill = wind_solar, pattern = supported)) +
+  ggpattern::geom_col_pattern(pattern_fill = "black", pattern_colour = "black",
+                              pattern_density = 0.02, pattern_spacing = 0.02) +
   ggpubr::theme_pubr() +
   xlab("Tested mitigation") +
-  labs(fill = "Mitigation supported") +
-  scale_fill_manual(values = c("#ef8a62","#67a9cf")) +
+  labs(fill = "Facility type", pattern = "Mitigation supported") +
+  scale_fill_discrete(type = my_colours$windsolar) +
+  ggpattern::scale_pattern_manual(values = c(no = "stripe", yes = "none")) +
+  guides(fill = guide_legend(override.aes = list(pattern = "none")),
+         pattern = guide_legend(override.aes = list(fill = "white", colour = "black"))) +
   ylab("Number of studies") +
   coord_flip()
 mittestedchart
