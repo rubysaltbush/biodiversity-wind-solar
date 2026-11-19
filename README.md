@@ -8,9 +8,9 @@ Lead Author, Second Author, Third Author, Fourth Author
 
 Author details removed for anonymous peer review.
 
-*Paper submitted; citation and DOI will be added here when published.*
+*Paper submitted; full citation will be added here when published.*
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/863259926.svg)](https://doi.org/10.5281/zenodo.24359942)
 
 ## Overview
 
