@@ -2,11 +2,11 @@
 
 Data and analysis code for:
 
-**From global evidence to local action: biodiversity impacts and mitigation for utility-scale wind and solar farms, with an Australian case study**
+**From global evidence to local action: biodiversity impacts and mitigation for wind and solar farms in understudied regions**
 
-Ruby E. Stephens, Malan Bothma, Neil R. Jordan, Will Cornwell
+Lead Author, Second Author, Third Author, Fourth Author
 
-Centre for Ecosystem Science and Evolution & Ecology Research Centre, University of New South Wales, Sydney, Australia
+Author details removed for anonymous peer review.
 
 *Paper submitted; citation and DOI will be added here when published.*
 
@@ -78,7 +78,7 @@ Other figures in `figures/` are exploratory and not used in the paper.
 
 ## Data sources
 
-The systematic map data (`data_input/wind_solar_biodiversity_sysreview_v8_20260602.csv`) were extracted from the included studies by Ruby Stephens and Malan Bothma. Other data come from:
+The systematic map data (`data_input/wind_solar_biodiversity_sysreview_v8_20260602.csv`) were extracted from the included studies by Lead Author and Second Author. Other data come from:
 
 - Global Energy Monitor, Global Wind Power Tracker and Global Solar Power Tracker (with TransitionZero), June 2024 and February 2025 releases (CC BY 4.0)
 - Global Renewables Watch (Robinson et al. 2025)
@@ -96,7 +96,7 @@ Full details, versions, links and citations are in `data_input/data_input_readme
 
 If you use this code or data, please cite the preprint:
 
-Stephens, R.E., Bothma, M., Jordan, N.R. & Cornwell, W. (2026) From global evidence to local action: biodiversity impacts and mitigation for utility-scale wind and solar farms, with an Australian case study. Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
+Lead Author, Second Author, Third Author & Fourth Author (2026) From global evidence to local action: biodiversity impacts and mitigation for utility-scale wind and solar farms, with an Australian case study. Zenodo. https://doi.org/10.5281/zenodo.XXXXXXX
 
 ## Licence
 
